@@ -244,6 +244,7 @@ if __name__ == "__main__":
     group.add_argument("-c", "--config",help="config file in a json format",type=argparse.FileType('r'))
     group.add_argument("-m", "--modules",help="module folders",nargs='*')
     parser.add_argument("-l", "--log", dest="logLevel", choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], help="Set the logging level", default='WARNING')
+    parser.add_argument("-r", "--repositorie", help="Set the repositorie dir", default='cn_modules')
     parser.add_argument("-d", "--destination", help="Set the destination dir", default='build')
     parser.add_argument("-f", "--feedback", action='store_true', help="Set the destination dir", default=False)
     
@@ -253,33 +254,34 @@ if __name__ == "__main__":
     # load the html template
     index,e,content = loadTemplate("index.tmpl");
 
+    # FIXME : work with absolute path
+    parentDir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
     # add subdirectory to outDir
-    args.destination = os.path.join(args.destination, 'last')
-
+    outDir = os.path.join(parentDir, args.repositorie, args.destination, 'last')
     # check destination
-    prepareDestination(args.destination)
+    prepareDestination(outDir)
             
     if args.config != None:
-        processConfig(args.config,e,args.destination, args.feedback)
+        processConfig(args.config, e, outDir, args.feedback)
     elif args.modules != None:
-        processModules(args.modules,e,args.destination, args.feedback)
+        processModules(args.modules, e, outDir, args.feedback)
     else:
-        args.modules = processDefault(e,args.destination, args.feedback)
+        args.modules = processDefault(e, outDir, args.feedback)
     
     #index.write(os.path.join(args.destination, "index.html"),method='html') 
     # Create index.html with accueil.html content
     with open("accueil.html", 'r') as f:
         data=f.read()
     content.append(html.fromstring(data))
-    index.write(os.path.join(args.destination, "index.html"),method='html')  
+    index.write(os.path.join(outDir, "index.html"),method='html')  
     # same for modules:
     for module in args.modules:
-        module_dir = os.path.join(args.destination, module)
-        module_file = os.path.join(module_dir, module+".html")
+        out_module_dir = os.path.join(outDir, module)
+        in_module_file = os.path.join(out_module_dir, module+".html")
         content.clear()
-        with open(module_file, 'r') as f:
+        with open(in_module_file, 'r') as f:
             data=f.read()
         # content.append(html.parse(module_file).getroot())
         content.append(html.fromstring(data))
-        index.write(os.path.join(args.destination, module+".html"),method='html')    
+        index.write(os.path.join(out, module+".html"),method='html')    
         
