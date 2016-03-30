@@ -255,10 +255,10 @@ if __name__ == "__main__":
     # load the html template
     index,e,content = loadTemplate("index.tmpl");
 
-    # FIXME : work with absolute path
+    # Setting paths
     parentDir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
     repoDir = os.path.join(parentDir, args.repository)
-    # add subdirectory to outDir
+    # add arbitrary subdirectory to outDir in case given outDir is '.' 
     outDir = os.path.join(repoDir, args.destination, 'last')
     # check destination
     prepareDestination(outDir)
