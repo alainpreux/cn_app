@@ -42,17 +42,22 @@ def createDirs(outDir):
             shutil.rmtree(new_folder, ignore_errors=True)
             os.makedirs(new_folder, exist_ok=False)
     
-def processModule(module,outDir=None, feedback_option=False):
+def processModule(module,repoDir,outDir=None, feedback_option=False):
+    """ fetch markdown files from [repoDir]/[module]/ folder. 
+        [repoDir] has to be given as absolute path. [module] is just the name of the module
+        If no outDir given, build files directly in same folder, else in [repoDir]/[outDir]/[module]/
+    """
+    moduleDir = os.path.join(repoDir, module)
     if not outDir:
-        outDir = os.path.abspath(module)
+        outDir = moduleDir
     else:
-        outDir = os.path.abspath(os.path.join(outDir,module))
+        outDir = os.path.join(repoDir,outDir,module)
 
     # Fetch first md file in module folder
     filein = None
-    for file in os.listdir(module):
+    for file in os.listdir(moduleDir):
         if '.md' in file:
-            filein = os.path.join(module, file)
+            filein = os.path.join(moduleDir, file)
             break
     if not filein:
         logging.error(" No MarkDown file found, MarkDown file should end with '.md'")

@@ -163,12 +163,12 @@ def generateModuleHtml(data, module, outModuleDir):
     generateMainContent(data,doc,tag,text,module, outModuleDir)
     writeHtml(module, outModuleDir,doc)
 
-def processModule(module,e,outDir, feedback_option):
+def processModule(module,e,repoDir,outDir, feedback_option):
     # generate config file
-    utils.processModule(module,outDir, feedback_option)
+    utils.processModule(module,repoDir,outDir, feedback_option)
     
     # config file for each module is named [module_folder].config.json
-    outModuleDir = os.path.join(outDir,module)
+    outModuleDir = os.path.join(repoDir,outDir,module)
     mod_config = os.path.join(outModuleDir, module+'.config.json')
     with open(mod_config, encoding='utf-8') as mod_data_file:
         # load module data from filin
@@ -183,22 +183,23 @@ def processModule(module,e,outDir, feedback_option):
         
     e.append(html.fromstring(strhtml))
     
-def processConfig(fconfig,e,outDir,feedback_option):
+def processConfig(fconfig,e,repoDir,outDir,feedback_option):
     global_data = json.load(fconfig)
     for module in global_data["modules"]:
-        processModule(module['folder'],e,outDir, feedback_option)
+        processModule(module['folder'],e,repoDir,outDir, feedback_option)
                       
-def processModules(modules,e,outDir, feedback_option):
+def processModules(modules,e,repoDir,outDir, feedback_option):
     for module in modules:
         logging.info("Process %s",module)
-        processModule(module,e,outDir, feedback_option)
+        processModule(module,e,repoDir, outDir, feedback_option)
 
-def processDefault(e,outDir, feedback_option):
+def processDefault(e,repoDir, outDir, feedback_option):
     import glob
+    os.chdir(repoDir)
     listt = glob.glob("module[0-9]")
     modules = sorted(listt,key=lambda a: a.lstrip('module'))
     for module in modules:
-        processModule(module,e,outDir, feedback_option)
+        processModule(module,e,repoDir,outDir, feedback_option)
     return modules
 
 def loadTemplate(template="index.tmpl"):
@@ -244,7 +245,7 @@ if __name__ == "__main__":
     group.add_argument("-c", "--config",help="config file in a json format",type=argparse.FileType('r'))
     group.add_argument("-m", "--modules",help="module folders",nargs='*')
     parser.add_argument("-l", "--log", dest="logLevel", choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], help="Set the logging level", default='WARNING')
-    parser.add_argument("-r", "--repositorie", help="Set the repositorie dir", default='cn_modules')
+    parser.add_argument("-r", "--repository", help="Set the repositorie source dir containing the moduleX dirs, relative to current app parent dir. This dir will be the base dir where build dir will be put", default='cn_modules')
     parser.add_argument("-d", "--destination", help="Set the destination dir", default='build')
     parser.add_argument("-f", "--feedback", action='store_true', help="Set the destination dir", default=False)
     
@@ -256,21 +257,23 @@ if __name__ == "__main__":
 
     # FIXME : work with absolute path
     parentDir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+    repoDir = os.path.join(parentDir, args.repository)
     # add subdirectory to outDir
-    outDir = os.path.join(parentDir, args.repositorie, args.destination, 'last')
+    outDir = os.path.join(repoDir, args.destination, 'last')
     # check destination
     prepareDestination(outDir)
             
     if args.config != None:
         processConfig(args.config, e, outDir, args.feedback)
     elif args.modules != None:
-        processModules(args.modules, e, outDir, args.feedback)
+        processModules(args.modules, e, repoDir, outDir, args.feedback)
     else:
-        args.modules = processDefault(e, outDir, args.feedback)
+        args.modules = processDefault(e, repoDir, outDir, args.feedback)
     
     #index.write(os.path.join(args.destination, "index.html"),method='html') 
     # Create index.html with accueil.html content
-    with open("accueil.html", 'r') as f:
+    
+    with open(os.path.join(outDir,"accueil.html"), 'r') as f:
         data=f.read()
     content.append(html.fromstring(data))
     index.write(os.path.join(outDir, "index.html"),method='html')  
@@ -283,5 +286,5 @@ if __name__ == "__main__":
             data=f.read()
         # content.append(html.parse(module_file).getroot())
         content.append(html.fromstring(data))
-        index.write(os.path.join(out, module+".html"),method='html')    
+        index.write(os.path.join(outDir, module+".html"),method='html')    
         
