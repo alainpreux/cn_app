@@ -245,7 +245,7 @@ if __name__ == "__main__":
     group.add_argument("-c", "--config",help="config file in a json format",type=argparse.FileType('r'))
     group.add_argument("-m", "--modules",help="module folders",nargs='*')
     parser.add_argument("-l", "--log", dest="logLevel", choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], help="Set the logging level", default='WARNING')
-    parser.add_argument("-r", "--repository", help="Set the repositorie source dir containing the moduleX dirs, relative to current app parent dir. This dir will be the base dir where build dir will be put", default='cn_modules')
+    parser.add_argument("-r", "--repository", help="Set the repositorie source dir containing the moduleX dirs, given as absolute or relative to cn_app dir", default='repositories/culturenumerique/cn_modules')
     parser.add_argument("-d", "--destination", help="Set the destination dir", default='build')
     parser.add_argument("-f", "--feedback", action='store_true', help="Set the destination dir", default=False)
     
@@ -256,8 +256,11 @@ if __name__ == "__main__":
     index,e,content = loadTemplate("index.tmpl");
 
     # Setting paths
-    parentDir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-    repoDir = os.path.join(parentDir, args.repository)
+    base_path = os.path.abspath(os.getcwd())
+    if os.path.isabs(args.repository):
+        repoDir = args.repository
+    else:    
+        repoDir = os.path.join(base_path, args.repository)
     # add arbitrary subdirectory to outDir in case given outDir is '.' 
     outDir = os.path.join(repoDir, args.destination, 'last')
     # check destination
