@@ -261,6 +261,10 @@ if __name__ == "__main__":
         repoDir = args.repository
     else:    
         repoDir = os.path.join(base_path, args.repository)
+    logging.warn("repository directory path : %s" % repoDir)
+    # check repo exist, otherwise exit
+    if not(os.path.exists(repoDir)):
+        sys.exit("Error : repository directory provided does not exist")
     # add arbitrary subdirectory to outDir in case given outDir is '.' 
     outDir = os.path.join(repoDir, args.destination, 'last')
     # check destination
@@ -290,4 +294,6 @@ if __name__ == "__main__":
         # content.append(html.parse(module_file).getroot())
         content.append(html.fromstring(data))
         index.write(os.path.join(outDir, module+".html"),method='html')    
-        
+    
+    # Exit and print path to build files:
+    sys.exit("**Build successful!** See result in : %s" % outDir)
