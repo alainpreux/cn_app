@@ -1,0 +1,15 @@
+{
+    "repositories":[
+        {
+            "repo_owner":"culturenumerique",
+            "repo_name":"cn_modules",
+            "repo_url":"https://github.com/CultureNumerique/cn_modules"
+            
+        },
+        {
+            "repo_owner":"freddylimpens",
+            "repo_name":"cours",
+            "repo_url":"https://github.com/freddylimpens/cn_modules"
+        },
+    ]
+}
