@@ -132,6 +132,6 @@ def serve_static_site(repo_user, repo, path):
 if __name__ == '__main__':
     
     logging.basicConfig(filename='cnapp.log',filemode='w',level='WARNING')
-    init_repos()
-    app.debug = True
+    #init_repos()
+    app.debug = False
     app.run(use_reloader=False)
