@@ -296,4 +296,5 @@ if __name__ == "__main__":
         index.write(os.path.join(outDir, module+".html"),method='html')    
     
     # Exit and print path to build files:
-    sys.exit("**Build successful!** See result in : %s" % outDir)
+    print("**Build successful!** See result in : %s" % outDir)
+    sys.exit(0)

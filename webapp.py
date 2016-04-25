@@ -1,40 +1,49 @@
+import json
 import logging
 import os
 import subprocess
 
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, request
 from werkzeug.routing import BaseConverter
 
 # Configurations
-app = Flask(__name__)
-BASE_PATH = os.path.abspath(os.getcwd()) # we assume cnapp is run from base application folder
+BASE_PATH = os.path.abspath(os.getcwd())
 REPOS_DIR = 'repositories' # or give absolute path to repos dir
 REPOS_FILE = 'repos.config.json'
+
+# Create app
+app = Flask(__name__, static_folder="repositories")
+app.config.from_object(__name__)
+
 
 def create_repo(repo_user, repo_name, repo_url):
     """ Create a dir repo_user/repo_name with clone of repo_url """
     repo_path = os.path.join(BASE_PATH, REPOS_DIR, repo_user, repo_name)
+    current_path = os.path.abspath(os.getcwd())
     try:
         os.makedirs(repo_path)
         os.chdir(repo_path)
         git_cmd = ("git clone %s ." % repo_url)
         subprocess.check_output(git_cmd.split())
+        
     except Exception as e:
         logging.warn("[creating repo] problem when creating %s/%s with url %s \n Error : %s " % (repo_user, repo_name, repo_url, e))
         pass 
-    
+    # In any case, go back to current_path
+    os.chdir(current_path)
     logging.warn("[creating repo] successful creation of %s/%s with url %s" % (repo_user, repo_name, repo_url))
     return True
-    
+
 def init_repos(repos_file=REPOS_FILE):
     """ Admin command that initialize registered repositories:
         - open json file
         - check local clone exists 
         - if not create them """
-    logging.warn(" initialize repos ")
-    with open(repos_file, encoding='utf-8') as repos_data:
-        repos_data = json.load(repos_data)
-        
+    logging.warn(" initialize repos %s" % repos_file)
+    with open(repos_file, encoding='utf-8') as repos_data_file:
+        repos_data = json.load(repos_data_file)
+    
+    current_path = os.path.abspath(os.getcwd())
     for repo in repos_data['repositories']:
         # check path repos_dir/repo_user/repo_name exists
         try:
@@ -47,7 +56,11 @@ def init_repos(repos_file=REPOS_FILE):
             # if not, create and initialize it with repo_url
             logging.warn(" creating : %s/%s" % (repo['repo_user'], repo['repo_name']))        
             create_repo(repo['repo_user'], repo['repo_name'], repo['repo_url'])
-                
+        os.chdir(current_path)
+    
+    print(" Initialization done. Now running app")
+    return True
+            
 @app.route('/repos/')
 def list_repos():
     """ Home page that list available repos """
@@ -58,7 +71,7 @@ def detail_repo():
     """ give detail for selected repo """
     pass
     
-@app.route('/build/<string:repo_user>/<string:repo_name>')
+@app.route('/build/<repo_user>/<repo_name>', methods=['GET', 'POST'])
 def build_repo(repo_user, repo_name):
     """ build repository
     """
@@ -86,7 +99,7 @@ def build_repo(repo_user, repo_name):
     return 'Build done !'
     
 # Repo creation route methods    
-@app.route('/new/<string:repo>')
+@app.route('/new/<repo>')
 def new_repo(repo):
     """ create new repo """
     # TODO:
@@ -95,15 +108,15 @@ def new_repo(repo):
     #   - create model for this : repo, user, platform, branch, other git username allowed to build, etc
     return 'Coming soon ;)'    
     
-# Serving static pages >> FIXME: is it usefull ??
+# Serving static pages
 class WildcardConverter(BaseConverter):
     """ Converter to catch e.g 'site' and 'site/' """ 
     regex = r'(|/.*)'
     weight = 200
 app.url_map.converters['wildcard'] = WildcardConverter
 
-@app.route('/site/<string:repo_user>/<string:repo><wildcard:path>')
-@app.route('/site/<string:repo_user>/<string:repo>/<path:path>')
+@app.route('/site/<repo_user>/<repo><wildcard:path>')
+@app.route('/site/<repo_user>/<repo>/<path:path>')
 def serve_static_site(repo_user, repo, path):
     logging.warn("site path : =%s=" % path)
     if path == '/':
@@ -116,7 +129,8 @@ def serve_static_site(repo_user, repo, path):
 
 # Main 
 if __name__ == '__main__':
+    
     logging.basicConfig(filename='cnapp.log',filemode='w',level='WARNING')
-    app.debug = True
     init_repos()
-    app.run(host='0.0.0.0')
+    app.debug = True
+    app.run(use_reloader=False)
