@@ -60,11 +60,12 @@ def init_repos(repos_file=REPOS_FILE):
     
     print(" Initialization done. Now running app")
     return True
-            
+    
+@app.route('/')            
 @app.route('/repos/')
 def list_repos():
     """ Home page that list available repos """
-    pass
+    return ' Liste des repos '
 
 @app.route('/repos/<string:repo_user>/<string:repo_name>')
 def detail_repo():
