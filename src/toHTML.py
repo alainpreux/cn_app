@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import json
@@ -12,6 +12,7 @@ from lxml import html
 from yattag import indent
 from yattag import Doc
 from lxml.html.clean import Cleaner
+from io import open
 
 import utils
 
@@ -22,7 +23,7 @@ def write_iframe_code(video_link):
 def parse_content(href, module, outModuleDir, rewrite_iframe_src=True):
     """ open file and replace media links and src for iframes """
     try:
-        with open(href, 'r') as file:
+        with open(href, 'r', encoding='utf-8') as file:
             htmltext = file.read()
     except Exception as e:
         logging.exception("Exception reading %s: %s " % (href,e))
@@ -134,7 +135,7 @@ def generateMainContent(data, doc,tag,text,module, outModuleDir):
 
 def writeHtml(module, outModuleDir,doc):
     module_file_name = os.path.join(outModuleDir, module)+'.html'
-    moduleHtml = open(module_file_name, 'w')
+    moduleHtml = open(module_file_name, 'w', encoding='utf-8')
     moduleHtml.write(indent(doc.getvalue()))
     moduleHtml.close()
     # Copy the media subdir if necessary to the dest 
@@ -210,7 +211,7 @@ def loadTemplate(template="index.tmpl"):
         content_node_l = tree.xpath("//div[@class='module_content']")
         return tree,e_list[0],content_node_l[0]
     except OSError:
-        print ("html template not found : ",template, file=sys.stderr)
+        print("html template not found : %s" % (template))
         sys.exit(0)
 
 def prepareDestination(outDir):
@@ -222,7 +223,7 @@ def prepareDestination(outDir):
        if not os.path.exists(outDir):
            os.makedirs(outDir)
        else:
-           print ("Cannot create ",outDir, file=sys.stderr)
+           print ("Cannot create %s " % (outDir))
            sys.exit(0)
     shutil.copy('accueil.html',os.path.join(outDir,'accueil.html'))
     for d in ['js', 'img', 'svg', 'css']:
@@ -280,7 +281,7 @@ if __name__ == "__main__":
     #index.write(os.path.join(args.destination, "index.html"),method='html') 
     # Create index.html with accueil.html content
     
-    with open(os.path.join(outDir,"accueil.html"), 'r') as f:
+    with open(os.path.join(outDir,"accueil.html"), 'r', encoding='utf-8') as f:
         data=f.read()
     content.append(html.fromstring(data))
     index.write(os.path.join(outDir, "index.html"),method='html')  
@@ -289,7 +290,7 @@ if __name__ == "__main__":
         out_module_dir = os.path.join(outDir, module)
         in_module_file = os.path.join(out_module_dir, module+".html")
         content.clear()
-        with open(in_module_file, 'r') as f:
+        with open(in_module_file, 'r', encoding='utf-8') as f:
             data=f.read()
         # content.append(html.parse(module_file).getroot())
         content.append(html.fromstring(data))

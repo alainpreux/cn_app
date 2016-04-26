@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import json
@@ -7,6 +7,7 @@ import os
 import sys
 import zipfile
 import random
+from io import open
 
 from lxml import etree
 from lxml import html
@@ -16,6 +17,10 @@ from yattag import indent
 from yattag import Doc
 
 import model
+
+# utf8 hack
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 ######
 ##   reférences : 
@@ -259,27 +264,9 @@ def create_empty_ims_test(id, num, title, max_attempts):
 
     return src
 
-def usage():
-    str = """
-    Usage:
-       toIMS module_dir 
-       exporte les fichiers depuis l'arborescence git située dans [module_dir] en
-       suivant les paramètres du fichier de config généré  pour les
-       comprimer dans une archive [module_dir].imscc.zip
-
-    """
-    print (str)
-    exit(1)
-
-
 def replaceLink(link):
     """ Replace __BASE__ in urls with base given in config file toIMSconfig.json """
     return link.replace("__BASE__/", '')
-
-
-def build_href(folder, filename):
-    pass
-
 
 def generateIMSManifest(data):
     """ parse data from config file 'moduleX.config.json' and recreate imsmanifest.xml """
@@ -378,36 +365,36 @@ def generateIMSManifest(data):
                             continue
 
     doc.asis("</manifest>")
-    imsfile = open('imsmanifest.xml', 'w')
+    imsfile = open('imsmanifest.xml', 'w', encoding='utf-8')
     imsfile.write(indent(doc.getvalue()))
     imsfile.close()
     return True
 
 
 def main(argv):
-    """ toIMS is a utility to help building imscc archives for exporting curent material to Moodle 
-        usage:
-        python3 toIMS.py module_folder [OPTIONS]
-        OPTIONS: 
-        -md : parses markdown file found in module_folder given in argument 
+    """ 
     """
-    if len(sys.argv) != 2:
-        usage()
-        
-    module_dir = sys.argv[1]
-    build_dir = os.path.join('build', 'last') # FIXME or get it from argument or config file
-    fileout = module_dir+'.imscc.zip'
-    filein = os.path.join(build_dir, module_dir, module_dir+'.config.json')
+    import argparse
+    parser = argparse.ArgumentParser(description="toIMS is a utility to help building imscc archives for exporting curent material to Moodle. Usage: $ python toIMS.py -d module_directory -n module_name .")
+    parser.add_argument("-d", "--module_directory", help="Set the module directory", default='.')
+    parser.add_argument("-n", "--module_name", help="Set the name of the module", default='module')    
+    
+    args = parser.parse_args()
+    
+    # Now this script has to get full path to module dir containing module_name.config.json
+    fileout = args.module_name+'.imscc.zip'
+    filein = os.path.join(args.module_directory, args.module_name+'.config.json')
     
     # load data from filin
     with open(filein, encoding='utf-8') as data_file:
         data = json.load(data_file)
+    
     # change directory to builded module dir
-    os.chdir(os.path.join(build_dir, module_dir))
+    os.chdir(args.module_directory)
 
     # parse data and generate imsmanifest.xml
     generateIMSManifest(data)
-    logging.info(" imsmanifest.xml saved for module %s", module_dir)
+    logging.info(" imsmanifest.xml saved for module %s", args.module_directory)
 
     # Compress relevant files
     zipf = zipfile.ZipFile(fileout, 'w')
