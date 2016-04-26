@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals    # at top of module
 
 import json
 import logging
@@ -18,9 +19,12 @@ from yattag import Doc
 
 import model
 
-# utf8 hack
-reload(sys)
-sys.setdefaultencoding('utf8')
+
+
+# utf8 hack, python 2 only !!
+if sys.version_info[0] == 2:
+    reload(sys)
+    sys.setdefaultencoding('utf8')
 
 ######
 ##   reférences : 

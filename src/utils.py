@@ -37,9 +37,9 @@ def write_file(src, current_dir, target_folder, name):
     return True
 
 def stitch_files(files, filename):
-    with open(filename, "wb", encoding='utf-8') as outfile:
+    with open(filename, "w", encoding='utf-8') as outfile:
         for f in files:
-            with open(f, "rb", encoding='utf-8') as infile:
+            with open(f, "r", encoding='utf-8') as infile:
                 outfile.write(infile.read())
     return outfile
     
