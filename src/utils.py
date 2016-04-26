@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import division
+from datetime import datetime, timedelta
+from io import open
 import os
 import shutil
 
@@ -8,6 +13,13 @@ import logging
 FOLDERS = ['Comprehension', 'Activite', 'ActiviteAvancee', 'cours', 'correction', 'webcontent']
 VERBOSITY = False
 
+
+def totimestamp(dt, epoch=datetime(1970,1,1)):
+    td = dt - epoch
+    # return td.total_seconds()
+    return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6 
+
+
 def write_file(src, current_dir, target_folder, name):
     """
         given a "src" source string, write a file with "name" located in
@@ -15,8 +27,8 @@ def write_file(src, current_dir, target_folder, name):
     """
     filename = os.path.join(current_dir, target_folder, name)
     try:
-        with open(filename, 'w') as outfile:
-            outfile.write(src)
+        outfile = open(filename, 'wb')
+        outfile.write(src)
     except:
         logging.exception(" Error writing file %s" % filename)
         return False
@@ -25,9 +37,9 @@ def write_file(src, current_dir, target_folder, name):
     return True
 
 def stitch_files(files, filename):
-    with open(filename, "wb") as outfile:
+    with open(filename, "w", encoding='utf-8') as outfile:
         for f in files:
-            with open(f, "rb") as infile:
+            with open(f, "r", encoding='utf-8') as infile:
                 outfile.write(infile.read())
     return outfile
     
@@ -36,11 +48,11 @@ def createDirs(outDir):
         new_folder = os.path.join(outDir, folder)
         # create and overwrite
         try:
-            os.makedirs(new_folder, exist_ok=False)
+            os.makedirs(new_folder)
         except OSError:
             # remove then create
             shutil.rmtree(new_folder, ignore_errors=True)
-            os.makedirs(new_folder, exist_ok=False)
+            os.makedirs(new_folder)
     
 def processModule(module,repoDir,outDir=None, feedback_option=False):
     """ fetch markdown files from [repoDir]/[module]/ folder. 

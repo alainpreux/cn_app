@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import os
@@ -8,7 +8,7 @@ import json
 import markdown
 import zipfile
 import random
-import datetime
+from datetime import datetime 
 import time
 import logging
 
@@ -16,6 +16,8 @@ from lxml import etree
 from lxml import html
 from yattag import indent
 from yattag import Doc
+
+import utils
 
 HEADER = """
     <!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0"></head><body>
@@ -58,8 +60,8 @@ class GiftQuestion():
 
     """
     def __init__(self):
-        now = datetime.datetime.now()  
-        self.id = int(now.timestamp())
+        now = datetime.utcnow()  
+        self.id = int(utils.totimestamp(now))
         self.gift_src = ''
         self.type = ''
         self.title = ''
@@ -163,7 +165,7 @@ class GiftQuestion():
     
     def parse_gift_src(self):
         # 1. Separate in 3 parts: q_prestate { q_answers } q_poststate
-        split_1 = self.gift_src.split('{', maxsplit=1)
+        split_1 = self.gift_src.split('{', 1)
         q_prestate = split_1[0]
         if len(split_1) <= 1:
             # description type with no {}
@@ -172,10 +174,10 @@ class GiftQuestion():
             q_answers = ''
         else:
             tmp = split_1[1]
-            split_2 = tmp.split('}', maxsplit=1)
-            q_answers = tmp.split('}', maxsplit=1)[0]
+            split_2 = tmp.split('}', 1)
+            q_answers = tmp.split('}', 1)[0]
             if len(split_2) > 1:
-                q_poststate = tmp.split('}', maxsplit=1)[1]
+                q_poststate = tmp.split('}', 1)[1]
 
         # 2. Process q_prestate
         r0 = re.compile('(::(?P<title>.*)::){0,1}\s*(\[(?P<text_format>[^\]]*)\]){0,1}(?P<text>.*)', flags=re.M+re.S)
