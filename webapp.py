@@ -1,3 +1,4 @@
+from io import open
 import json
 import logging
 import os
@@ -51,7 +52,7 @@ def init_repos(repos_file=REPOS_FILE):
             # if so, updtate it
             git_cmd = "git pull origin master"
             subprocess.check_output(git_cmd.split())
-        except FileNotFoundError as err:
+        except OSError as err:
             logging.warn(" repo is in data but does not (yet) exist : %s" % err)        
             # if not, create and initialize it with repo_url
             logging.warn(" creating : %s/%s" % (repo['repo_user'], repo['repo_name']))        
@@ -132,6 +133,6 @@ def serve_static_site(repo_user, repo, path):
 if __name__ == '__main__':
     
     logging.basicConfig(filename='cnapp.log',filemode='w',level='WARNING')
-    #init_repos()
+    init_repos()
     app.debug = False
     app.run(use_reloader=False)
