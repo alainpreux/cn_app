@@ -17,7 +17,7 @@ from io import open
 import utils
 
 def write_iframe_code(video_link):
-    return '<p><iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" data-src="'+video_link+'"></iframe></p>'
+    return '<div class="iframe_cont"><iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" data-src="'+video_link+'"></iframe></div>'
     
 
 def parse_content(href, module, outModuleDir, rewrite_iframe_src=True):
@@ -78,6 +78,17 @@ def generateMenuSections(data,doc,tag,text):
 
 def generateVideo(doc,tag,text,videos,display,subsection,subsec_text):
     for idVid, video in enumerate(videos):
+        # add text only 1st time
+        if idVid == 0:
+            # add text in fancybox lightbox
+            text_id = subsection['num']+"_"+str(idVid)
+            with tag('div', klass="inline fancybox", href="#"+text_id):
+                text('Version Texte du cours')
+                with tag('div', klass="mini-text"):
+                    doc.asis(subsec_text)
+            with tag('div', style="display:none"):
+                with tag('div', id=text_id, klass="fancy-text"):
+                    doc.asis(subsec_text)
         # go now line for each video after 1st video
         if idVid > 0:
             doc.asis('<br />')
@@ -87,18 +98,7 @@ def generateVideo(doc,tag,text,videos,display,subsection,subsec_text):
             iframe_code = iframe_code.replace('data-src', 'src')
         doc.asis(iframe_code)
         doc.asis("\n\n")
-        # add text only 1st time
-        if idVid == 0:
-            # add text in fancybox lightbox
-
-            text_id = subsection['num']+"_"+str(idVid)
-            with tag('div', klass="inline fancybox", href="#"+text_id):
-                text('Version Texte du cours')
-                with tag('div', klass="mini-text"):
-                    doc.asis(subsec_text)
-            with tag('div', style="display:none"):
-                with tag('div', id=text_id, klass="fancy-text"):
-                    doc.asis(subsec_text)
+        
 
 def generateMainContent(data, doc,tag,text,module, outModuleDir):
     # Print main content
