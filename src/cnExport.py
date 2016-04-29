@@ -167,7 +167,7 @@ def generateModuleHtml(data, module, outModuleDir):
 def processModule(module,e,repoDir,outDir, feedback_option):
     # generate config file
     utils.processModule(module,repoDir,outDir, feedback_option)
-    
+    # if chosen, generate IMS archive
     # config file for each module is named [module_folder].config.json
     outModuleDir = os.path.join(repoDir,outDir,module)
     mod_config = os.path.join(outModuleDir, module+'.config.json')
