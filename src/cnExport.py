@@ -76,7 +76,12 @@ def generateMenuSections(data,doc,tag,text):
                 text(section['num']+' '+section['title'])
             with tag('p', style=display):
                 generateMenuSubsections(idSection,section['subsections'],doc,tag,text)
-
+    # add link to download section
+    with tag('li', style="border-top: 2px solid lightgray;"):
+        with tag('a', href="#", data_sec_id="sec_A", klass="section"):
+            text("Annexe: Réutiliser ce module")
+            
+            
 def generateVideo(doc,tag,text,videos,display,subsection,subsec_text):
     for idVid, video in enumerate(videos):
         # add text only 1st time
@@ -100,6 +105,20 @@ def generateVideo(doc,tag,text,videos,display,subsection,subsec_text):
         doc.asis(iframe_code)
         doc.asis("\n\n")
         
+def generateDownloadSection(data, doc,tag,text,module, outModuleDir):
+    ims_path = module+'/'+data["ims_archive_path"]
+    with tag('section', id="sec_A", style="display:none"):
+        with tag('p', klass="fil_ariane"):
+            text("Annexe A: Réutiliser ce module")
+        with tag('p'):
+            text("Voici les liens vers les fichiers téléchargeables vous permettant de réutiliser ce module de cours:")
+        with tag('ul'):
+            if len(data["ims_archive_path"]) > 0:
+                with tag('li'):
+                    text("Archive IMS CC utilisable dans les LMS Moodle, Claroline, Blackboard, etc: ")
+                    with tag('a', href=ims_path):
+                        text(data["ims_archive_path"])
+            
 
 def generateMainContent(data, doc,tag,text,module, outModuleDir):
     # Print main content
@@ -132,7 +151,8 @@ def generateMainContent(data, doc,tag,text,module, outModuleDir):
                         else: # print subsection text asis                        
                             if href.endswith(".html"):
                                 doc.asis(subsec_text)
-
+        # add download section
+        generateDownloadSection(data, doc,tag,text,module, outModuleDir)
 
 def writeHtml(module, outModuleDir,doc):
     module_file_name = os.path.join(outModuleDir, module)+'.html'
@@ -166,17 +186,20 @@ def generateModuleHtml(data, module, outModuleDir):
     writeHtml(module, outModuleDir,doc)
 
 def processModule(module,e,repoDir,outDir, feedback_option, ims_option):
-    # generate config file
-        # config file for each module is named [module_folder].config.json
+    """ given input paramaters, process a module  """
     outModuleDir = os.path.join(repoDir,outDir,module)
+    # generate config file: config file for each module is named [module_folder].config.json
         #mod_config = os.path.join(outModuleDir, module+'.config.json')
     mod_config = utils.processModule(module,repoDir,outDir, feedback_option)
     # if chosen, generate IMS archive
+    ims_archive_path = ''
     if ims_option:
         ims_archive_path = toIMS.generateImsArchive(module, outModuleDir)
+        logging.warn('*Path to IMS = %s*' % ims_archive_path)
     with open(mod_config, encoding='utf-8') as mod_data_file:
         # load module data from filin
         mod_data = json.load(mod_data_file)
+        mod_data['ims_archive_path'] = ims_archive_path
         if 'menutitle' in mod_data:
             shortTitle = mod_data['menutitle']
         else:
@@ -276,7 +299,7 @@ if __name__ == "__main__":
     prepareDestination(outDir)
             
     if args.config != None:
-        processConfig(args.config, e, outDir, args.feedback, args.ims)
+        processConfig(args.config, e, repoDir, outDir, args.feedback, args.ims)
     elif args.modules != None:
         processModules(args.modules, e, repoDir, outDir, args.feedback, args.ims)
     else:
@@ -294,7 +317,6 @@ if __name__ == "__main__":
         content.clear()
         with open(in_module_file, 'r', encoding='utf-8') as f:
             data=f.read()
-        # content.append(html.parse(module_file).getroot())
         content.append(html.fromstring(data))
         index.write(os.path.join(outDir, module+".html"),method='html')    
     
