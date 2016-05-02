@@ -251,7 +251,7 @@ def prepareDestination(outDir):
        else:
            print ("Cannot create %s " % (outDir))
            sys.exit(0)
-    shutil.copy('accueil.html',os.path.join(outDir,'accueil.html'))
+    shutil.copy('templates/accueil.html',os.path.join(outDir,'accueil.html'))
     for d in ['js', 'img', 'svg', 'css']:
         dest = os.path.join(outDir,d)
         try :
@@ -278,10 +278,10 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--ims", action='store_true', help="Also generate IMS archive for each module", default=False)
     
     args = parser.parse_args()
-    logging.basicConfig(filename='toHTML.log',filemode='w',level=getattr(logging, args.logLevel))
+    logging.basicConfig(filename='logs/toHTML.log',filemode='w',level=getattr(logging, args.logLevel))
 
     # load the html template
-    index,e,content = loadTemplate("index.tmpl");
+    index,e,content = loadTemplate("templates/index.tmpl");
 
     # Setting paths
     base_path = os.path.abspath(os.getcwd())
