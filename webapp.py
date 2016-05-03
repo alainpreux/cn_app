@@ -95,7 +95,7 @@ def build_repo(repo_user, repo_name):
     subprocess.check_output(git_cmd.split())
     # 3. build with BASE_PATH/src/toHTML.py 
     os.chdir(BASE_PATH)
-    build_cmd = ("python src/toHTML.py -r %s" % repo_path)
+    build_cmd = ("python src/cnExport.py -r %s -i" % repo_path)
     subprocess.check_output(build_cmd.split())
 
     return 'Build done !'

@@ -265,6 +265,11 @@ def prepareDestination(outDir):
 ############### main ################
 if __name__ == "__main__":
 
+    # utf8 hack, python 2 only !!
+    if sys.version_info[0] == 2:
+        print ("reload default encoding")
+        reload(sys)
+        sys.setdefaultencoding('utf8')
     
     import argparse
     parser = argparse.ArgumentParser(description="Parses markdown files and generates a website using index.tmpl in the current directory. Default is to process and all folders 'module*'.")
