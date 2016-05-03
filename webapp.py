@@ -4,7 +4,8 @@ import logging
 import os
 import subprocess
 
-from flask import Flask, send_from_directory, request
+from flask import Flask, send_from_directory, request, session, g, redirect, url_for, \
+     abort, render_template, flash
 from werkzeug.routing import BaseConverter
 
 # Configurations
@@ -69,9 +70,9 @@ def list_repos():
     return ' Liste des repos '
 
 @app.route('/repos/<string:repo_user>/<string:repo_name>')
-def detail_repo():
+def detail_repo(repo_user, repo_name):
     """ give detail for selected repo """
-    pass
+    return render_template('repo.html')
     
 @app.route('/build/<repo_user>/<repo_name>', methods=['GET', 'POST'])
 def build_repo(repo_user, repo_name):
