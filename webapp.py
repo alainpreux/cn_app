@@ -76,15 +76,8 @@ def detail_repo(repo_user, repo_name):
     
 @app.route('/build/<repo_user>/<repo_name>', methods=['GET', 'POST'])
 def build_repo(repo_user, repo_name):
-    """ build repository
-    """
-    # TODO: 
-    # - make it POST method
-    # - add generation of IMS archive for all modules
-    # - Add "repo_host" param / default to github.com
-    # - retrieve branch 
-    # - create subdir for other than master branch
-    
+    """ build repository  """
+    # TODO: retrieve branch and create subdir for other than master branch
     # 1. cd to repo path
     repo_path = os.path.join(BASE_PATH, REPOS_DIR, repo_user, repo_name)
     try:
@@ -99,7 +92,7 @@ def build_repo(repo_user, repo_name):
     build_cmd = ("python src/cnExport.py -r %s -i" % repo_path)
     subprocess.check_output(build_cmd.split())
 
-    return 'Build done !'
+    return redirect(url_for('serve_static_site', repo_user=repo_user, repo=repo_name, path=''))
     
 # Repo creation route methods    
 @app.route('/new/<repo>')
@@ -130,10 +123,17 @@ def serve_static_site(repo_user, repo, path):
     build_path = os.path.join(BASE_PATH, REPOS_DIR, repo_user, repo, 'build/last')
     return send_from_directory(build_path, path)
 
+@app.after_request
+def add_header(response):
+    """ Add headers to disable cache """
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    return response
+
 # Main 
 if __name__ == '__main__':
     
     logging.basicConfig(filename='logs/cnapp.log',filemode='w',level='WARNING')
     init_repos()
-    app.debug = False
+    app.debug = True
     app.run(use_reloader=False)
