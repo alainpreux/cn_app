@@ -14,9 +14,14 @@ REPOS_DIR = 'repositories' # or give absolute path to repos dir
 REPOS_FILE = 'repos.config.json'
 
 # Create app
-app = Flask(__name__, static_folder="repositories")
+app = Flask(__name__, static_folder="static")
 app.config.from_object(__name__)
 
+# Data 
+def load_data(data_file=REPOS_FILE):
+    with open(data_file, encoding='utf-8') as f:
+        repos_data = json.load(f)
+    return repos_data
 
 def create_repo(repo_user, repo_name, repo_url):
     """ Create a dir repo_user/repo_name with clone of repo_url """
@@ -29,21 +34,19 @@ def create_repo(repo_user, repo_name, repo_url):
         subprocess.check_output(git_cmd.split())
         
     except Exception as e:
-        logging.warn("[creating repo] problem when creating %s/%s with url %s \n Error : %s " % (repo_user, repo_name, repo_url, e))
+        logging.warn("Problem when creating %s/%s with url %s \n Error : %s " % (repo_user, repo_name, repo_url, e))
         pass 
     # In any case, go back to current_path
     os.chdir(current_path)
-    logging.warn("[creating repo] successful creation of %s/%s with url %s" % (repo_user, repo_name, repo_url))
+    logging.warn(" successful creation of %s/%s with url %s" % (repo_user, repo_name, repo_url))
     return True
 
-def init_repos(repos_file=REPOS_FILE):
+def init_repos():
     """ Admin command that initialize registered repositories:
         - open json file
         - check local clone exists 
         - if not create them """
-    logging.warn(" initialize repos %s" % repos_file)
-    with open(repos_file, encoding='utf-8') as repos_data_file:
-        repos_data = json.load(repos_data_file)
+    repos_data = load_data()
     
     current_path = os.path.abspath(os.getcwd())
     for repo in repos_data['repositories']:
@@ -67,12 +70,16 @@ def init_repos(repos_file=REPOS_FILE):
 @app.route('/repos/')
 def list_repos():
     """ Home page that list available repos """
-    return ' Liste des repos '
+    repos_data = load_data()
+    return render_template('repos.html', repos=repos_data['repositories'])
 
-@app.route('/repos/<string:repo_user>/<string:repo_name>')
+@app.route('/repo/<string:repo_user>/<string:repo_name>')
 def detail_repo(repo_user, repo_name):
     """ give detail for selected repo """
-    return render_template('repo.html')
+    repos_data = load_data()
+    repo = [repo for repo in repos_data["repositories"] 
+        if (repo["repo_name"] == repo_name) and (repo["repo_user"]== repo_user)][0]
+    return render_template('repos_detail.html', repo=repo)
     
 @app.route('/build/<repo_user>/<repo_name>', methods=['GET', 'POST'])
 def build_repo(repo_user, repo_name):

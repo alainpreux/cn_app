@@ -1,0 +1,21 @@
+{% extends "layout.html" %} {% block main_content %}
+
+<!-- Begin page content -->
+<div class="container">
+    <div class="page-header">
+        <h3>Liste des dépôts de cours :</h3>
+    </div>
+    <ul class=entries>
+        {% for repo in repos %}
+        <li>
+            <a href="{{ url_for('detail_repo', repo_user=repo.repo_user, repo_name=repo.repo_name)}}" 
+                <p>{{ repo.repo_user }} / {{ repo.repo_name }}</p>
+            </a><
+        {% else %}
+        <li>
+            <em>Unbelievable. No repos here so far</em>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
