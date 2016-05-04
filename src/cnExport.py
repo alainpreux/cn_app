@@ -252,11 +252,11 @@ def prepareDestination(outDir):
            print ("Cannot create %s " % (outDir))
            sys.exit(0)
     shutil.copy('templates/accueil.html',os.path.join(outDir,'accueil.html'))
-    for d in ['js', 'img', 'svg', 'css']:
-        dest = os.path.join(outDir,d)
+    for d in ['static/js', 'static/img', 'static/svg', 'static/css']:
+        dest = os.path.join(outDir, d)
         try :
             shutil.copytree(d, dest)
-        except FileExistsError as e:
+        except OSError as e:
             logging.warn("%s already exists, going to overwrite it",d)
             shutil.rmtree(dest)
             shutil.copytree(d, dest)

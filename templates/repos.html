@@ -3,14 +3,23 @@
 <!-- Begin page content -->
 <div class="container">
     <div class="page-header">
-        <h3>Liste des dépôts de cours :</h3>
+        <h3>Liste des cours :</h3>
     </div>
+    <p>
+        <em>(classés par [nom d'utilisateur] / [nom du cours])</em>
+    </p>
+    <br>
     <ul class=entries>
         {% for repo in repos %}
         <li>
-            <a href="{{ url_for('detail_repo', repo_user=repo.repo_user, repo_name=repo.repo_name)}}" 
-                <p>{{ repo.repo_user }} / {{ repo.repo_name }}</p>
-            </a><
+            <p>{{ repo.repo_user }} / {{ repo.repo_name }}</p>
+            <p>
+                <a href="{{ url_for('build_repo', repo_user=repo.repo_user, repo_name=repo.repo_name)}}" target="_blank">Générer site </a> |
+                <a href="{{ url_for('serve_static_site', repo_user=repo.repo_user, repo_name=repo.repo_name, path='')}}" target="_blank"> Visiter site </a> |
+                <a href="{{ repo.repo_url }}" target="_blank">Dépôt de fichiers</a> |
+                <a href="http://prose.io/#{{ repo.repo_user }}/{{ repo.repo_name }}" target="_blank">Editer</a> 
+                
+            </p>
         {% else %}
         <li>
             <em>Unbelievable. No repos here so far</em>

@@ -99,7 +99,7 @@ def build_repo(repo_user, repo_name):
     build_cmd = ("python src/cnExport.py -r %s -i" % repo_path)
     subprocess.check_output(build_cmd.split())
 
-    return redirect(url_for('serve_static_site', repo_user=repo_user, repo=repo_name, path=''))
+    return redirect(url_for('serve_static_site', repo_user=repo_user, repo_name=repo_name, path=''))
     
 # Repo creation route methods    
 @app.route('/new/<repo>')
@@ -118,16 +118,16 @@ class WildcardConverter(BaseConverter):
     weight = 200
 app.url_map.converters['wildcard'] = WildcardConverter
 
-@app.route('/site/<repo_user>/<repo><wildcard:path>')
-@app.route('/site/<repo_user>/<repo>/<path:path>')
-def serve_static_site(repo_user, repo, path):
+@app.route('/site/<repo_user>/<repo_name><wildcard:path>')
+@app.route('/site/<repo_user>/<repo_name>/<path:path>')
+def serve_static_site(repo_user, repo_name, path):
     logging.warn("site path : =%s=" % path)
     if path == '/':
         path = 'index.html'
     elif path == "":
         pass # fixme: redirect browser to site/
     logging.warn("site path AFTER: =%s=" % path)
-    build_path = os.path.join(BASE_PATH, REPOS_DIR, repo_user, repo, 'build/last')
+    build_path = os.path.join(BASE_PATH, REPOS_DIR, repo_user, repo_name, 'build/last')
     return send_from_directory(build_path, path)
 
 @app.after_request
