@@ -215,6 +215,7 @@ def create_ims_test(questions, test_id, test_title):
                                             try:
                                                 score = int(answer['credit'])
                                             except:
+                                                #FIXME print(" ++ cannot get credit value =%s" % answer['credit'])
                                                 pass
                                             if score <= 0:
                                                 with tag('not'):
