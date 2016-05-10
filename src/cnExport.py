@@ -15,9 +15,10 @@ from lxml.html.clean import Cleaner
 from io import open
 
 import utils
+import toIMS
 
 def write_iframe_code(video_link):
-    return '<p><iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" data-src="'+video_link+'"></iframe></p>'
+    return '<div class="iframe_cont"><iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" data-src="'+video_link+'"></iframe></div>'
     
 
 def parse_content(href, module, outModuleDir, rewrite_iframe_src=True):
@@ -75,9 +76,25 @@ def generateMenuSections(data,doc,tag,text):
                 text(section['num']+' '+section['title'])
             with tag('p', style=display):
                 generateMenuSubsections(idSection,section['subsections'],doc,tag,text)
-
+    # add link to download section
+    with tag('li', style="border-top: 2px solid lightgray;"):
+        with tag('a', href="#", data_sec_id="sec_A", klass="section"):
+            text("Annexe: Réutiliser ce module")
+            
+            
 def generateVideo(doc,tag,text,videos,display,subsection,subsec_text):
     for idVid, video in enumerate(videos):
+        # add text only 1st time
+        if idVid == 0:
+            # add text in fancybox lightbox
+            text_id = subsection['num']+"_"+str(idVid)
+            with tag('div', klass="inline fancybox", href="#"+text_id):
+                text('Version Texte du cours')
+                with tag('div', klass="mini-text"):
+                    doc.asis(subsec_text)
+            with tag('div', style="display:none"):
+                with tag('div', id=text_id, klass="fancy-text"):
+                    doc.asis(subsec_text)
         # go now line for each video after 1st video
         if idVid > 0:
             doc.asis('<br />')
@@ -87,18 +104,21 @@ def generateVideo(doc,tag,text,videos,display,subsection,subsec_text):
             iframe_code = iframe_code.replace('data-src', 'src')
         doc.asis(iframe_code)
         doc.asis("\n\n")
-        # add text only 1st time
-        if idVid == 0:
-            # add text in fancybox lightbox
-
-            text_id = subsection['num']+"_"+str(idVid)
-            with tag('div', klass="inline fancybox", href="#"+text_id):
-                text('Version Texte du cours')
-                with tag('div', klass="mini-text"):
-                    doc.asis(subsec_text)
-            with tag('div', style="display:none"):
-                with tag('div', id=text_id, klass="fancy-text"):
-                    doc.asis(subsec_text)
+        
+def generateDownloadSection(data, doc,tag,text,module, outModuleDir):
+    ims_path = module+'/'+data["ims_archive_path"]
+    with tag('section', id="sec_A", style="display:none"):
+        with tag('p', klass="fil_ariane"):
+            text("Annexe A: Réutiliser ce module")
+        with tag('p'):
+            text("Voici les liens vers les fichiers téléchargeables vous permettant de réutiliser ce module de cours:")
+        with tag('ul'):
+            if len(data["ims_archive_path"]) > 0:
+                with tag('li'):
+                    text("Archive IMS CC utilisable dans les LMS Moodle, Claroline, Blackboard, etc: ")
+                    with tag('a', href=ims_path):
+                        text(data["ims_archive_path"])
+            
 
 def generateMainContent(data, doc,tag,text,module, outModuleDir):
     # Print main content
@@ -131,7 +151,8 @@ def generateMainContent(data, doc,tag,text,module, outModuleDir):
                         else: # print subsection text asis                        
                             if href.endswith(".html"):
                                 doc.asis(subsec_text)
-
+        # add download section
+        generateDownloadSection(data, doc,tag,text,module, outModuleDir)
 
 def writeHtml(module, outModuleDir,doc):
     module_file_name = os.path.join(outModuleDir, module)+'.html'
@@ -164,16 +185,21 @@ def generateModuleHtml(data, module, outModuleDir):
     generateMainContent(data,doc,tag,text,module, outModuleDir)
     writeHtml(module, outModuleDir,doc)
 
-def processModule(module,e,repoDir,outDir, feedback_option):
-    # generate config file
-    utils.processModule(module,repoDir,outDir, feedback_option)
-    
-    # config file for each module is named [module_folder].config.json
+def processModule(module,e,repoDir,outDir, feedback_option, ims_option):
+    """ given input paramaters, process a module  """
     outModuleDir = os.path.join(repoDir,outDir,module)
-    mod_config = os.path.join(outModuleDir, module+'.config.json')
+    # generate config file: config file for each module is named [module_folder].config.json
+        #mod_config = os.path.join(outModuleDir, module+'.config.json')
+    mod_config = utils.processModule(module,repoDir,outDir, feedback_option)
+    # if chosen, generate IMS archive
+    ims_archive_path = ''
+    if ims_option:
+        ims_archive_path = toIMS.generateImsArchive(module, outModuleDir)
+        logging.warn('*Path to IMS = %s*' % ims_archive_path)
     with open(mod_config, encoding='utf-8') as mod_data_file:
         # load module data from filin
         mod_data = json.load(mod_data_file)
+        mod_data['ims_archive_path'] = ims_archive_path
         if 'menutitle' in mod_data:
             shortTitle = mod_data['menutitle']
         else:
@@ -184,23 +210,23 @@ def processModule(module,e,repoDir,outDir, feedback_option):
         
     e.append(html.fromstring(strhtml))
     
-def processConfig(fconfig,e,repoDir,outDir,feedback_option):
+def processConfig(fconfig,e,repoDir,outDir,feedback_option, ims_option):
     global_data = json.load(fconfig)
     for module in global_data["modules"]:
-        processModule(module['folder'],e,repoDir,outDir, feedback_option)
+        processModule(module['folder'],e,repoDir,outDir, feedback_option, ims_option)
                       
-def processModules(modules,e,repoDir,outDir, feedback_option):
+def processModules(modules,e,repoDir,outDir, feedback_option, ims_option):
     for module in modules:
         logging.info("Process %s",module)
-        processModule(module,e,repoDir, outDir, feedback_option)
+        processModule(module,e,repoDir, outDir, feedback_option, ims_option)
 
-def processDefault(e,repoDir, outDir, feedback_option):
+def processDefault(e,repoDir, outDir, feedback_option, ims_option):
     import glob
     os.chdir(repoDir)
     listt = glob.glob("module[0-9]")
     modules = sorted(listt,key=lambda a: a.lstrip('module'))
     for module in modules:
-        processModule(module,e,repoDir,outDir, feedback_option)
+        processModule(module,e,repoDir,outDir, feedback_option, ims_option)
     return modules
 
 def loadTemplate(template="index.tmpl"):
@@ -225,12 +251,12 @@ def prepareDestination(outDir):
        else:
            print ("Cannot create %s " % (outDir))
            sys.exit(0)
-    shutil.copy('accueil.html',os.path.join(outDir,'accueil.html'))
-    for d in ['js', 'img', 'svg', 'css']:
-        dest = os.path.join(outDir,d)
+    shutil.copy('templates/accueil.html',os.path.join(outDir,'accueil.html'))
+    for d in ['static/js', 'static/img', 'static/svg', 'static/css']:
+        dest = os.path.join(outDir, d)
         try :
             shutil.copytree(d, dest)
-        except FileExistsError as e:
+        except OSError as e:
             logging.warn("%s already exists, going to overwrite it",d)
             shutil.rmtree(dest)
             shutil.copytree(d, dest)
@@ -239,6 +265,11 @@ def prepareDestination(outDir):
 ############### main ################
 if __name__ == "__main__":
 
+    # utf8 hack, python 2 only !!
+    if sys.version_info[0] == 2:
+        print ("reload default encoding")
+        reload(sys)
+        sys.setdefaultencoding('utf8')
     
     import argparse
     parser = argparse.ArgumentParser(description="Parses markdown files and generates a website using index.tmpl in the current directory. Default is to process and all folders 'module*'.")
@@ -249,12 +280,13 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--repository", help="Set the repositorie source dir containing the moduleX dirs, given as absolute or relative to cn_app dir", default='repositories/culturenumerique/cn_modules')
     parser.add_argument("-d", "--destination", help="Set the destination dir", default='build')
     parser.add_argument("-f", "--feedback", action='store_true', help="Set the destination dir", default=False)
+    parser.add_argument("-i", "--ims", action='store_true', help="Also generate IMS archive for each module", default=False)
     
     args = parser.parse_args()
-    logging.basicConfig(filename='toHTML.log',filemode='w',level=getattr(logging, args.logLevel))
+    logging.basicConfig(filename='logs/toHTML.log',filemode='w',level=getattr(logging, args.logLevel))
 
     # load the html template
-    index,e,content = loadTemplate("index.tmpl");
+    index,e,content = loadTemplate("templates/index.tmpl");
 
     # Setting paths
     base_path = os.path.abspath(os.getcwd())
@@ -272,15 +304,13 @@ if __name__ == "__main__":
     prepareDestination(outDir)
             
     if args.config != None:
-        processConfig(args.config, e, outDir, args.feedback)
+        processConfig(args.config, e, repoDir, outDir, args.feedback, args.ims)
     elif args.modules != None:
-        processModules(args.modules, e, repoDir, outDir, args.feedback)
+        processModules(args.modules, e, repoDir, outDir, args.feedback, args.ims)
     else:
-        args.modules = processDefault(e, repoDir, outDir, args.feedback)
+        args.modules = processDefault(e, repoDir, outDir, args.feedback, args.ims)
     
-    #index.write(os.path.join(args.destination, "index.html"),method='html') 
-    # Create index.html with accueil.html content
-    
+    # Create index.html with accueil.html content    
     with open(os.path.join(outDir,"accueil.html"), 'r', encoding='utf-8') as f:
         data=f.read()
     content.append(html.fromstring(data))
@@ -292,7 +322,6 @@ if __name__ == "__main__":
         content.clear()
         with open(in_module_file, 'r', encoding='utf-8') as f:
             data=f.read()
-        # content.append(html.parse(module_file).getroot())
         content.append(html.fromstring(data))
         index.write(os.path.join(outDir, module+".html"),method='html')    
     

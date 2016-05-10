@@ -100,6 +100,19 @@ a:hover {
 }
 
 /* ---------- iFRAME --------- */
+.iframe_left{
+	display: inline-block;
+	height: 100%;
+	margin-left: 5em;
+	padding-bottom: 135px;
+	vertical-align: top;
+	width: 50%;	
+}
+
+div.iframe_cont{
+	width:400px;
+	height: 228px;
+}
 
 iframe {
 	border : 3px solid #ddd;
@@ -385,6 +398,8 @@ div.inline {
 	overflow: hidden;
 	color: #AFA70E; /*same color than anchors a*/
 	margin-bottom: 3em;
+	float: right;
+	margin-right: 20%;
 }
 
 div.mini-text{
@@ -398,6 +413,11 @@ div.mini-text{
 div.fancy-text{
 	text-align: justify;
 	padding: 2em;
+}
+
+div.texte_right{
+	display: inline-block;
+	width:10%;
 }
 
 /*  -----------  FOOTER ------------*/

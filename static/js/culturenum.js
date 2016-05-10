@@ -26,8 +26,11 @@ function navigation(){
         if ($(this).hasClass("section")) {
             //go to 1st subsection if selected section is empty
             console.log('Switching to 1st subsection');
-            current_node = current_node.next().find('a.subsection')[0];
-            selector = $(current_node).attr('data_sec_id');
+            next_sub = current_node.next().find('a.subsection')[0];
+            if (next_sub) {
+                current_node = next_sub
+                selector = $(current_node).attr('data_sec_id');
+            }
             console.log('new selector ='+selector+';');
         }
         // turn selected subsection active, if any

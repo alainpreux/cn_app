@@ -34,7 +34,7 @@ def write_file(src, current_dir, target_folder, name):
         return False
 
     # if successful
-    return True
+    return filename
 
 def stitch_files(files, filename):
     with open(filename, "w", encoding='utf-8') as outfile:
@@ -90,4 +90,7 @@ def processModule(module,repoDir,outDir=None, feedback_option=False):
     m.toXMLMoodle(outDir)
     write_file(m.toGift(), outDir, '', module+'.questions_bank.gift.txt')
     write_file(m.toVideoList(), outDir, '', module+'.video_iframe_list.txt')
-    write_file(m.toJson(), outDir, '',  module+'.config.json')
+    mod_config = write_file(m.toJson(), outDir, '',  module+'.config.json')
+    
+    # We return last generated file name which is a pivot file containing all processed data
+    return mod_config
