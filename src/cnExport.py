@@ -236,10 +236,22 @@ def processRepository(args, repoDir, outDir):
 #         sys.exit(0)
 
 def buildSite(course_obj, templates_path, repoDir, outDir):
-    """ Generate full site from result of parsing repository """
+    """ Generate full site from result of parsing repository """    
     
-    template = Template(templates_path)
-    
+    jenv = Environment(loader=FileSystemLoader(templates_path))
+    site_template = jenv.get_template("site_layout.html")
+    #if found, copy logo.png, else use default
+    logo_files = glob.glob(os.path.join(repoDir, 'logo.*'))
+    if len(logo_files) > 0:
+        logo = logo_files[0]
+    else:# use default one
+        logo = os.path.join(templates_path, 'logo.png') 
+    try:
+        shutil.copy(logo, outDir)
+    except Exception as e:
+        logging.warn(" Error while copying logo file")
+        pass
+        
     # Create site index.html with home.md content    
     ## open and parse home.md
     try:
@@ -247,31 +259,21 @@ def buildSite(course_obj, templates_path, repoDir, outDir):
         with open(home_file, 'r', encoding='utf-8') as f:
             home_data = f.read()
             home_html = markdown.markdown(home_data)
-    except OSError as err:
+    except Exception as err:
         ## use default from template
-        default_home_file = os.path.join(templates_path, 'default_home.html')
-        with open(default_home_file, 'r', encoding='utf-8') as f:
+        with open(os.path.join(templates_path, 'default_home.html'), 'r', encoding='utf-8') as f:
             home_html = f.read()
-    except Exception as e:
-        raise 
-    ## 
+    ## write index.html file
+    html = site_template.render(course=course_obj, module_content=home_html)
+    utils.write_file(html, os.getcwd(), outDir, 'index.html')
     
-
-    
-    # # Create site index.html with accueil.html content    
-    # with open(os.path.join(outDir,"accueil.html"), 'r', encoding='utf-8') as f:
-    #     data=f.read()
-    # content.append(html.fromstring(data))
-    # index.write(os.path.join(outDir, "index.html"),method='html')  
-    # # same for modules:
-    # for module in args.modules:
-    #     out_module_dir = os.path.join(outDir, module)
-    #     in_module_file = os.path.join(out_module_dir, module+".html")
-    #     content.clear()
-    #     with open(in_module_file, 'r', encoding='utf-8') as f:
-    #         data=f.read()
-    #     content.append(html.fromstring(data))
-    #     index.write(os.path.join(outDir, module+".html"),method='html')    
+    # Loop through modules
+    for module in course_obj.modules:
+        in_module_file = os.path.join(outDir, module.module, module.module+".html")
+        with open(in_module_file, 'r', encoding='utf-8') as f:
+            data=f.read()
+        html = site_template.render(course=course_obj, module_content=data)
+        utils.write_file(html, os.getcwd(), outDir, module.module+'.html')
 
 
 def prepareDestination(outDir):
@@ -322,9 +324,6 @@ if __name__ == "__main__":
     # Setting up paths and directories
     ## App paths
     base_path = os.path.abspath(os.getcwd())
-    templates_path = os.path.join(base_path, 'templates' )
-    jinja2_env = Environment(loader=FileSystemLoader(templates_path))
-    site_layout = jinja2_env.get_template("site_layout.html")
     ## repo path
     if os.path.isabs(args.repository):
         repoDir = args.repository
@@ -343,6 +342,7 @@ if __name__ == "__main__":
     course_obj = processRepository(args, repoDir, outDir)
     
     # Build site
+    templates_path = os.path.join(base_path, 'templates' )
     buildSite(course_obj, templates_path, repoDir, outDir)        
         
     # Exit and print path to build files:

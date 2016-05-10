@@ -175,7 +175,7 @@ header {
 	text-align: center;
 }
 
-header  h1 a {
+/*header  h1 a {
 	height: 3em;
 	display: block;
 	background: url("../svg/logo_plat_vert.svg") no-repeat;
@@ -197,7 +197,7 @@ header  h1 a:hover {
     transition: opacity .55s ease-in-out;
     -moz-transition: opacity .55s ease-in-out;
     -webkit-transition: opacity .55s ease-in-out;
-}
+}*/
 
 /* -------- Module Menu  -----------------*/
 

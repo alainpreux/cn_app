@@ -18,16 +18,18 @@
     <div id="container">
         <header>
             <h1>
-                <a title="Culture Numérique" class="maintitle" href="">{{ course.title }}</a>
+                <a title="Culture Numérique" class="maintitle" href="">
+                    <img src="logo.png" style="max-height:70px;">
+                </a>
             </h1>
-            <!-- <h2>Site vitrine de présentation des modules de cours</h2> -->
+            <h2>{{ course.title }}</h2>
         </header>
         <!-- Module Menu FIXME : fetch this from toHTMLgobal.config.json -->
         <nav class="module_menu">
             <ul id="static-nav">
                 <li><a class="active" href="index.html">Accueil</a></li>
                 {% for module in course.modules %}
-                <li><a class="" href="{{ module.href }}">{{ module.menu_title }}</a></li>
+                <li><a class="" href="{{ module.module }}.html">{{ module.menutitle }}</a></li>
                 {% endfor %}
             </ul>
         </nav>

@@ -358,9 +358,13 @@ class Module:
         self.sections = []
         Section.num = 1
         self.module = module
-        self.parse(f)
         self.ims_archive_path = ''
-
+        self.language = 'fr'
+        self.title = 'Titre long'
+        self.menutitle = 'Titre'
+        self.author = 'culture numerique'
+        self.css = 'http://culturenumerique.univ-lille3.fr/css/base.css'
+        self.parse(f)
     
     def parseHead(self,f) :
         """ Captures meta-data  """
