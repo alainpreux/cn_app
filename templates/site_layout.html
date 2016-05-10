@@ -10,7 +10,7 @@
     <script type="text/javascript" src="static/js/fancybox/jquery.fancybox.pack.js"></script>
     <script type="text/javascript" src="static/js/culturenum.js"></script>
     <link rel="stylesheet" href="static/css/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
-    <title>Culture Numérique | Présentation des modules de cours</title>
+    <title>{{ course.title }}</title>
 </head>
 
 <body>
@@ -18,26 +18,31 @@
     <div id="container">
         <header>
             <h1>
-                <a title="Culture Numérique" class="maintitle" href="http://culturenumerique.univ-lille3.fr">Culture Numérique</a>
+                <a title="Culture Numérique" class="maintitle" href="">{{ course.title }}</a>
             </h1>
-            <h2>Site vitrine de présentation des modules de cours</h2>
+            <!-- <h2>Site vitrine de présentation des modules de cours</h2> -->
         </header>
         <!-- Module Menu FIXME : fetch this from toHTMLgobal.config.json -->
         <nav class="module_menu">
             <ul id="static-nav">
                 <li><a class="active" href="index.html">Accueil</a></li>
+                {% for module in course.modules %}
+                <li><a class="" href="{{ module.href }}">{{ module.menu_title }}</a></li>
+                {% endfor %}
             </ul>
         </nav>
 
         <div class="module_content">
-
+            
+            {{ module_content | safe }}
+        
         </div>
         <!--  EndOf <div class="module_content">-->
         <footer>
             <a href="https://www.univ-lille3.fr/">
                 <img src="static/svg/logo_lille3.svg" title="" alt="Lille 3" />
             </a>
-            <p><a href="http://culturenumerique.univ-lille3.fr/" title="Culture Numérique">Culture Numérique</a> - 2015</p>
+            <p><a href="http://culturenumerique.univ-lille3.fr/" title="Culture Numérique">{{ course.title }}</a> - 2015</p>
         </footer>
     </div>
     <!-- End of container-->

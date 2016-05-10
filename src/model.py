@@ -359,6 +359,7 @@ class Module:
         Section.num = 1
         self.module = module
         self.parse(f)
+        self.ims_archive_path = ''
 
     
     def parseHead(self,f) :
@@ -411,6 +412,19 @@ class Module:
             video_list += s.toVideoList()+'\n\n'
             
         return video_list
+
+
+class CourseProgram:
+    """ A course program is made of one or several course modules """
+    
+    def __init__(self, repository):
+        """ A CP is initiated from a repository containing global paramaters file (logo.jpg, title.md, home.md)
+         and folders moduleX containing module file and medias """
+        self.modules = []
+        self.repository = repository
+        self.title = 'Culture Numérique'
+        self.logo_path = 'logo.png'
+        
 
 ############### main ################
 if __name__ == "__main__":

@@ -92,5 +92,5 @@ def processModule(module,repoDir,outDir=None, feedback_option=False):
     write_file(m.toVideoList(), outDir, '', module+'.video_iframe_list.txt')
     mod_config = write_file(m.toJson(), outDir, '',  module+'.config.json')
     
-    # We return last generated file name which is a pivot file containing all processed data
-    return mod_config
+    # We return module object and link to json-serialized file
+    return m, mod_config
