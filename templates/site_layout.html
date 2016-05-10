@@ -34,7 +34,7 @@
             </ul>
         </nav>
 
-        <div class="module_content">
+        <div class="module_content {% if is_home %}accueil{%endif%}">
             
             {{ module_content | safe }}
         

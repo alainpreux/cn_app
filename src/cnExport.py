@@ -10,6 +10,7 @@ import glob
 
 from lxml import etree
 from lxml import html
+import markdown
 from yattag import indent
 from yattag import Doc
 from lxml.html.clean import Cleaner
@@ -19,6 +20,8 @@ from jinja2 import Template, Environment, FileSystemLoader
 import utils
 import toIMS
 import model
+
+MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 
 def write_iframe_code(video_link):
     return '<div class="iframe_cont"><iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" data-src="'+video_link+'"></iframe></div>'
@@ -162,15 +165,7 @@ def writeHtml(module, outModuleDir,doc):
     moduleHtml = open(module_file_name, 'w', encoding='utf-8')
     moduleHtml.write(indent(doc.getvalue()))
     moduleHtml.close()
-    # Copy the media subdir if necessary to the dest 
-    mediaDir = os.path.join(module,"media")
-    if os.path.isdir(mediaDir):
-        try :
-            shutil.copytree(mediaDir, os.path.join(outModuleDir,'media'))
-        except FileExistsError as exception:
-            logging.warn("%s already exists. Going to delete it",mediaDir)
-            shutil.rmtree(os.path.join(outModuleDir,'media'))
-            shutil.copytree(mediaDir, os.path.join(outModuleDir,'media'))
+    
     
 def generateModuleHtml(data, module, outModuleDir):
     """ parse data from config file 'moduleX.config.json' and generate a moduleX html file """
@@ -191,8 +186,20 @@ def generateModuleHtml(data, module, outModuleDir):
 def processModule(module,repoDir,outDir, feedback_option, ims_option):
     """ given input paramaters, process a module  """
     outModuleDir = os.path.join(repoDir,outDir,module)
+    
     # generate config file: config file for each module is named [module_folder].config.json
     mod_obj, mod_config = utils.processModule(module,repoDir,outDir, feedback_option)
+    
+    # Copy the media subdir if necessary to the dest 
+    mediaDir = os.path.join(repoDir, module, "media")
+    if os.path.isdir(mediaDir):
+        try :
+            shutil.copytree(mediaDir, os.path.join(outModuleDir,'media'))
+        except OSError as exception:
+            logging.warn("%s already exists. Going to delete it",mediaDir)
+            shutil.rmtree(os.path.join(outModuleDir,'media'))
+            shutil.copytree(mediaDir, os.path.join(outModuleDir,'media'))
+            
     # if chosen, generate IMS archive
     if ims_option:
         mod_obj.ims_archive_path = toIMS.generateImsArchive(module, outModuleDir)
@@ -204,6 +211,7 @@ def processModule(module,repoDir,outDir, feedback_option, ims_option):
         mod_data['ims_archive_path'] = mod_obj.ims_archive_path
     generateModuleHtml(mod_data, module, outModuleDir)
     
+        
     return mod_obj
 
 def processRepository(args, repoDir, outDir):
@@ -219,21 +227,8 @@ def processRepository(args, repoDir, outDir):
         logging.info("\nStart Processing %s",module)
         course_obj.modules.append(processModule(module, repoDir, outDir, args.feedback, args.ims))
     
-    # TODO parse logo, title and home
-    
     return course_obj
      
-# 
-# def loadTemplate(template="index.tmpl"):
-#     try: 
-#         parser = etree.HTMLParser()
-#         tree   = etree.parse(template, parser)
-#         e_list = tree.xpath("//ul[@id='static-nav']")
-#         content_node_l = tree.xpath("//div[@class='module_content']")
-#         return tree,e_list[0],content_node_l[0]
-#     except OSError:
-#         print("html template not found : %s" % (template))
-#         sys.exit(0)
 
 def buildSite(course_obj, templates_path, repoDir, outDir):
     """ Generate full site from result of parsing repository """    
@@ -249,22 +244,32 @@ def buildSite(course_obj, templates_path, repoDir, outDir):
     try:
         shutil.copy(logo, outDir)
     except Exception as e:
-        logging.warn(" Error while copying logo file")
+        logging.warn(" Error while copying logo file %s" % e)
         pass
-        
+    
+    ## open and parse 1st line title.md
+    try:
+        title_file = os.path.join(repoDir, 'title.md')
+        with open(title_file, 'r', encoding='utf-8') as f:
+            course_obj.title = f.read().strip()
+    except Exception as e:
+        logging.warn(" Error while parsing title file %s" % e)
+        pass
+    
     # Create site index.html with home.md content    
     ## open and parse home.md
     try:
         home_file = os.path.join(repoDir, 'home.md')
         with open(home_file, 'r', encoding='utf-8') as f:
             home_data = f.read()
-            home_html = markdown.markdown(home_data)
+        home_html = markdown.markdown(home_data, MARKDOWN_EXT)
     except Exception as err:
         ## use default from template
+        logging.error(" Cannot parse home markdown ")
         with open(os.path.join(templates_path, 'default_home.html'), 'r', encoding='utf-8') as f:
             home_html = f.read()
     ## write index.html file
-    html = site_template.render(course=course_obj, module_content=home_html)
+    html = site_template.render(course=course_obj, module_content=home_html, is_home=True)
     utils.write_file(html, os.getcwd(), outDir, 'index.html')
     
     # Loop through modules
@@ -272,8 +277,9 @@ def buildSite(course_obj, templates_path, repoDir, outDir):
         in_module_file = os.path.join(outDir, module.module, module.module+".html")
         with open(in_module_file, 'r', encoding='utf-8') as f:
             data=f.read()
-        html = site_template.render(course=course_obj, module_content=data)
+        html = site_template.render(course=course_obj, module_content=data, is_home=False)
         utils.write_file(html, os.getcwd(), outDir, module.module+'.html')
+
 
 
 def prepareDestination(outDir):
@@ -287,7 +293,6 @@ def prepareDestination(outDir):
        else:
            print ("Cannot create %s " % (outDir))
            sys.exit(0)
-    #shutil.copy('templates/accueil.html',os.path.join(outDir,'accueil.html'))
     for d in ['static/js', 'static/img', 'static/svg', 'static/css']:
         dest = os.path.join(outDir, d)
         try :
@@ -346,5 +351,6 @@ if __name__ == "__main__":
     buildSite(course_obj, templates_path, repoDir, outDir)        
         
     # Exit and print path to build files:
+    os.chdir(base_path)
     print("**Build successful!** See result in : %s" % outDir)
     sys.exit(0)

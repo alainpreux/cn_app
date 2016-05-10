@@ -169,6 +169,10 @@ blockquote {
 	padding-bottom: 1em;
 }
 
+
+.content img{
+	max-width: 100%;
+}
 /*  ------  HEADER --------*/
 
 header {
