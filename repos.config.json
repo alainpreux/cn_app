@@ -11,7 +11,19 @@
             "repo_name":"prog_crea",
             "repo_url":"https://github.com/freddylimpens/prog_crea",
             "repo_last_update":"2016-04-27 14:29:00.504423"    
-        }
+        },
+        {
+            "repo_user":"freddylimpens",
+            "repo_name":"cn_modules",
+            "repo_url":"https://github.com/freddylimpens/cn_modules",
+            "repo_last_update":"2016-04-27 14:29:00.504423"    
+        },
+        {
+            "repo_user":"freddylimpens",
+            "repo_name":"course_template",
+            "repo_url":"https://github.com/freddylimpens/course_template",
+            "repo_last_update":"2016-04-27 14:29:00.504423"    
+        }        
         
     ]
 }

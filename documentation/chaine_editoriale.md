@@ -148,7 +148,7 @@ Ingrédients<br />
 </p>
 ```
 
-####Export
+#### Export
 
 - site vitrine : Ces activités sont exportés en HTML pour le site vitrine
 - Moodle/IMSCC : dans ce cas, le traitement se fait en 2 étapes:
