@@ -31,6 +31,7 @@ from fromGIFT import extract_questions, process_questions
 from toIMS import create_ims_test, create_empty_ims_test
 import utils
 
+
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 VIDEO_THUMB_API_URL = 'https://vimeo.com/api/v2/video/'
 DEFAULT_VIDEO_THUMB_URL = 'https://i.vimeocdn.com/video/536038298_640.jpg'
@@ -165,7 +166,7 @@ class Cours(Subsection):
         return html_src
                 
     def detectVideoLinks(self):
-        videos_findall = re.findall('\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.lien_video\s*}', self.src, flags=re.M)
+        videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.lien_video\s*}', self.src, flags=re.M)
         for video_match in videos_findall:
             video_link = video_match[1]
             #image_link = fetch_video_thumb(video_link)
@@ -357,8 +358,13 @@ class Module:
         self.sections = []
         Section.num = 1
         self.module = module
+        self.ims_archive_path = ''
+        self.language = 'fr'
+        self.title = 'Titre long'
+        self.menutitle = 'Titre'
+        self.author = 'culture numerique'
+        self.css = 'http://culturenumerique.univ-lille3.fr/css/base.css'
         self.parse(f)
-
     
     def parseHead(self,f) :
         """ Captures meta-data  """
@@ -410,6 +416,19 @@ class Module:
             video_list += s.toVideoList()+'\n\n'
             
         return video_list
+
+
+class CourseProgram:
+    """ A course program is made of one or several course modules """
+    
+    def __init__(self, repository):
+        """ A CP is initiated from a repository containing global paramaters file (logo.jpg, title.md, home.md)
+         and folders moduleX containing module file and medias """
+        self.modules = []
+        self.repository = repository
+        self.title = 'Culture Numérique'
+        self.logo_path = 'logo.png'
+        
 
 ############### main ################
 if __name__ == "__main__":

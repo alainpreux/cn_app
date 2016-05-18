@@ -4,3 +4,4 @@ python-slugify
 markdown
 MarkdownSuperscript
 flask
+requests

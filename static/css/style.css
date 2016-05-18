@@ -100,6 +100,19 @@ a:hover {
 }
 
 /* ---------- iFRAME --------- */
+.iframe_left{
+	display: inline-block;
+	height: 100%;
+	margin-left: 5em;
+	padding-bottom: 135px;
+	vertical-align: top;
+	width: 50%;	
+}
+
+div.iframe_cont{
+	width:400px;
+	height: 228px;
+}
 
 iframe {
 	border : 3px solid #ddd;
@@ -156,13 +169,17 @@ blockquote {
 	padding-bottom: 1em;
 }
 
+
+.content img{
+	max-width: 100%;
+}
 /*  ------  HEADER --------*/
 
 header {
 	text-align: center;
 }
 
-header  h1 a {
+/*header  h1 a {
 	height: 3em;
 	display: block;
 	background: url("../svg/logo_plat_vert.svg") no-repeat;
@@ -184,7 +201,7 @@ header  h1 a:hover {
     transition: opacity .55s ease-in-out;
     -moz-transition: opacity .55s ease-in-out;
     -webkit-transition: opacity .55s ease-in-out;
-}
+}*/
 
 /* -------- Module Menu  -----------------*/
 
@@ -385,6 +402,8 @@ div.inline {
 	overflow: hidden;
 	color: #AFA70E; /*same color than anchors a*/
 	margin-bottom: 3em;
+	float: right;
+	margin-right: 20%;
 }
 
 div.mini-text{
@@ -395,9 +414,22 @@ div.mini-text{
 	padding: 3em;
 }
 
+div.mini-text img{
+	display:none;
+}
+
 div.fancy-text{
 	text-align: justify;
 	padding: 2em;
+}
+
+div.fancy-text img{
+	max-width: 100%
+}
+
+div.texte_right{
+	display: inline-block;
+	width:10%;
 }
 
 /*  -----------  FOOTER ------------*/

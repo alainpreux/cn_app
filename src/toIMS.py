@@ -213,7 +213,7 @@ def create_ims_test(questions, test_id, test_title):
                                         for id_a, answer in enumerate(question.answers):
                                             score = 0
                                             try:
-                                                score = int(answer['credit'])
+                                                score = float(answer['credit'])
                                             except:
                                                 pass
                                             if score <= 0:
@@ -329,20 +329,21 @@ def generateIMSManifest(data):
     with tag('resources'):
         # retrieve images and add dependency when needed
         doc.asis("<!-- Media -->")
-        try:
-            media_dir = data["media_dir"]
-        except:
-            media_dir = "media"
-
+        media_dir ="media"
         images = {}
-        for idx, filename in enumerate(os.listdir(os.path.join(os.getcwd(), media_dir))):
-            if filename in resources:
-                pass # avoid duplicating resources
-            else:
-                doc_id = media_dir+"_"+str(idx)
-                images[filename] = doc_id # store img id for further reference
-                with tag('resource', identifier=doc_id, type="webcontent", href=media_dir+"/"+filename):
-                    doc.stag('file', href=media_dir+"/"+filename)
+        try:
+            for idx, filename in enumerate(os.listdir(os.path.join(os.getcwd(), media_dir))):
+                if filename in resources:
+                    pass # avoid duplicating resources
+                else:
+                    doc_id = media_dir+"_"+str(idx)
+                    images[filename] = doc_id # store img id for further reference
+                    with tag('resource', identifier=doc_id, type="webcontent", href=media_dir+"/"+filename):
+                        doc.stag('file', href=media_dir+"/"+filename)
+        except Exception as e:
+            logging.warn("[toIMS] No media found for this module : %s" % e)
+            pass
+        
 
         doc.asis("<!-- Webcontent -->")
         for idA, section in enumerate(data["sections"]):
@@ -365,7 +366,7 @@ def generateIMSManifest(data):
                                     # add dependency
                                     doc.stag('dependency', identifierref=images[img_filename])
                         except:
-                            pprint(" Error while parsing doc: %s" % (href))
+                            logging.error(" [toIMS]Error while parsing doc: %s" % (href))
                             continue
 
     doc.asis("</manifest>")
@@ -374,6 +375,40 @@ def generateIMSManifest(data):
     imsfile.close()
     return True
 
+def generateImsArchive(module_name, module_directory):
+    # Now this script has to get full path to module dir containing module_name.config.json
+    fileout = module_name+'.imscc.zip'
+    filein = os.path.join(module_directory, module_name+'.config.json')
+    
+    # load data from filin
+    with open(filein, encoding='utf-8') as data_file:
+        data = json.load(data_file)
+    
+    # change directory to builded module dir
+    cur_dir = os.getcwd()
+    os.chdir(module_directory)
+
+    # parse data and generate imsmanifest.xml
+    generateIMSManifest(data)
+    logging.warning("[toIMS] imsmanifest.xml saved for module %s", module_directory)
+
+    # Compress relevant files
+    zipf = zipfile.ZipFile(fileout, 'w')
+    zipf.write(os.getcwd()+'/imsmanifest.xml')
+    for dir_name in FOLDERS:
+        try:
+            if os.listdir(dir_name):
+                for file in os.listdir(dir_name):
+                    filepath = os.path.join(os.getcwd(), dir_name)
+                    filepath = os.path.join(filepath, file)
+                    logging.info("[toIMS] Adding %s to archive " % (filepath))
+                    zipf.write(filepath)
+        except:
+            continue
+
+    zipf.close()
+    os.chdir(cur_dir)
+    return fileout  
 
 def main(argv):
     """ 
@@ -385,36 +420,9 @@ def main(argv):
     
     args = parser.parse_args()
     
-    # Now this script has to get full path to module dir containing module_name.config.json
-    fileout = args.module_name+'.imscc.zip'
-    filein = os.path.join(args.module_directory, args.module_name+'.config.json')
-    
-    # load data from filin
-    with open(filein, encoding='utf-8') as data_file:
-        data = json.load(data_file)
-    
-    # change directory to builded module dir
-    os.chdir(args.module_directory)
-
-    # parse data and generate imsmanifest.xml
-    generateIMSManifest(data)
-    logging.info(" imsmanifest.xml saved for module %s", args.module_directory)
-
-    # Compress relevant files
-    zipf = zipfile.ZipFile(fileout, 'w')
-    zipf.write(os.getcwd()+'/imsmanifest.xml')
-    for dir_name in FOLDERS:
-        try:
-            if os.listdir(dir_name):
-                for file in os.listdir(dir_name):
-                    filepath = os.path.join(os.getcwd(), dir_name)
-                    filepath = os.path.join(filepath, file)
-                    print (" Adding %s to archive " % (filepath))
-                    zipf.write(filepath)
-        except:
-            continue
-
-    zipf.close()
+    fileout_path = generateImsArchive(args.module_name, args.module_directory)
+    print("archive generated %s" % fileout_path)
+    exit(0)
 
 
 ############### main ################
