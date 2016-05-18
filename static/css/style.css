@@ -414,9 +414,17 @@ div.mini-text{
 	padding: 3em;
 }
 
+div.mini-text img{
+	display:none;
+}
+
 div.fancy-text{
 	text-align: justify;
 	padding: 2em;
+}
+
+div.fancy-text img{
+	max-width: 100%
 }
 
 div.texte_right{

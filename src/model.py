@@ -166,7 +166,7 @@ class Cours(Subsection):
         return html_src
                 
     def detectVideoLinks(self):
-        videos_findall = re.findall('\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.lien_video\s*}', self.src, flags=re.M)
+        videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.lien_video\s*}', self.src, flags=re.M)
         for video_match in videos_findall:
             video_link = video_match[1]
             #image_link = fetch_video_thumb(video_link)
