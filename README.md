@@ -4,9 +4,17 @@
 application providing services to parse a escapad formated files 
 
 ## Versions
-v 0.1 backporting to python 2
+v 0.2 added template mechanism for home page
 
 # Usage
+
+## Installation
+
+Install the requirements with pip:
+
+```
+$ pip install -r requirements.txt
+```
 
 ## Export script src/CnExport.py
 
@@ -24,4 +32,10 @@ This will generate a web site for all modules contained in given repository. Opt
 - specify a global config file for the modules `-c path/to/config/file`
 
 ## Web service
+
+Start the web application locally with:
+
+```
+$ python webapp.py
+```
 
