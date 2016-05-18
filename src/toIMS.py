@@ -213,9 +213,8 @@ def create_ims_test(questions, test_id, test_title):
                                         for id_a, answer in enumerate(question.answers):
                                             score = 0
                                             try:
-                                                score = int(answer['credit'])
+                                                score = float(answer['credit'])
                                             except:
-                                                #FIXME print(" ++ cannot get credit value =%s" % answer['credit'])
                                                 pass
                                             if score <= 0:
                                                 with tag('not'):
@@ -341,8 +340,8 @@ def generateIMSManifest(data):
                     images[filename] = doc_id # store img id for further reference
                     with tag('resource', identifier=doc_id, type="webcontent", href=media_dir+"/"+filename):
                         doc.stag('file', href=media_dir+"/"+filename)
-        except:
-            print(" No media found for this module")
+        except Exception as e:
+            logging.warn("[toIMS] No media found for this module : %s" % e)
             pass
         
 
@@ -367,7 +366,7 @@ def generateIMSManifest(data):
                                     # add dependency
                                     doc.stag('dependency', identifierref=images[img_filename])
                         except:
-                            pprint(" Error while parsing doc: %s" % (href))
+                            logging.error(" [toIMS]Error while parsing doc: %s" % (href))
                             continue
 
     doc.asis("</manifest>")
@@ -391,7 +390,7 @@ def generateImsArchive(module_name, module_directory):
 
     # parse data and generate imsmanifest.xml
     generateIMSManifest(data)
-    logging.info(" imsmanifest.xml saved for module %s", module_directory)
+    logging.warning("[toIMS] imsmanifest.xml saved for module %s", module_directory)
 
     # Compress relevant files
     zipf = zipfile.ZipFile(fileout, 'w')
@@ -402,7 +401,7 @@ def generateImsArchive(module_name, module_directory):
                 for file in os.listdir(dir_name):
                     filepath = os.path.join(os.getcwd(), dir_name)
                     filepath = os.path.join(filepath, file)
-                    print (" Adding %s to archive " % (filepath))
+                    logging.info("[toIMS] Adding %s to archive " % (filepath))
                     zipf.write(filepath)
         except:
             continue
