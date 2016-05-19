@@ -20,3 +20,6 @@ urlpatterns = [
     url(r'^escapad/', include('escapad.urls')),
     url(r'^admin/', admin.site.urls),
 ]
+
+admin.site.site_header = 'Esc@pad Admin'
+admin.site.site_title = 'Esc@pad Admin'
