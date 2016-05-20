@@ -1,5 +1,9 @@
 from __future__ import unicode_literals
 
+import os
+import subprocess
+
+from django.conf import settings
 from django.db import models
 
 # Create your models here.
@@ -27,8 +31,8 @@ class Repository(models.Model):
             provider = "http://github.com"
         return provider
     
-    
     def save(self, *args, **kwargs):
+        """ populate some fields from git url and create directory before saving"""
         if not self.git_name:
             self.git_name = self.set_name(self.git_url)
         if not self.git_username:
@@ -41,6 +45,7 @@ class Repository(models.Model):
     git_name = models.CharField(max_length=200, blank=True, null=True)
     git_username = models.CharField(max_length=200, blank=True, null=True)
     last_compiled = models.DateTimeField(blank=True, null=True)
+    repo_synced = models.BooleanField(default=False)
     provider = models.URLField(max_length=200, blank=True, null=True)
 
 

@@ -7,7 +7,7 @@ from .models import Repository
 
 
 class RepositoryAdmin(admin.ModelAdmin):
-    list_display = ('git_username', 'git_name', 'last_compiled', 'git_url', 'build_url', 'site_url')
+    list_display = ('git_username', 'git_name', 'repo_synced', 'last_compiled', 'git_url', 'build_url', 'site_url')
 
     def build_url(self, obj):
         url = reverse('build_repo', args=(obj.git_username, obj.git_name,))
