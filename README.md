@@ -31,11 +31,13 @@ This will generate a web site for all modules contained in given repository. Opt
 - add feebacks and correct responses `-f`
 - specify a global config file for the modules `-c path/to/config/file`
 
+
+
 ## Web service
 
 Start the web application locally with:
 
 ```
-$ python webapp.py
+$ python manage.py runserver
 ```
 
