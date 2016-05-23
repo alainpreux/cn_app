@@ -5,6 +5,7 @@ import mimetypes
 import os.path
 import subprocess
 import logging
+import datetime
 
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
@@ -30,7 +31,34 @@ class BuildView(View):
         return super(BuildView, self).dispatch(*args, **kwargs)
 
     def post(self, request, username, name, *args, **kwargs):
-        logger.warn("Post to buidl view !")
+        # 1. cd to repo path
+        repo_path = os.path.join(settings.REPOS_DIR, username, name)
+        logger.warn("Post to buidl view ! repo_path = %s" % repo_path)        
+        repo_object = Repository.objects.all().filter(git_username=username,git_name=name)[0]
+        try:
+            os.chdir(repo_path)
+        except Exception as e:
+            return JsonResponse({"success":"false", "reason":"repo not existing, or not synced"})
+        # 2. git pull origin [branch:'master']
+        git_cmd = "git pull origin master"
+        try:
+            subprocess.check_output(git_cmd.split())
+        except Exception as e:
+            os.chdir(settings.BASE_DIR)
+            return JsonResponse({"success":"false", "reason":"error with git pull origin master command"})
+        # 3. build with BASE_PATH/src/toHTML.py 
+        os.chdir(settings.BASE_DIR)
+        build_cmd = ("python src/cnExport.py -r %s -i" % repo_path)
+        try:
+            subprocess.check_output(build_cmd.split())
+        except Exception as e:
+            os.chdir(settings.BASE_DIR)
+            return JsonResponse({"success":"false", "reason":"error when running command"})
+        
+        # Normal conclusion
+        os.chdir(settings.BASE_DIR)
+        repo_object.last_compiled = datetime.datetime.now()
+        repo_object.save()
         
         return JsonResponse({"success":"true"})
 

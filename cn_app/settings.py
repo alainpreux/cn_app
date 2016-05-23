@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django_extensions',
     'escapad.apps.EscapadConfig',
     'django.contrib.admin',
     'django.contrib.auth',

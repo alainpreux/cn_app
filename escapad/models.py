@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
 import os
@@ -5,11 +8,13 @@ import subprocess
 
 from django.conf import settings
 from django.db import models
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
 class Repository(models.Model):
     
+        
     def set_name(self, url):
         try:
             name = url.strip('/').rsplit('/',1)[-1].strip('.git').lower()
@@ -48,5 +53,6 @@ class Repository(models.Model):
     repo_synced = models.BooleanField(default=False)
     provider = models.URLField(max_length=200, blank=True, null=True)
 
-
+    class Meta:
+        unique_together = ('git_name', 'git_username')
     

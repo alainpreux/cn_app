@@ -4,11 +4,13 @@ from django.core.urlresolvers import reverse
 
 # Register your models here.
 from .models import Repository
+from .forms import RepositoryForm
 
 
 class RepositoryAdmin(admin.ModelAdmin):
     list_display = ('git_username', 'git_name', 'repo_synced', 'last_compiled', 'git_url', 'build_url', 'site_url')
-
+    #form = RepositoryForm
+    
     def build_url(self, obj):
         url = reverse('build_repo', args=(obj.git_username, obj.git_name,))
         return '<a href="%s">%s<a>' % (url, 'build')
