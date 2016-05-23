@@ -123,6 +123,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# FIXME: logging maybe not suitable for production env (is it automatically redirect to log files ?)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -130,14 +131,19 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
         },
+        'apps_handler': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
-        'escapad.utils': {
-            'handlers': ['console'],
+        'escapad': {
+            'handlers': ['apps_handler'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
     },

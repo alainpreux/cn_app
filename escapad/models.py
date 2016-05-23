@@ -12,21 +12,21 @@ class Repository(models.Model):
     
     def set_name(self, url):
         try:
-            name = url.strip('/').rsplit('/',1)[-1].strip('.git')
+            name = url.strip('/').rsplit('/',1)[-1].strip('.git').lower()
         except Exception as e:
             name = "default_name"
         return name
     
     def set_user(self, url):
         try:
-            user = url.strip('/').rsplit('/', 2)[-2]
+            user = url.strip('/').rsplit('/', 2)[-2].lower()
         except Exception as e:
             user = "default_user"
         return user
     
     def set_provider(self, url):
         try:
-            provider = url.strip('/').rsplit('/', 3)[-3]
+            provider = url.strip('/').rsplit('/', 3)[-3].lower()
         except Exception as e:
             provider = "http://github.com"
         return provider

@@ -13,7 +13,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from escapad.models import Repository
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__) # see in cn_app.settings.py logger declaration
 
 @receiver(post_save, sender=Repository)
 def create_repo_dir(sender, instance, created, update_fields, **kwargs):
