@@ -1,6 +1,8 @@
+import os
+
 from django.contrib import admin
 from django.core.urlresolvers import reverse
-
+from django.conf import settings
 
 # Register your models here.
 from .models import Repository
@@ -18,7 +20,8 @@ class RepositoryAdmin(admin.ModelAdmin):
     build_url.short_description = 'Build link'
     
     def site_url(self, obj):
-        url = reverse('visit_site', args=(obj.git_username, obj.git_name,))
+        #url = reverse('visit_site', args=(obj.git_username, obj.git_name,))
+        url = os.path.join(settings.STATIC_URL, obj.git_username, obj.git_name, 'index.html' )
         return '<a href="%s">%s<a>' % (url, 'visit')
     site_url.allow_tags = True
     site_url.short_description = 'Site link'

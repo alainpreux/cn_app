@@ -33,6 +33,7 @@ class BuildView(View):
     def post(self, request, username, name, *args, **kwargs):
         # 1. cd to repo path
         repo_path = os.path.join(settings.REPOS_DIR, username, name)
+        build_path = os.path.join(settings.GENERATED_SITES_DIR, username, name)
         logger.warn("Post to buidl view ! repo_path = %s" % repo_path)        
         repo_object = Repository.objects.all().filter(git_username=username,git_name=name)[0]
         try:
@@ -48,7 +49,7 @@ class BuildView(View):
             return JsonResponse({"success":"false", "reason":"error with git pull origin master command"})
         # 3. build with BASE_PATH/src/toHTML.py 
         os.chdir(settings.BASE_DIR)
-        build_cmd = ("python src/cnExport.py -r %s -i" % repo_path)
+        build_cmd = ("python src/cnExport.py -r %s -d %s -i" % (repo_path, build_path))
         try:
             subprocess.check_output(build_cmd.split())
         except Exception as e:

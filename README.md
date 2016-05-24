@@ -35,7 +35,7 @@ This will generate a web site for all modules contained in given repository. Opt
 
 ## Web service
 
-Start the web application locally with:
+Start the web application locae lly with:
 
 ```
 $ python manage.py runserver

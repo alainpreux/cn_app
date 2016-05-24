@@ -17,6 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # used to store repositories files structure
 REPOS_DIR = os.path.join(BASE_DIR, 'repositories')
+GENERATED_SITES_DIR = os.path.join(BASE_DIR, 'generatedsites')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -27,7 +28,7 @@ SECRET_KEY = '#v^rw2==%hi4qh_y4xv)l9d1i&1_!)rgsclb$!vmyg5%gw(*bx'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['culturenumerique-lille3.fr', '127.0.0.1']
 
 
 # Application definition
@@ -123,6 +124,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = "collectedstatics/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "generatedsites"),
+]
 
 # FIXME: logging maybe not suitable for production env (is it automatically redirect to log files ?)
 LOGGING = {
