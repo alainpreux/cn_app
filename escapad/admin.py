@@ -15,7 +15,7 @@ class RepositoryAdmin(admin.ModelAdmin):
     
     def build_url(self, obj):
         url = reverse('build_repo', args=(obj.git_username, obj.git_name,))
-        return '<a href="%s">%s<a>' % (url, 'build')
+        return '<a href="%s" target="_blank">%s<a>' % (url, 'build')
     build_url.allow_tags = True
     build_url.short_description = 'Build link'
     
