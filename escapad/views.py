@@ -35,9 +35,9 @@ class BuildView(View):
     def build_repo(self, slug):
         # 1. cd to repo path
         repo_path = os.path.join(settings.REPOS_DIR, slug)
-        build_path = os.path.join(settings.GENERATED_SITES_DIR, username, name)
+        build_path = os.path.join(settings.GENERATED_SITES_DIR, slug)
         logger.warn("Post to buidl view ! repo_path = %s" % repo_path)        
-        repo_object = Repository.objects.all().filter(git_username=username,git_name=name)[0]
+        repo_object = Repository.objects.all().filter(slug=slug)[0]
         try:
             os.chdir(repo_path)
         except Exception as e:
