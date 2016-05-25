@@ -37,7 +37,10 @@ class Repository(models.Model):
         return provider
         
     def set_slug(self, url):
-        slug = slugify(url.lstrip('htpps://').replace('.','_').replace('/','__').lower())
+        try:
+            slug = slugify(url.lstrip('htpps://').replace('.','_').replace('/','__').lower())
+        except Exception as e:
+            slug = slugify(url)
         return slug
             
     def save(self, *args, **kwargs):
@@ -60,6 +63,3 @@ class Repository(models.Model):
     repo_synced = models.BooleanField(default=False)
     provider = models.URLField(max_length=200, blank=True, null=True)
 
-    class Meta:
-        unique_together = ('git_name', 'git_username')
-    
