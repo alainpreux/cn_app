@@ -32,9 +32,9 @@ class BuildView(View):
     def dispatch(self, *args, **kwargs):
         return super(BuildView, self).dispatch(*args, **kwargs)
     
-    def build_repo(self, username, name):
+    def build_repo(self, slug):
         # 1. cd to repo path
-        repo_path = os.path.join(settings.REPOS_DIR, username, name)
+        repo_path = os.path.join(settings.REPOS_DIR, slug)
         build_path = os.path.join(settings.GENERATED_SITES_DIR, username, name)
         logger.warn("Post to buidl view ! repo_path = %s" % repo_path)        
         repo_object = Repository.objects.all().filter(git_username=username,git_name=name)[0]
@@ -63,14 +63,15 @@ class BuildView(View):
         repo_object.last_compiled = datetime.datetime.now()
         repo_object.save()
 
-    def post(self, request, username, name, *args, **kwargs):
-        self.build_repo(username, name)
+    def post(self, request, slug, *args, **kwargs):
+        self.build_repo(slug)
         return JsonResponse({"success":"true"})
         
-    def get(self, request, username, name, *args, **kwargs):
-        self.build_repo(username, name)
-        return redirect(os.path.join(settings.STATIC_URL, username, name, 'index.html'))
+    def get(self, request, slug, *args, **kwargs):
+        self.build_repo(slug)
+        return redirect(os.path.join(settings.STATIC_URL, slug, 'index.html'))
 
 
-def visit_site(request, username, name):
-    return HttpResponse(u"Visiting site for repo user = %s | name = %s" % (username, name))
+# FIXME : make simple template view for index.html of each static site 
+#def visit_site(request, username, name):
+#     return HttpResponse(u"Visiting site for repo user = %s | name = %s" % (username, name))

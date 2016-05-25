@@ -9,12 +9,12 @@ import subprocess
 from django.conf import settings
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.utils.text import slugify
 
 # Create your models here.
 
 class Repository(models.Model):
-    
-        
+            
     def set_name(self, url):
         try:
             name = url.strip('/').rsplit('/',1)[-1].strip('.git').lower()
@@ -35,20 +35,27 @@ class Repository(models.Model):
         except Exception as e:
             provider = "http://github.com"
         return provider
-    
+        
+    def set_slug(self, url):
+        slug = slugify(url.lstrip('htpps://').replace('.','_').replace('/','__').lower())
+        return slug
+            
     def save(self, *args, **kwargs):
-        """ populate some fields from git url and create directory before saving"""
+        """ populate some fields from git url before saving"""
         if not self.git_name:
             self.git_name = self.set_name(self.git_url)
         if not self.git_username:
             self.git_username = self.set_user(self.git_url)
         if not self.provider:
             self.provider = self.set_provider(self.git_url)
+        self.slug = self.set_slug(self.git_url)
         super(Repository, self).save(*args, **kwargs)
 
     git_url = models.URLField(max_length=200, unique=True)
+    slug = models.SlugField(unique=True)
     git_name = models.CharField(max_length=200, blank=True, null=True)
     git_username = models.CharField(max_length=200, blank=True, null=True)
+    default_branch = models.CharField(max_length=200, blank=True, null=True, default="master")
     last_compiled = models.DateTimeField(blank=True, null=True)
     repo_synced = models.BooleanField(default=False)
     provider = models.URLField(max_length=200, blank=True, null=True)

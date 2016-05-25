@@ -8,4 +8,4 @@ class EscapadConfig(AppConfig):
     
     def ready(self):
         # import signal handlers
-        import escapad.utils
+        import escapad.signals
