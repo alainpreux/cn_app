@@ -7,11 +7,24 @@
     padding-left: 300px;
   }
   
+  #menutop .container {
+	 /* padding-left: 300px;*/
+  }
+ 
+ #menugauche {
+	 top:3.7em;
+ }
+ 
+ .breadcrumb {
+	 position:fixed;
+	 width:100%;
+ }
+  
 	}
 /* ---------------------------------------------------------*/
 /* APPEL DE FONTES */
 /* ---------------------------------------------------------*/
-}
+
 @charset "UTF-8";
 
 @font-face {
@@ -173,6 +186,14 @@ iframe {
 /* MENU GAUCHE 
 /* ---------------------------------------------------------*/
 
+#menugauche {
+	top:3.6em;
+}
+
+ #menugauche-sm {
+	 top:3.6em;
+ }
+
 .menugauchebtn {
 	background-color:#333333;
 	border:none;
@@ -331,9 +352,12 @@ iframe {
 /* ---------------------------------------------------------*/
 
 .breadcrumb {
-	background-color: #DCDEDE;
+	background: rgba(220,222,222,0.7);
 	border-radius: 0;
     list-style: outside none none;
+		 position:fixed;
+	 width:100%;
+	 	 top:3.6em;
 }
 
 
@@ -369,11 +393,10 @@ iframe {
 
 body {
 	font-family: 'Lato', sans-serif;
-/*	padding-left:300px;*/
 }
 
 #content {
-		padding-top:4em; 	
+	padding-top:3.8em; 	
 }
 
 
