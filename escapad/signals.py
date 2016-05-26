@@ -6,11 +6,13 @@ import json
 import logging
 import os
 import subprocess
+from django.utils import timezone
 
 from django.conf import settings
 
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+# from django.utils import datetime
 from escapad.models import Repository
 
 logger = logging.getLogger(__name__) # see in cn_app.settings.py logger declaration
@@ -18,7 +20,7 @@ logger = logging.getLogger(__name__) # see in cn_app.settings.py logger declarat
 @receiver(post_save, sender=Repository)
 def create_repo_dir(sender, instance, created, update_fields, **kwargs):
     """ Create a dir repo_user/repo_name with clone of repo_url """
-    logger.warning(" creating repo dir ! create = %s, update_fields = %s" % (created,update_fields))
+    logger.warning(" %s | creating repo dir ! create = %s, update_fields = %s" % (timezone.now(), created, update_fields))
     if update_fields == {'repo_synced'}:
         return
     if created:
