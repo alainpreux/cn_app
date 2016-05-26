@@ -35,8 +35,9 @@ class Repository(models.Model):
         except Exception as e:
             provider = "http://github.com"
         return provider
-        
-    def set_slug(self, url):
+    
+    @staticmethod    
+    def set_slug(url):
         try:
             slug = slugify(url.lstrip('htpps://').replace('.','_').replace('/','__').lower())
         except Exception as e:
@@ -45,12 +46,9 @@ class Repository(models.Model):
             
     def save(self, *args, **kwargs):
         """ populate some fields from git url before saving"""
-        if not self.git_name:
-            self.git_name = self.set_name(self.git_url)
-        if not self.git_username:
-            self.git_username = self.set_user(self.git_url)
-        if not self.provider:
-            self.provider = self.set_provider(self.git_url)
+        self.git_name = self.set_name(self.git_url)
+        self.git_username = self.set_user(self.git_url)
+        self.provider = self.set_provider(self.git_url)
         self.slug = self.set_slug(self.git_url)
         super(Repository, self).save(*args, **kwargs)
 

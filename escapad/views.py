@@ -43,7 +43,7 @@ class BuildView(View):
         except Exception as e:
             return JsonResponse({"success":"false", "reason":"repo not existing, or not synced"})
         # 2. git pull origin [branch:'master']
-        git_cmd = "git pull origin master"
+        git_cmd = "git checkout %s | git pull origin %s" % (repo_object.default_branch, repo_object.default_branch)
         try:
             subprocess.check_output(git_cmd.split())
         except Exception as e:

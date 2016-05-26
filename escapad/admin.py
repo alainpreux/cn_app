@@ -10,9 +10,12 @@ from .forms import RepositoryForm
 
 
 class RepositoryAdmin(admin.ModelAdmin):
-    list_display = ('git_username', 'git_name', 'repo_synced', 'last_compiled', 'git_url', 'build_url', 'site_url')
+    list_display = ('repository',  'repo_synced', 'default_branch', 'last_compiled', 'git_url', 'build_url', 'site_url')
     readonly_fields = ('slug', 'git_username', 'git_name', 'repo_synced', 'last_compiled','provider')
     #form = RepositoryForm
+    
+    def repository(self, obj):
+        return '%s/%s' % (obj.git_username, obj.git_name)
     
     def build_url(self, obj):
         url = reverse('build_repo', args=(obj.slug,))
