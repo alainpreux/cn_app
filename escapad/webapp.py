@@ -13,7 +13,8 @@ BASE_PATH = os.path.abspath(os.getcwd())
 REPOS_DIR = 'repositories' # or give absolute path to repos dir
 REPOS_FILE = 'repos.config.json'
 
-# Create app
+# Create   app
+
 app = Flask(__name__, static_folder="static")
 app.config.from_object(__name__)
 

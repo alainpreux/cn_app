@@ -338,8 +338,13 @@ if __name__ == "__main__":
     ## Check repo exists, otherwise exit
     if not(os.path.exists(repoDir)):
         sys.exit("Error : repository directory provided does not exist")
-    ## add arbitrary subdirectory to outDir in case given outDir is '.' 
-    outDir = os.path.join(repoDir, args.destination, 'last')
+    ## check destination path and build outDir
+    if (args.destination == '.') or (args.destination.rstrip('/') == os.getcwd()):
+        sys.exit("Error: cannot build within current directory.")
+    if os.path.isabs(args.destination):
+        outDir = args.destination
+    else: 
+        outDir = os.path.join(repoDir, args.destination)
     ## check destination
     prepareDestination(outDir)
     
