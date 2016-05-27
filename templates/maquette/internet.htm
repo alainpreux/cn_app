@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Culture numérique</title>
 	
-	
 	<!-- Favico --> 
 	<link rel="icon" type="image/png" href="favicon.ico" />
 	<!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="favicon.ico" /><![endif]-->
@@ -18,12 +17,12 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/jasny-bootstrap.min.css" rel="stylesheet" media="screen"> 	
 
-	<!-- onepage css -->
+	<!-- Onepage css -->
     <link href="css/modules.css" rel="stylesheet">
 	
 	<!-- Icones -->
     <link href="css/icons.css" rel="stylesheet">
-	
+
 	<!-- Google Font -->
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
 	
@@ -33,15 +32,15 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
 	
   </head>
   <body>
-
-   
-   <!-- -------------------------------------------------------------------- -->
   
-     <!-- Début menu top --> 
+<!------------------------------------------------------------------------------------------------>
+<!------------------------------------------------------------------------------------------------>
+<!----------------------------------------- MENU TOP --------------------------------------------->
+<!------------------------------------------------------------------------------------------------>
+<!------------------------------------------------------------------------------------------------>
    
    <!-- Fixed navbar -->
     <nav class="navbar navbar-default navbar-fixed-top" id="menutop">
@@ -80,7 +79,8 @@
 	
 	
 <div class="menugauche navmenu navmenu-default navmenu-fixed-left offcanvas-sm" role="navigation" id="menugauche">
-  <h1 class="icon-web">Internet</h1>
+  
+  <h1 class="icon-web">Internet</h1><!-- Logo du module ici --> 
    
    <div class="panel-group" id="accordion">
 	
@@ -213,7 +213,6 @@
 	</div> 	
 </div>
 
-	<!-- Fin menu gauche -->
 <!------------------------------------------------------------------------------------------------>
 <!------------------------------------------------------------------------------------------------>
 <!------------------------- MENU GAUCHE VERSION REDUITE ------------------------------------------>
@@ -372,88 +371,88 @@
 
 </div>
 
-
-
-<!-- Fin menu gauche version réduite-->
+<!------------------------------------------------------------------------------------------------>
+<!------------------------------------------------------------------------------------------------>
+<!--------------------- BOUTON POUR DEPLIER MENU GAUCHE EN PETIT --------------------------------->
 <!------------------------------------------------------------------------------------------------>
 <!------------------------------------------------------------------------------------------------>
 
+
+<button type="button" class="navmenu-fixed-left navmenu-fixed-left navbar-offcanvas-toggle menugauchebtn collapsed hidden-md hidden-lg" data-toggle="offcanvas" data-target="#menugauche" data-canvas="body" id="menugauche-sm">
+	<span class="icon-chevron-right"> </span>
+</button>
+
+<!------------------------------------------------------------------------------------------------>
+<!------------------------------------------------------------------------------------------------>
+<!--------------------------------------- CONTENU COURS ------------------------------------------>
+<!------------------------------------------------------------------------------------------------>
+<!------------------------------------------------------------------------------------------------>
   
-<div id="content"><!-- Margin top 4 em -->
+<div id="content"><!-- Pour margin top 4 em -->
 
-   <!-- Fin menu top -->
-	<!-- Début menu gauche --> 
+	<!-- Fil d'ariane --> 
 
+		<ol class="breadcrumb">
+			<li><a href="#"><span class="icon-home"></span></a></li>
+			<li><a href="#">Internet</a></li>
+			<li class="active">Cours</li>
+		</ol>
 
-	<!-- Début contenu droite --> 
+	<!-- Contenu sous fil d'ariane/cours -->		
 
-	<ol class="breadcrumb">
-		<li><a href="#"><span class="icon-home"></span></a></li>
-		<li><a href="#">Internet</a></li>
-		<li class="active">Cours</li>
-    </ol>
+	<div class="contenudroite">
 
-<div class="contenudroite"> <!-- OK, garder -->
+	<!-- Contenu vidéo -->
+	
+			<h2 class="icon-course title">1.1 Titre d'un cours</h2>
+			Blablabla.<br>
 
+			<iframe height="315" frameborder="1" width="560" allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" src="https://player.vimeo.com/video/122104210"></iframe>
 
-		  <button type="button" class="navmenu-fixed-left navmenu-fixed-left navbar-offcanvas-toggle menugauchebtn collapsed hidden-md hidden-lg" data-toggle="offcanvas" data-target="#menugauche" data-canvas="body" id="menugauche-sm">
-		  <span class="icon-chevron-right"> </span>
+	<!-- Contenu Quizz -->			
+			
+			<h2 class="icon-quizz title">1.2 Titre d'une auto-évaluation </h2>
 
-		  </button>
+			<h3>Pourquoi représenter avec des nombres?</h3>
+			Pourquoi faut-il représenter les textes, images, son, etc, par des nombres dans un ordinateur ?<br>
+			<br>
+			Liste à puuuuuuces.
+			<div class="radio">
+				<label><input type="radio" name="optradio">Puce.</label>
+			</div>
+			<div class="radio">
+				<label><input type="radio" name="optradio">Pupuce.</label>
+			</div>
+			<div class="radio disabled">
+				<label><input type="radio" name="optradio" disabled>Pupupuce qui marche pas.</label>
+			</div>
+			<br>
+			Liste à cooooooches.
+			<div class="checkbox">
+				<label><input type="checkbox" value="">Coche.</label>
+			</div>
+			<div class="checkbox">
+				<label><input type="checkbox" value="">Cocoche.</label>
+			</div>
+			<div class="checkbox disabled">
+				<label><input type="checkbox" value="" disabled>Cococoche qui marche pas.</label>
+			</div>
+			<hr>
 
-  
-<h2 class="icon-course title">1.1 Titre d'un cours</h2>
-Blablabla.<br>
+	<!-- Contenu activités diverses -->
+			
+			<h3>Pourquoi représenter avec des nombres?</h3>
+			Pourquoi faut-il représenter les textes, images, son, etc, par des nombres dans un ordinateur ?
 
-<iframe height="315" frameborder="1" width="560" allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" src="https://player.vimeo.com/video/122104210"></iframe>
+			<h2 class="icon-activity title">1.3 Titre d'une activité</h2>
+			Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. 
 
-<h2 class="icon-quizz title">1.2 Titre d'une auto-évaluation </h2>
+			<h2 class="icon-register title">1.4 Titre d'une activité avancée</h2>
+			En se réveillant un matin après des rêves agités, Gregor Samsa se retrouva, dans son lit, métamorphosé en un monstrueux insecte. Il était sur le dos, un dos aussi dur qu’une carapace, et, en relevant un peu la tête, il vit, bombé, brun, cloisonné par des arceaux plus rigides, son abdomen sur le haut duquel la couverture, prête à glisser tout à fait, ne tenait plus qu’à peine.
 
-<h3>Pourquoi représenter avec des nombres?</h3>
-Pourquoi faut-il représenter les textes, images, son, etc, par des nombres dans un ordinateur ?
-<br><br>
-Liste à puuuuuuces.
- <div class="radio">
-  <label><input type="radio" name="optradio">Puce.</label>
-</div>
-<div class="radio">
-  <label><input type="radio" name="optradio">Pupuce.</label>
-</div>
-<div class="radio disabled">
-  <label><input type="radio" name="optradio" disabled>Pupupuce qui marche pas.</label>
-</div>
-
-<br>
-Liste à cooooooches.
- <div class="checkbox">
-  <label><input type="checkbox" value="">Coche.</label>
-</div>
-<div class="checkbox">
-  <label><input type="checkbox" value="">Cocoche.</label>
-</div>
-<div class="checkbox disabled">
-  <label><input type="checkbox" value="" disabled>Cococoche qui marche pas.</label>
-</div>
-
-<hr>
-<h3>Pourquoi représenter avec des nombres?</h3>
-Pourquoi faut-il représenter les textes, images, son, etc, par des nombres dans un ordinateur ?
-
-<h2 class="icon-activity title">1.3 Titre d'une activité</h2>
-
-Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. 
-
-<h2 class="icon-register title">1.4 Titre d'une activité avancée</h2>
-
-En se réveillant un matin après des rêves agités, Gregor Samsa se retrouva, dans son lit, métamorphosé en un monstrueux insecte. Il était sur le dos, un dos aussi dur qu’une carapace, et, en relevant un peu la tête, il vit, bombé, brun, cloisonné par des arceaux plus rigides, son abdomen sur le haut duquel la couverture, prête à glisser tout à fait, ne tenait plus qu’à peine.
-
-</div>	<!-- Fin contenu droite -->
+	</div>	<!-- Fin contenu sous fil d'ariane/cours -->
 	
 </div>	<!--Content -->
-	
-
-
-
 
    <!-- Début footer --> 
  
@@ -467,7 +466,6 @@ En se réveillant un matin après des rêves agités, Gregor Samsa se retrouva, 
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 });
-</script>
-
+	</script>
   </body>
 </html>

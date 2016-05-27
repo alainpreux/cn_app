@@ -1,28 +1,4 @@
 /* ---------------------------------------------------------*/
-/* JASNY OFFCANVAS */
-/* ---------------------------------------------------------*/
-
-	@media (min-width: 992px) {
-  body {
-    padding-left: 300px;
-  }
- 
- #content {
-	 padding-left:0 !important;
- }
- 
- #menugauche {
-	 top:3.6em;
- }
- 
- .breadcrumb {
-	 position:fixed;
-	 width:100%;
- }
- 
- 
-	}
-/* ---------------------------------------------------------*/
 /* APPEL DE FONTES */
 /* ---------------------------------------------------------*/
 
@@ -114,20 +90,42 @@ a, a:link, a:hover, a:active, a:visited {
 }
 
 
+/* ---------------------------------------------------------*/
+/* JASNY OFFCANVAS */
+/* ---------------------------------------------------------*/
+/* Partie définissant les changements au glissement du menu */
+
+
+@media (min-width: 992px) {
+
+  body {
+    padding-left: 300px;
+  }
+ 
+ #content {
+	 padding-left:0 !important;
+ }
+ 
+ #menugauche {
+	 top:3.6em;
+ }
+ 
+ .breadcrumb {
+	 position:fixed;
+	 width:100%;
+ } 
+ 
+	}
+	
 
 /* ---------------------------------------------------------*/
 /* STYLES TEXTES */
 /* ---------------------------------------------------------*/
 
-html {
-
-}
 
 body {
-	/*line-height:250%;*/
   	font-family: 'Open Sans', sans-serif;
   }
-
 
 h1 {
 	font-family: 'dynobold';
@@ -165,23 +163,6 @@ iframe {
 	border: solid 3px #DCDEDE;
 	
 }
-
-/* ---------------------------------------------------------*/
-/* ICONES TITRES 
-/* ---------------------------------------------------------*/
-
-
-
-/* ---------------------------------------------------------*/
-/* STYLES IMAGES + TEXTE */
-/* ---------------------------------------------------------*/
-
-/* ---------------------------------------------------------*/
-/* BOUTONS RADIO + CHECKBOXES */
-/* ---------------------------------------------------------*/
-
-
-
 
 /* ---------------------------------------------------------*/
 /* MENU GAUCHE 
@@ -231,7 +212,6 @@ iframe {
 	color:#fff;
 }
 
-
 .menugauche .list-group-item {
 	border: none;
 	background-color: transparent !important;
@@ -266,7 +246,6 @@ iframe {
 }
 
 .menugauche h4:first-letter {
-	/*float:left;*/
 	font-size: 2em;
 	padding: 0.2em 0.4em 0 0;
 	vertical-align: middle;
@@ -313,10 +292,14 @@ iframe {
 	text-decoration: none;
 }
 
+/* Placement icone dans sous-menu */
+
 .btnmodules {
 	padding:1em;
 	background-color: #0A2936;
 }
+
+/* Sous-titre modules */
 
 .subbtnmodules {
 	font-size:0.8em;
@@ -324,7 +307,6 @@ iframe {
 	line-height: 1em;
 	padding-left: 1.75em;
 }
-
 
 /* Icones menu déroulant */
 
@@ -342,8 +324,6 @@ iframe {
 	background: #0A2936 url("../img/icon_documents.svg") no-repeat scroll 0.75em 1.5em / 2.5em auto;
 	padding-left: 2.6em;  /* width of the image plus a little extra padding */
 }
-
-
 
 
 /* Style override menu déroulant */
@@ -374,6 +354,9 @@ iframe {
 	position:fixed;
 	width:100%;
 	top:3.6em;
+	margin-bottom: 1em;
+	padding-left:3em;
+	display: block;
 }
 
 
@@ -404,7 +387,6 @@ iframe {
 * {
   margin: 0;
   padding: 0;
-  font-family: arial;
 }
 
 body {
@@ -416,18 +398,12 @@ body {
 	padding-left:5.8em;
 }
 
-
-.content { 
-	/*display: table;*/
-}
-
 .menugauche {
 	margin:0;
 	padding: 0;
 	background-color: #525A59;
 	color: #fff;
     float: none;
-  /*  display: table-cell;*/
 	vertical-align:top;
 }
 
@@ -437,30 +413,8 @@ body {
 	padding-right:5em;
 	padding-bottom:4em;
 	float: none;
-   /* display: table-cell;*/
 }
 
 .contenudroite h2 {
 	margin-left: -2em;
-}
-
-.breadcrumb {
-    margin-bottom: 1em;
-	padding-left:3em;
-	display: block;
-}
-
-#footer {
-	position:absolute;
-	bottom:0;
-	left:0;
-	right:0;
-	background-color:white;
-	z-index:1;
-}
-
-#footer img {
-	height: 4em;
-	margin-top:1em;
-	margin-bottom:1em;
 }
