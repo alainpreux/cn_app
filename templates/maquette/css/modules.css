@@ -6,20 +6,21 @@
   body {
     padding-left: 300px;
   }
-  
-  #menutop .container {
-	 /* padding-left: 300px;*/
-  }
+ 
+ #content {
+	 padding-left:0 !important;
+ }
  
  #menugauche {
-	 top:3.7em;
+	 top:3.6em;
  }
  
  .breadcrumb {
 	 position:fixed;
 	 width:100%;
  }
-  
+ 
+ 
 	}
 /* ---------------------------------------------------------*/
 /* APPEL DE FONTES */
@@ -187,13 +188,28 @@ iframe {
 /* ---------------------------------------------------------*/
 
 #menugauche {
-	top:3.6em;
+	top:3.7em;
 }
 
  #menugauche-sm {
-	 top:3.6em;
+	 top:3.7em;
+	 left:3.8em;
+ }
+ 
+ #menugauche-sm2 h4 {
+    margin-left: 0em !important;
+}
+ 
+ #menugauche-sm2 {
+	 top:3.7em;
  }
 
+ #menugauche-sm2 h1{
+	margin-top: 1em;
+	margin-left:0.3em;
+}
+ 
+ 
 .menugauchebtn {
 	background-color:#333333;
 	border:none;
@@ -355,9 +371,9 @@ iframe {
 	background: rgba(220,222,222,0.7);
 	border-radius: 0;
     list-style: outside none none;
-		 position:fixed;
-	 width:100%;
-	 	 top:3.6em;
+	position:fixed;
+	width:100%;
+	top:3.6em;
 }
 
 
@@ -397,6 +413,7 @@ body {
 
 #content {
 	padding-top:3.8em; 	
+	padding-left:5.8em;
 }
 
 
@@ -416,7 +433,7 @@ body {
 
 .contenudroite {
 	padding-left:9em;
-	padding-top:1em;
+	padding-top:2em;
 	padding-right:5em;
 	padding-bottom:4em;
 	float: none;
