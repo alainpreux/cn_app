@@ -25,7 +25,7 @@ class RepositoryAdmin(admin.ModelAdmin):
     
     def site_url(self, obj):
         #url = reverse('visit_site', args=(obj.git_username, obj.git_name,))
-        url = os.path.join(settings.STATIC_URL, obj.slug, 'index.html' )
+        url = os.path.join(settings.STATIC_URL, settings.GENERATED_SITES_URL, obj.slug, 'index.html' )
         return '<a href="%s">%s<a>' % (url, 'visit')
     site_url.allow_tags = True
     site_url.short_description = 'Site link'

@@ -72,7 +72,7 @@ class BuildView(View):
         
     def get(self, request, slug, *args, **kwargs):
         self.build_repo(slug)
-        return redirect(os.path.join(settings.STATIC_URL, slug, 'index.html'))
+        return redirect(os.path.join(settings.STATIC_URL, settings.GENERATED_SITES_URL, slug, 'index.html'))
 
 
 # FIXME : make simple template view for index.html of each static site 

@@ -16,9 +16,10 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # used to store repositories files structure
-REPOS_DIR = os.path.join(BASE_DIR, 'repositories')
-GENERATED_SITES_DIR = os.path.join(BASE_DIR, 'generatedsites')
-
+REPOS_DIR = os.path.join(BASE_DIR, 'repo_data','repositories')
+GENERATED_SITES_URL = "sites"
+GENERATED_SITES_DIR = os.path.join(BASE_DIR, 'repo_data', GENERATED_SITES_URL)
+# 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
@@ -127,7 +128,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = "collectedstatics/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "generatedsites"),
+    os.path.join(BASE_DIR, "repo_data"),
 ]
 
 # FIXME: logging maybe not suitable for production env (is it automatically redirect to log files ?)

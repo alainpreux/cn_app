@@ -67,6 +67,7 @@ def resync_repo_dir(sender, instance, update_fields, **kwargs):
             slug = Repository.set_slug(instance.git_url)
             create_repo_dir(slug, instance.git_url)
             return
+        # FIXME if default branch changed resync it!
 
 @receiver(post_save, sender=Repository)
 def sync_repo_dir(sender, instance, created, update_fields, **kwargs):
