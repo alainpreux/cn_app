@@ -8,6 +8,7 @@ import logging
 import datetime
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
@@ -72,9 +73,8 @@ class BuildView(View):
         
     def get(self, request, slug, *args, **kwargs):
         self.build_repo(slug)
-        return redirect(os.path.join(settings.STATIC_URL, settings.GENERATED_SITES_URL, slug, 'index.html'))
-
+        return redirect(reverse('visit_site', args=(slug,)))
 
 # FIXME : make simple template view for index.html of each static site 
-#def visit_site(request, username, name):
-#     return HttpResponse(u"Visiting site for repo user = %s | name = %s" % (username, name))
+def visit_site(request, slug):
+    return redirect(os.path.join(settings.STATIC_URL, settings.GENERATED_SITES_URL, slug, 'index.html'))
