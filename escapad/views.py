@@ -41,14 +41,16 @@ class BuildView(View):
         try:
             os.chdir(repo_path)
         except Exception as e:
-            return JsonResponse({"success":"false", "reason":"repo not existing, or not synced"})
+            return {"success":"false", "reason":"repo not existing, or not synced"}
         # 2. git pull origin [branch:'master']
-        git_cmd = "git checkout %s | git pull origin %s" % (repo_object.default_branch, repo_object.default_branch)
+        git_cmd1 = "git checkout %s " %  repo_object.default_branch
+        git_cmd2 = "git pull origin %s" % repo_object.default_branch
         try:
-            subprocess.check_output(git_cmd.split())
+            subprocess.check_output(git_cmd1.split())
+            subprocess.check_output(git_cmd2.split())
         except Exception as e:
             os.chdir(settings.BASE_DIR)
-            return JsonResponse({"success":"false", "reason":"error with git pull origin master command"})
+            return {"success":"false", "reason":"error with git pull origin master command"}
         # 3. build with BASE_PATH/src/toHTML.py 
         os.chdir(settings.BASE_DIR)
         build_cmd = ("python src/cnExport.py -r %s -d %s -i" % (repo_path, build_path))
@@ -56,16 +58,17 @@ class BuildView(View):
             subprocess.check_output(build_cmd.split())
         except Exception as e:
             os.chdir(settings.BASE_DIR)
-            return JsonResponse({"success":"false", "reason":"error when running command"})
+            return {"success":"false", "reason":"error when running command"}
         
         # Normal conclusion
         os.chdir(settings.BASE_DIR)
         repo_object.last_compiled = datetime.datetime.now()
         repo_object.save()
+        return({"success":"true"})
 
     def post(self, request, slug, *args, **kwargs):
-        self.build_repo(slug)
-        return JsonResponse({"success":"true"})
+        res = self.build_repo(slug)
+        return JsonResponse(res)
         
     def get(self, request, slug, *args, **kwargs):
         self.build_repo(slug)
