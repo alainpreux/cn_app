@@ -1,10 +1,12 @@
+@charset "UTF-8";
+
 @font-face {
-	font-family: "culture-numerique";
-	src:url("../fonts/culture-numerique.eot");
-	src:url("../fonts/culture-numerique.eot?#iefix") format("embedded-opentype"),
-		url("../fonts/culture-numerique.woff") format("woff"),
-		url("../fonts/culture-numerique.ttf") format("truetype"),
-		url("../fonts/culture-numerique.svg#culture-numerique") format("svg");
+  font-family: "culture-numerique";
+  src:url("../fonts/culture-numerique.eot");
+  src:url("../fonts/culture-numerique.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/culture-numerique.woff") format("woff"),
+    url("../fonts/culture-numerique.ttf") format("truetype"),
+    url("../fonts/culture-numerique.svg#culture-numerique") format("svg");
   font-weight: normal;
   font-style: normal;
 
@@ -32,9 +34,6 @@
   text-transform: none !important;
   speak: none;
   line-height: 1;
-  font-size:150%;
-  padding-right:0.3em;
-  vertical-align:middle;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -279,7 +278,7 @@
 .icon-contact:before {
   content: "\3c";
 }
-.icon-course:before {
+.icon-course-01:before {
   content: "\3d";
 }
 .icon-database:before {
@@ -306,7 +305,7 @@
 .icon-register:before {
   content: "\60";
 }
-.icon-quizz:before {
+.icon-quizz-01:before {
   content: "\7b";
 }
 .icon-question:before {
@@ -332,4 +331,7 @@
 }
 .icon-forum:before {
   content: "\e003";
+}
+.icon-plus-circled:before {
+  content: "\e004";
 }
