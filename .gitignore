@@ -5,3 +5,4 @@ repositories
 *.sqlite*
 generatedsites
 collectedstatics
+repo_data*
