@@ -70,6 +70,7 @@
 body {
   padding-top: 4em;
   font-family: 'Lato', sans-serif;
+  font-size:160%;
 }
 
 /* ---------------------------------------------------------*/
@@ -87,8 +88,14 @@ body {
 /* ---------------------------------------------------------*/	
 
 .h1, .h2, .h3, h1, h2, h3 {	
-	font-family: 'dyno';
+	font-family: 'dynobold';
+	color: #e8900c ;
 }
+
+.h1, h1 {
+	font-size:300%;
+}
+
 	
 .blue {
 	color: #0F6E96;
@@ -105,7 +112,94 @@ body {
 .purple {
 	color: #802489;
 }	
-	
+
+.orange {
+	color:#e8900c;
+}
+
+
+/* ---------------------------------------------------------*/
+/* BOUTONS */
+/* ---------------------------------------------------------*/
+
+/* Pages impaires */
+
+.btn-odd {
+    padding: 3% 10%;
+    border:2px solid #fff;
+	border-radius:0;
+}
+
+.btn-odd:focus, .btn-odd:active:focus, .btn-odd.active:focus {
+   /* outline: 2px solid #fff;*/
+}
+
+.btn-odd-primary {
+    background: transparent;
+    color: #ffffff;
+}
+.btn-odd-primary:hover, .btn-odd-primary:focus, .btn-odd-primary:active, .btn-odd-primary.active, .open > .dropdown-toggle.btn-odd-primary {
+    background: #e8900c;
+}
+.btn-odd-primary:active, .btn-odd-primary.active {
+    background: #e8900c;
+    box-shadow: none;
+}
+
+/* Pages paires */
+
+
+.btn-even {
+    padding: 3% 10%;
+    border:2px solid #09384b;
+	border-radius:0;
+}
+
+.btn-even:focus, .btn-even:active:focus, .btn-even.active:focus {
+   /* outline: 2px solid #09384b;*/
+}
+
+.btn-even-primary {
+    background: transparent;
+    color: #09384b;
+}
+.btn-even-primary:hover, .btn-even-primary:focus, .btn-even-primary:active, .btn-even-primary.active, .open > .dropdown-toggle.btn-even-primary {
+    background:#e8900c ;
+}
+.btn-even-primary:active, .btn-even-primary.active {
+    background: #e8900c;
+    box-shadow: none;
+}
+
+
+/* ---------------------------------------------------------*/
+/* PANELS */
+/* ---------------------------------------------------------*/
+
+/* Pages impaires */
+
+.panel-odd {
+	border-radius:0;
+	background: #fff;
+	color:#09384b;
+	border:2px solid #fff;
+	padding:5%;
+	margin-top:5%;
+	text-align:left;
+}
+
+/* Pages paires */
+
+.panel-even {
+	border-radius:0;
+	background: #09384b;
+	color:#fff;
+	border:2px solid #09384b;
+	padding:5%;
+	margin-top:5%;
+	text-align:left;
+}
+
 /* ---------------------------------------------------------*/
 /* STYLES IMAGES + TEXTE */
 /* ---------------------------------------------------------*/
@@ -116,11 +210,17 @@ body {
 } 
 
 .image_text img {
-	/*float:left;*/
-	width:20%;
+	float:left;
+	width:30%;
 	margin-right:5%;
 	margin-bottom:5%;
 } 
+
+.vertical-image {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 	
 /* ---------------------------------------------------------*/
 /* MENU HAUT */
@@ -208,9 +308,9 @@ body {
 	position: fixed;
 	top: 50%;
 	right:0;
-	width: 15%;
+	padding:2%;
+	width:20%;
 	transform: translate(0%,-50%);
-	line-height:100%;
 }
 
 
@@ -220,13 +320,14 @@ body {
     background-size: 1em;
 	background-repeat:no-repeat;
 	background-position: 0.75em 0.75em;
-	padding-left: 2em;  /* width of the image plus a little extra padding */
-	display: block;
+	padding-left: 2em;*/  /* width of the image plus a little extra padding */
+	/*display: block;*/
+
 }
 
 #header .nav a {
 	/*font-family: 'dynobold';*/
-  text-decoration: none;
+ text-decoration: none;
   padding: 5px 10px;
   display: block;
 }
@@ -244,7 +345,7 @@ body {
 	background-repeat: no-repeat;
 	background-position: 0.75em 0.75em;
 	padding-left: 2em;  /* width of the image plus a little extra padding */
-	display: block;
+	/*display: block;*/
 }
 
 .sidemenu {
@@ -269,138 +370,112 @@ body {
 /* PAGES - ALL*/
 
 .section {
- display: flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   /*padding:5%;*/
-  padding-left:25%;
-  padding-right:25%;
-  padding-top:10%;
-  padding-bottom:10%;
+  padding-left:10%;
+  padding-right:10%;
+}
+
+/* Pages impaires */
+
+.section-odd {
+	background: #09384b ;
+	color: #fff ;
+}
+
+/* Pages paires */
+
+.section-even {
+	background-color: #fff;
+	color:#09384b;
 }
 
 
 /* ---------------------------------------------------------*/
 /* PAGE 1 */
 
-#page1 {
-  background: ;
-  color: ;
-}
-
-#page1 hr {
-	border: 2px solid  #AFA70E;	
+#page1{
+	z-index:5000;
 }
 
 #page1 img {
-	width:30%;
-	margin-bottom:5%;
-	margin-top:5%;
-} 
-
+	width:80%;
+}
 
 /* ---------------------------------------------------------*/
-/* PAGE 2 */
-
-#page2 {
-	background-color: #0c6d95;
-	color:#fff;
-}
-
-#page2 hr {
-	border: 2px solid  #fff;	
-}
+/* PAGE 2 - Culture Citoyenne */
 
 #page2 img {
-	/*width:50%;*/
-	margin-bottom:5%;
-	margin-top:5%;
+	width:50%;
+	padding-top:10%;
+	padding-bottom:10%;
 } 
 
 /* ---------------------------------------------------------*/
-/* PAGE 3 - Culture Citoyenne */
-
-#page3 {
- background-color:;
-}
-
-#page3 h3 {
-	color:#AFA70E;
-}
+/* PAGE 3 - Pari formation */
 
 #page3 img {
-	width:8em;
+	width:15em;
 	margin-bottom:5%;
-	cursor: pointer;
+	margin-top:5%;
     border-radius:0;
-    transition: box-shadow 0.5s;
 } 
 
-#page3 img:hover {
-    box-shadow: 5px 0px 40px rgba(0,0,0, .2);
-}
-
-#page3 hr {
-	border: 2px solid  #AFA70E;	
-}
-
-
 /* ---------------------------------------------------------*/
-/* PAGE 4 - C2i */
-
-#page4 {
- background-color: #0291c4;
- color: #fff;
-}
-
-#page4 hr {
-	border: 2px solid  #fff;	
-}
+/* PAGE 4 - Motivations */
 
 #page4 img {
 /*	width:8em;*/
+	height:7em;
 	margin-bottom:5%;
-	cursor: pointer;
-    border-radius:0;
 } 
 
+#page4 .btn-even {
+	margin-top:2%;
+}
+
+.page4title{
+	font-size:150%;
+	line-height:1.5;
+}
 
 /* ---------------------------------------------------------*/
 /* PAGE 5 - Contenus pensés pour la réutilisation */
 
-#page5 {
- background-color:;
-}
-
-#page5 hr {
-	border: 2px solid  #802489;	
-}
-
 #page5 img {
-/*	width:30%;*/
+	/*width:30%;*/
+	height:10em;
+	margin-top:5%;
 	margin-bottom:5%;
-	cursor: pointer;
-    border-radius:0;
 } 
 
 /* ---------------------------------------------------------*/
-/* PAGE 6 - Contacts */
-
-#page6 {
- background-color: #802489;
- color: #fff;
-}
-
-#page6 hr {
-	border: 2px solid  #fff;	
-}
+/* PAGE 6 - Modules */
 
 #page6 img {
-	width:20%;
+	height:8em;
+	margin-top:5%;
 	margin-bottom:5%;
-
 } 
 
+/* ---------------------------------------------------------*/
+/* PAGE 7 - Contacts */
+
+#page7{
+	position:relative;
+	z-index:-50;
+}
+
+#page7 img {
+	height:8em;
+	margin-top:5%;
+	margin-bottom:5%;
+} 
+
+/* ---------------------------------------------------------*/
+/* PAGE 7 -Footer */
 
 #footer {
 	position:absolute;
@@ -408,7 +483,7 @@ body {
 	left:0;
 	right:0;
 	background-color:white;
-	z-index:1;
+	text-align:center;
 }
 
 #footer img {
