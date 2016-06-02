@@ -63,7 +63,11 @@
         </div>
     </nav>
     <!-- end of fixed top navbar -->
-    {% block main_content %} {% endblock %}
+    {% block main_content %} 
+    
+        {{ module_content | safe }}
+        
+    {% endblock %}
     <!-- Début footer -->
     <!-- <footer>
         <a href="https://www.univ-lille3.fr/">
