@@ -17,8 +17,8 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/jasny-bootstrap.min.css" rel="stylesheet" media="screen"> 	
 	
-	<!-- custom -->
-    <link href="css/custom.css" rel="stylesheet">
+	<!-- Onepage -->
+    <link href="css/onepage.css" rel="stylesheet">
 
 	<!-- Icones -->
     <link href="css/icons.css" rel="stylesheet">
@@ -30,21 +30,18 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
   
-
-
- 
-
+  
   </head>
-  <body data-spy="scroll" data-target="#header" data-offset="80">
+  <body data-spy="scroll" data-target="#header" data-offset="120">
   <!-- Structure -->
-  <!-- UNE NOUVELLE APPROCHE DU NUMÉRIQUE / 1.origine du projet / 2.culture numérique, culture citoyenne / 3.complémentarité avec le C2i niveau 1? -->
-  <!-- DES CONTENUS PENSÉS POUR LA RÉUTILISATION / 1.des contenus libres pour une utilisation libre / 2. entre diffusion de contenus et recherches personnelles, le pari d'une formation active / 3.faciliter la réutilisabilité -->
+  <!-- UNE NOUVELLE APPROCHE DU NUMÉRIQUE  -->
+  <!-- DES CONTENUS PENSÉS POUR LA RÉUTILISATION  -->
   <!-- MODULES -->
   <!-- CONTACTS -->
  
 
    <!-- Début Menu One page / header --> 
-		<div id="header" >
+		<div id="header" class="navbar navbar-fixed-top">
 			<div class="collapse navbar-collapse" id="exCollapsingNavbar" >
 				<ul class="nav">
 					<li><a href="#page1">Une nouvelle approche du numérique</a></li>
@@ -62,15 +59,12 @@
    
   <!-- <nav class="navbar navbar-light bg-faded"> -->
 		
-		<nav class="sidemenu">
-		<!-- <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar"  aria-expanded="false" aria-controls="navbar"> -->
-		<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar"  aria-expanded="false" aria-controls="navbar">
-		<span class="glyphicon glyphicon-chevron-left"></span>
-		</button>
-		</nav> 
-  
-  	
-		
+		<nav class="sidemenu visible-xs">
+			<button class="btn-sidemenu btn-sidemenu-primary collapsed" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar"  aria-expanded="false" aria-controls="navbar">
+			<span class="sr-only">Activer navigation secondaire</span>
+			<span class="glyphicon glyphicon-chevron-left"></span>
+			</button>
+		</nav> 		
 		
    <!-- Fin Menu One page / header -->	
    
@@ -83,7 +77,7 @@
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
+            <span class="sr-only">Activer navigation principale</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -113,7 +107,7 @@
 
    <!-- Début page 1 -->
    
-  <div id="page1" class="section section-odd container-fluid">
+  <div id="page1" class="page section-odd container-fluid">
 		<div class="row text-center">
 			<div class="col-md-12">
 				<img src="img/maintitle.svg"  align="center">
@@ -125,7 +119,7 @@
    <!-- Fin page 1 -->
    <!-- Début page 2 --> 
   
-  <div id="page2"  class="section section-even container-fluid">
+  <div id="page2"  class="page section-even container-fluid">
 		<div class="row">
 			<div class="col-md-7">
 				<h1>Culture numérique,<br> culture citoyenne</h1>
@@ -137,7 +131,7 @@
 				Nous proposons une découverte de la culture numérique à travers différentes approches (historiques, sociologiques, économique, …). 
 				Les aspects technologiques ne sont jamais gratuits mais répondent toujours à la nécessaire compréhension de concepts pour appréhender des questions plus générales.	
 			</div>
-			<div class="col-md-5 vertical-image">
+			<div class="col-md-5 text-center">
 				<img src="img/citoyen.svg">
 			</div>	
 		</div>
@@ -147,7 +141,7 @@
    <!-- Fin page 2 -->
    <!-- Début page 3 --> 
   
- <div id="page3" class="section section-odd container-fluid">
+ <div id="page3" class="page section-odd container-fluid">
   		<div class="row">
 			<div class="col-md-12">
 			<h1>Le pari d’une formation active.</h1>
@@ -187,7 +181,7 @@
    <!-- Fin page 3 -->
    <!-- Début page 4 -->   
  
-    <div id="page4" class="section section-even container-fluid">
+    <div id="page4" class="page section-even container-fluid">
   		<div class="row">
 			<div class="col-md-12">
 				<h1>Motivations</h1>
@@ -220,7 +214,7 @@
    <!-- Fin page 4 -->
    <!-- Début page 5 -->   
   
-  <div id="page5" class="section section-odd container-fluid">
+  <div id="page5" class="page section-odd container-fluid">
   		<div class="row">
 			<div class="col-md-12">
 			<h1>Réutilisabilité</h1>
@@ -265,7 +259,7 @@
 
    <!-- Fin page 5 -->
    <!-- Début page 6 --> 
-   <div id="page6" class="section section-even container-fluid">
+   <div id="page6" class="page section-even container-fluid">
 		<div class="row">
 			<div class="col-md-12">
 			<h1>Modules</h1>
@@ -299,7 +293,7 @@
 	
     <!-- Fin page 6 -->
    <!-- Début page 7 -->    
-  <div id="page7" class="section section-odd container-fluid">
+  <div id="page7" class="page section-odd container-fluid">
   		<div class="row">
 		<div class="col-md-12">
 		<h1>Contacts</h1>
@@ -315,11 +309,10 @@
 		<button type="button" data-target="" class="btn-odd btn-odd-primary btn-lg">valerie.duhal@univ-lille3.fr</button>
 		</div>
 		</div>
-		<div id="footer">
+  </div>
+  		<div id="footer">
 		<img src="img/logo_lille3.svg"><img src="img/logo_unr.svg">
 		</div>
-  </div>
-  
    <!-- Fin page 7 -->
 
    <!-- Scripts fin --> 
