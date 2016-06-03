@@ -394,7 +394,7 @@ body {
 }
 
 #content {
-	padding-top:3.8em; 	
+	padding-top:4.8em; 	
 	padding-left:5.8em;
 }
 
@@ -416,5 +416,5 @@ body {
 }
 
 .contenudroite h2 {
-	margin-left: -2em;
+	/*margin-left: -2em;*/
 }

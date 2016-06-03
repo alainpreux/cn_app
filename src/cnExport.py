@@ -104,7 +104,7 @@ def generateVideo(doc,tag,text,videos,display,subsection,subsec_text):
             with tag('div', style="display:none"):
                 with tag('div', id=text_id, klass="fancy-text"):
                     doc.asis(subsec_text)
-        # go now line for each video after 1st video
+        # go new line for each video after 1st video
         if idVid > 0:
             doc.asis('<br />')
         # add iframe code
@@ -161,7 +161,7 @@ def generateMainContent(data, doc,tag,text,module, outModuleDir):
                             if href.endswith(".html"):
                                 doc.asis(subsec_text)
         # add download section
-        generateDownloadSection(data, doc,tag,text,module, outModuleDir)
+        generateDownloadSection(data,doc,tag,text,module,outModuleDir)
 
 def writeHtml(module, outModuleDir, html):
     module_file_name = os.path.join(outModuleDir, module)+'.html'

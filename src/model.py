@@ -146,24 +146,25 @@ class Cours(Subsection):
 
             
     def toHTML(self, feedback_option=False):
-        html_src = markdown.markdown(self.src, MARKDOWN_EXT)
+        self.html_src = markdown.markdown(self.src, MARKDOWN_EXT)
         if self.detectVideoLinks() : 
             # post-Processing video links
             try:
-                tree = html.fromstring(html_src)
+                tree = html.fromstring(self.html_src)
                 for vl in tree.xpath('//a[contains(@class, "lien_video")]'):
                     vl.text = vl.text+" (vers la video)"
                     # change href to this format http://vimeo.com/[id]
                     video_id = vl.attrib['href'].rsplit('/', 1)[1]
                     vl.attrib['href'] = 'http://vimeo.com/'+video_id
 
-                html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
+                self.html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
             except:
                 logging.exception("Exception with vimeo video links")
         # FIXME : ugly hack; we should have a proper URL mechanism like the one in Django framework
         # indirection for media link because files are splitted and put in folders
-        html_src = html_src.replace('media/', '../media/')
-        return html_src
+        self.html_src = self.html_src.replace('media/', '../media/')
+        
+        return self.html_src
                 
     def detectVideoLinks(self):
         videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.lien_video\s*}', self.src, flags=re.M)
@@ -217,25 +218,25 @@ class AnyActivity(Subsection):
         return gift_src
     
     def toHTML(self, feedback_option=False):
-        html_src = ''
+        self.html_src = ''
         for question in self.questions:
             # append each question to html output
-            html_src+=question.to_html(feedback_option)
-            if html_src == '': # fallback when question is not yet properly formated
-                html_src = '<p>'+self.src+'</p>'
+            self.html_src+=question.to_html(feedback_option)
+            if self.html_src == '': # fallback when question is not yet properly formated
+                self.html_src = '<p>'+self.src+'</p>'
             # post-process Gift source replacing markdown formated questions text by html equivalent
             if question.text_format in (("markdown")):
                 question.md_src_to_html()
         # add "target="_blank" to all anchors
         try:
-            tree = html.fromstring(html_src)
+            tree = html.fromstring(self.html_src)
             for link in tree.xpath('//a'):
                 link.attrib['target']="_blank"
-            html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
+            self.html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
         except:
-            logging.exception("=== Error finding anchors in html src: %s" % html_src)
+            logging.exception("=== Error finding anchors in html src: %s" % self.html_src)
 
-        return html_src
+        return self.html_src
     
     def toXMLMoodle(self,outDir):
         # a) depending on the type, get max number of attempts for the test 
