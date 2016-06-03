@@ -22,6 +22,9 @@ import toIMS
 import model
 
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
+BASE_PATH = os.path.abspath(os.getcwd())
+TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates' )
+
 
 def write_iframe_code(video_link):
     return '<div class="iframe_cont"><iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" data-src="'+video_link+'"></iframe></div>'
@@ -160,28 +163,31 @@ def generateMainContent(data, doc,tag,text,module, outModuleDir):
         # add download section
         generateDownloadSection(data, doc,tag,text,module, outModuleDir)
 
-def writeHtml(module, outModuleDir,doc):
+def writeHtml(module, outModuleDir, html):
     module_file_name = os.path.join(outModuleDir, module)+'.html'
     moduleHtml = open(module_file_name, 'w', encoding='utf-8')
-    moduleHtml.write(indent(doc.getvalue()))
+    moduleHtml.write(html)
     moduleHtml.close()
     
     
 def generateModuleHtml(data, module, outModuleDir):
     """ parse data from config file 'moduleX.config.json' and generate a moduleX html file """
-
-    # create magic yattag triple
-    doc, tag, text = Doc().tagtext()
-
-    doc.asis('<!--  NAVIGATION MENU -->')
-    with tag('nav', klass="menu accordion"):
-        with tag('h3'):
-            text(data["title"])
-        with tag('ul'):
-            generateMenuSections(data,doc,tag,text)
-            
-    generateMainContent(data,doc,tag,text,module, outModuleDir)
-    writeHtml(module, outModuleDir,doc)
+    # 
+    # # create magic yattag triple
+    # doc, tag, text = Doc().tagtext()
+    # 
+    # doc.asis('<!--  NAVIGATION MENU -->')
+    # with tag('nav', klass="menu accordion"):
+    #     with tag('h3'):
+    #         text(data["title"])
+    #     with tag('ul'):
+    #         generateMenuSections(data,doc,tag,text)
+    #         
+    # generateMainContent(data,doc,tag,text,module, outModuleDir)
+    jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
+    module_template = jenv.get_template("module.html")
+    html = module_template.render(module=data)
+    writeHtml(module, outModuleDir, html)
 
 def processModule(module,repoDir,outDir, feedback_option, ims_option):
     """ given input paramaters, process a module  """
@@ -230,17 +236,17 @@ def processRepository(args, repoDir, outDir):
     return course_obj
      
 
-def buildSite(course_obj, templates_path, repoDir, outDir):
+def buildSite(course_obj, repoDir, outDir):
     """ Generate full site from result of parsing repository """    
     
-    jenv = Environment(loader=FileSystemLoader(templates_path))
+    jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
     site_template = jenv.get_template("site_layout.html")
     #if found, copy logo.png, else use default
     logo_files = glob.glob(os.path.join(repoDir, 'logo.*'))
     if len(logo_files) > 0:
         logo = logo_files[0]
     else:# use default one
-        logo = os.path.join(templates_path, 'logo.png') 
+        logo = os.path.join(TEMPLATES_PATH, 'logo.png') 
     try:
         shutil.copy(logo, outDir)
     except Exception as e:
@@ -266,10 +272,10 @@ def buildSite(course_obj, templates_path, repoDir, outDir):
     except Exception as err:
         ## use default from template
         logging.error(" Cannot parse home markdown ")
-        with open(os.path.join(templates_path, 'default_home.html'), 'r', encoding='utf-8') as f:
+        with open(os.path.join(TEMPLATES_PATH, 'default_home.html'), 'r', encoding='utf-8') as f:
             home_html = f.read()
     ## write index.html file
-    html = site_template.render(course=course_obj, module_content=home_html, is_home=True)
+    html = site_template.render(course=course_obj, module_content=home_html,body_class="home")
     utils.write_file(html, os.getcwd(), outDir, 'index.html')
     
     # Loop through modules
@@ -277,7 +283,7 @@ def buildSite(course_obj, templates_path, repoDir, outDir):
         in_module_file = os.path.join(outDir, module.module, module.module+".html")
         with open(in_module_file, 'r', encoding='utf-8') as f:
             data=f.read()
-        html = site_template.render(course=course_obj, module_content=data, is_home=False)
+        html = site_template.render(course=course_obj, module_content=data, body_class="modules")
         utils.write_file(html, os.getcwd(), outDir, module.module+'.html')
 
 
@@ -293,7 +299,7 @@ def prepareDestination(outDir):
        else:
            print ("Cannot create %s " % (outDir))
            sys.exit(0)
-    for d in ['static/js', 'static/img', 'static/svg', 'static/css']:
+    for d in ['static/js', 'static/img', 'static/svg', 'static/css', 'static/fonts']:
         dest = os.path.join(outDir, d)
         try :
             shutil.copytree(d, dest)
@@ -327,13 +333,11 @@ if __name__ == "__main__":
     logging.basicConfig(filename='logs/toHTML.log',filemode='w',level=getattr(logging, args.logLevel))
 
     # Setting up paths and directories
-    ## App paths
-    base_path = os.path.abspath(os.getcwd())
     ## repo path
     if os.path.isabs(args.repository):
         repoDir = args.repository
     else:    
-        repoDir = os.path.join(base_path, args.repository)
+        repoDir = os.path.join(BASE_PATH, args.repository)
     logging.warn("repository directory path : %s" % repoDir)
     ## Check repo exists, otherwise exit
     if not(os.path.exists(repoDir)):
@@ -352,10 +356,10 @@ if __name__ == "__main__":
     course_obj = processRepository(args, repoDir, outDir)
     
     # Build site
-    templates_path = os.path.join(base_path, 'templates' )
-    buildSite(course_obj, templates_path, repoDir, outDir)        
+    
+    buildSite(course_obj, repoDir, outDir)        
         
     # Exit and print path to build files:
-    os.chdir(base_path)
+    os.chdir(BASE_PATH)
     print("**Build successful!** See result in : %s" % outDir)
     sys.exit(0)
