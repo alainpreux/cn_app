@@ -21,7 +21,7 @@ function windowSize(){
                 return false
             })
             
-            var scrollPos = $('.content #page2').offset.top();
+            var scrollPos = $('.content #page2').offset().top();
    $('#page2').html(scrollPos);
    
         })

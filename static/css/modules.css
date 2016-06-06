@@ -178,9 +178,8 @@ hr {
 	border: 1px solid  #AFA70E;		
 }
 
-iframe {
-	border: solid 3px #DCDEDE;
-}
+
+
 
 /* ---------------------------------------------------------*/
 /* MENU GAUCHE 
@@ -439,4 +438,57 @@ body {
   margin-top: -90px; 
   height: 90px; 
   visibility: hidden; 
+}
+
+
+/* Video related stuff */
+.lien_video{
+    display: none;
+}
+
+.play_thumb{
+    width: 320px;
+    height:180px;
+}
+
+.iframe_cont {
+    padding-bottom: 1em;
+}
+
+iframe{
+	border: solid 3px #DCDEDE;
+    width: 320px;
+    height:180px;
+}
+
+.play_thumb img{
+    width:100%;
+    float: left;
+    border: 3px solid #dcdede;
+}
+
+.play-button {
+    height: 40px;
+    width: 65px;    
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    position: relative;
+    top:33%;
+    left:39%;
+}
+
+.play-button:hover {
+    background-color: rgba(0, 173, 239, 0.9);
+}
+
+.play-button:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 10.5px;
+    left: 24px;
+    margin: 0 auto;
+    border-style: solid;
+    border-width: 9.5px 0 9.5px 17px;
+    border-color: transparent transparent transparent rgba(255, 255, 255, 1);
 }

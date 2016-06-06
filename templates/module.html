@@ -59,8 +59,11 @@
                         {% if sub.videos|length > 0  %}
                             {% for video in sub.videos %}
                         <!--  TODO : check video here and add fancy text -->
+                                
                                 <div class="iframe_cont">
-                                    <iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" {% if not firstsec %}data-{%endif%}src="{{video.video_link}}"></iframe></div>
+                                    {% if not firstsec %}{% include 'player_button.html'%}{%endif%}
+                                    <iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" {% if not firstsec %}data-{%endif%}src="{{video.video_link}}" 
+                                        {%if not firstsec%}style="display:none"{%endif%}></iframe></div>
                             {% endfor %}
                         {% endif %}
                         {{ sub.html_src|safe }}

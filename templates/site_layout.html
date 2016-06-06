@@ -85,7 +85,11 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="static/js/vendors/bootstrap.min.js"></script>
     <script src="static/js/vendors/jasny-bootstrap.min.js"></script>
+    {% if body_class == 'home' %}
     <script src="static/js/scroll.js"></script>
+    {% else %}
+    <script src="static/js/modules.js"></script>
+    {% endif %}
     <script>
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
