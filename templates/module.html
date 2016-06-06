@@ -7,13 +7,13 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{section.num|replace('-','_')}}">{{ section.num }} {{ section.title }}</a>
+                    <a data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{section.num|replace('-','_')}}" href="#sec_{{section.num|replace('-','_')}}">{{ section.num }} {{ section.title }}</a>
                 </h4>
             </div>
             <div id="collapse{{section.num|replace('-','_')}}" class="panel-collapse collapse">
                 <ul class="list-group">
                     {% for subsection in section.subsections %}
-                    <a href="#">
+                    <a href="#subsec_{{ subsection.num|replace('-','_') }}">
                         <li class="list-group-item icon-{{ subsection.folder|lower  }}">{{ subsection.title }}</li>
                     </a>
                     {% endfor %}

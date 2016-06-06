@@ -123,6 +123,7 @@ a, a:link, a:hover, a:active, a:visited {
 /* ---------------------------------------------------------*/
 
 
+
 body {
   	font-family: 'Open Sans', sans-serif;
   }
@@ -417,4 +418,15 @@ body {
 
 .contenudroite h2 {
 	/*margin-left: -2em;*/
+}
+
+/* Added by Freddy */
+
+/* offset pour les ancres */ 
+*[id]:before { 
+  display: block; 
+  content: " "; 
+  margin-top: -90px; 
+  height: 90px; 
+  visibility: hidden; 
 }
