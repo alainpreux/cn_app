@@ -23,6 +23,7 @@
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin-right:0.75em;
 }
 
 [class^="icon-"]:before,
@@ -36,6 +37,7 @@
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+    margin-right:0.75em;
 }
 
 .icon-android:before {
@@ -278,7 +280,7 @@
 .icon-contact:before {
   content: "\3c";
 }
-.icon-course-01:before {
+.icon-course:before {
   content: "\3d";
 }
 .icon-database:before {
@@ -305,7 +307,7 @@
 .icon-register:before {
   content: "\60";
 }
-.icon-quizz-01:before {
+.icon-quizz:before {
   content: "\7b";
 }
 .icon-question:before {
