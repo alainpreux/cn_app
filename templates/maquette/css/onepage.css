@@ -64,11 +64,10 @@
   padding: 0;
 }
 
-
 body {
 	position:relative;
 	padding-top: 3.2em;
-	font-family: 'Lato', sans-serif;
+	font-family: 'Open sans', sans-serif;
 	font-size:160%;
 }
 
@@ -79,6 +78,19 @@ body {
 .navbar-nav > li > a {
     padding-bottom: 0.72em;
     padding-top: 0.81em;
+}
+
+.navbar-nav {
+    margin: 0;
+	margin-right:-15px;
+}
+
+.navbar-collapse.in {
+    overflow-y: visible;
+}
+
+.navbar-fixed-bottom .navbar-collapse, .navbar-fixed-top .navbar-collapse {
+    max-height: 1000px;
 }
 
 /* ---------------------------------------------------------*/
@@ -309,7 +321,6 @@ body {
 	padding: 5px 10px;
 	color:#fff;
 }
-
 
 #header .nav a:hover {
   text-shadow: 0 0 5px #000;
