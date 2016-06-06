@@ -432,7 +432,7 @@ body {
 /* Added by Freddy */
 
 /* offset pour les ancres */ 
-*[id]:before { 
+section:before { 
   display: block; 
   content: " "; 
   margin-top: -90px; 
