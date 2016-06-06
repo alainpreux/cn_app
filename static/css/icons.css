@@ -337,3 +337,17 @@
 .icon-plus-circled:before {
   content: "\e004";
 }
+
+/* custom mapping */
+.icon-webcontent:before {
+  content: "\3d";
+} 
+.icon-comprehension:before {
+  content: "\7b";
+}
+.icon-activite:before {
+  content: "\2e";
+}
+.icon-activiteavancee:before {
+  content: "\2f";
+}
