@@ -1,3 +1,7 @@
+body {
+	position:relative;
+}
+
 /* RESET */
 
 .h1, .h2, .h3, h1, h2, h3 {
@@ -154,15 +158,30 @@ iframe {
 .menugauche a {
 	color:#fff;
 	font-weight:bold;
+    display: inline !important;
+    padding: 0 !important;
 }
 
 .menugauche a:hover {
 	color:#AFA70E;
 	font-weight:bold;
+    background-color:transparent!important;
 }
 
 .menugauche a:active {
 	color:#C84B24;
+	font-weight:bold;
+}
+.menugauche li.active a {
+	color:#C84B24;
+	font-weight:bold;
+}
+.menugauche li.active {
+	color:#C84B24;
+	font-weight:bold;
+}
+.menugauche a[aria-expanded=true] {
+	color:#AFA70E;
 	font-weight:bold;
 }
 

@@ -1,7 +1,8 @@
 <!-- Menu gauche -->
 <div class="menugauche navmenu navmenu-default navmenu-fixed-left offcanvas-sm" role="navigation" id="menugauche">
     <h1 class="icon-web">{{ module.menutitle }}</h1>
-    <div class="panel-group" id="accordion">
+
+    <div class="nav panel-group" id="accordion">
         <!-- Copier ici un item déployable -->
         {% for section in module.sections %}
         <div class="panel panel-default">
@@ -11,11 +12,13 @@
                 </h4>
             </div>
             <div id="collapse{{section.num|replace('-','_')}}" class="panel-collapse collapse">
-                <ul class="list-group">
+
+                <ul class="nav list-group">
                     {% for subsection in section.subsections %}
-                    <a href="#subsec_{{ subsection.num|replace('-','_') }}">
-                        <li class="list-group-item icon-{{ subsection.folder|lower  }}">{{ subsection.title }}</li>
-                    </a>
+                    
+                        <li class="list-group-item"><a class="icon-{{ subsection.folder|lower  }}" href="#subsec_{{ subsection.num|replace('-','_') }}">{{ subsection.title }}</a></li>
+                    
+
                     {% endfor %}
                 </ul>
             </div>

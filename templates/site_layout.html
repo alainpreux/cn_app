@@ -23,7 +23,8 @@
     <title>{{ course.title }}</title>
 </head>
 
-<body class={{ body_class }} {% if body_class == 'home' %}data-spy="scroll" data-target="#header" data-offset="120"{% endif %}>
+<body class={{ body_class }} data-spy="scroll" {% if body_class == 'home' %}data-target="#header" data-offset="120"{%elif body_class== 'modules'%}data-target="#menugauche" data-offset="120"{% endif %}>
+
     <!-- Fixed navbar -->
     <nav class="navbar navbar-default navbar-fixed-top" id="menutop">
         <div class="container">

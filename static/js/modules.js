@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    // play button 
     var icon = $('.play-button');
     icon.click(function() {
         console.log("I m clicked !", $(this));
@@ -11,5 +12,18 @@ $(document).ready(function() {
             }
         
         return true;
+        });
+    
+    // menu gauche active link and set breadcrumb
+    var subseclink = $('#accordion  ul.list-group > li > a');
+    subseclink.click(function(){
+        console.log("Subsec link clicked !", $(this));
+        $('#accordion  ul.list-group > a').removeClass('active');
+        $(this).addClass('active');
+        // change breadcrumb
     });
+    $('#accordion ul.list-group > li').on("activate.bs.scrollspy", function(){
+        console.log("Link activated by spy", $(this));
+    })
+    
 });
