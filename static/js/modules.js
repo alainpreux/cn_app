@@ -22,8 +22,16 @@ $(document).ready(function() {
         $(this).addClass('active');
         // change breadcrumb
     });
+    
+    // Watch scrollspy events and change breadcrumb
     $('#accordion ul.list-group > li').on("activate.bs.scrollspy", function(){
         console.log("Link activated by spy", $(this));
-    })
+        section_title = $(this).parents('.panel-default').children('.panel-heading').children('h4').children('a').text();
+        //subsec_title = $(this).children('a').text()
+        $('ol.breadcrumb').children('.active').text(section_title);        
+        // deploy section
+        //$('[aria-expanded="true"]').collapse("hide")
+        //$(this).parentsUntil('.collapse').parent().collapse({parent:"#accordion",toggle:"true"})
+    });
     
 });
