@@ -26,12 +26,21 @@ $(document).ready(function() {
     // Watch scrollspy events and change breadcrumb
     $('#accordion ul.list-group > li').on("activate.bs.scrollspy", function(){
         console.log("Link activated by spy", $(this));
+        console.log("Already collapsed ?", $(this).parentsUntil('.collapse').parent().attr("aria-expanded"));
         section_title = $(this).parents('.panel-default').children('.panel-heading').children('h4').children('a').text();
         //subsec_title = $(this).children('a').text()
         $('ol.breadcrumb').children('.active').text(section_title);        
-        // deploy section
-        //$('[aria-expanded="true"]').collapse("hide")
-        //$(this).parentsUntil('.collapse').parent().collapse({parent:"#accordion",toggle:"true"})
+        // deploy section, but only when it has not been done already via a click:
+        
+        if ($(this).parentsUntil('.collapse').parent().attr("aria-expanded") != "true" ) {
+            console.log("Toggling ?")
+            $('#accordion .collapse.in').collapse("toggle")
+            $(this).parentsUntil('.collapse').parent().collapse("toggle");
+            //$(this).parentsUntil('.collapse').parent().parent().siblings().children('.collapse.in').collapse("toggle")
+            // $(this).parentsUntil('.collapse').parent().collapse({"toggle": true, 'parent': '#accordion'});
+            // $('#accordion [aria-expanded="true"].panel-collapse').collapse("hide")
+            // $(this).parentsUntil('.collapse').parent().collapse("show");
+        }
     });
     
 });

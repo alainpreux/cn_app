@@ -219,7 +219,7 @@ iframe {
 /* ---------------------------------------------------------*/
 
 .breadcrumb {
-	background: rgba(220,222,222,0.7);
+	background: rgba(220,222,222,0.9);
 	border-radius: 0;
     list-style: outside none none;
 	position:fixed;
