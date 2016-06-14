@@ -34,8 +34,9 @@ $(document).ready(function() {
         
         if ($(this).parentsUntil('.collapse').parent().attr("aria-expanded") != "true" ) {
             console.log("Toggling ?")
-            $('#accordion .collapse.in').collapse("toggle")
-            $(this).parentsUntil('.collapse').parent().collapse("toggle");
+            //$('#accordion .collapse.in').collapse("toggle")
+            //$(this).parentsUntil('.collapse').parent().collapse("toggle");
+            
             //$(this).parentsUntil('.collapse').parent().parent().siblings().children('.collapse.in').collapse("toggle")
             // $(this).parentsUntil('.collapse').parent().collapse({"toggle": true, 'parent': '#accordion'});
             // $('#accordion [aria-expanded="true"].panel-collapse').collapse("hide")

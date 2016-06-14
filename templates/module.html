@@ -2,18 +2,17 @@
 <div class="menugauche navmenu navmenu-default navmenu-fixed-left offcanvas-sm" role="navigation" id="menugauche">
     <h1 class="icon-web">{{ module.menutitle }}</h1>
 
-    <div class="nav panel-group" id="accordion">
+    <div class="nav panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <!-- Copier ici un item déployable -->
         {% for section in module.sections %}
         <div class="panel panel-default">
-            <div class="panel-heading">
+            <div class="panel-heading" role="tab" id="heading{{section.num|replace('-','_')}}">
                 <h4 class="panel-title">
-                    <a href="#sec_{{section.num|replace('-','_')}}">{{ section.num }} {{ section.title }}</a>
-                    <!-- <a data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{section.num|replace('-','_')}}" href="#sec_{{section.num|replace('-','_')}}">{{ section.num }} {{ section.title }}</a> -->
+                    <!-- <a href="#sec_{{section.num|replace('-','_')}}">{{ section.num }} {{ section.title }}</a> -->
+                    <a role="button" class="collapsed" aria-expanded="false" data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{section.num|replace('-','_')}}" href="#sec_{{section.num|replace('-','_')}}">{{ section.num }} {{ section.title }}</a>
                 </h4>
             </div>
-            <div id="collapse{{section.num|replace('-','_')}}" class="panel-collapse collapse">
-
+            <div id="collapse{{section.num|replace('-','_')}}" class="panel-collapse collapse" role="tabpanel" aria-labelled-by="heading{{section.num|replace('-','_')}}">
                 <ul class="nav list-group">
                     {% for subsection in section.subsections %}
                     
