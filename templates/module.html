@@ -2,30 +2,24 @@
 <div class="menugauche navmenu navmenu-default navmenu-fixed-left offcanvas-sm" role="navigation" id="menugauche">
     <h1 class="icon-web">{{ module.menutitle }}</h1>
 
-    <div class="nav panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-        <!-- Copier ici un item déployable -->
+    <ul class="nav panel-group" id="accordion">
         {% for section in module.sections %}
-        <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="heading{{section.num|replace('-','_')}}">
-                <h4 class="panel-title">
-                    <!-- <a href="#sec_{{section.num|replace('-','_')}}">{{ section.num }} {{ section.title }}</a> -->
-                    <a role="button" class="collapsed" aria-expanded="false" data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{section.num|replace('-','_')}}" href="#sec_{{section.num|replace('-','_')}}">{{ section.num }} {{ section.title }}</a>
-                </h4>
-            </div>
-            <div id="collapse{{section.num|replace('-','_')}}" class="panel-collapse collapse" role="tabpanel" aria-labelled-by="heading{{section.num|replace('-','_')}}">
-                <ul class="nav list-group">
-                    {% for subsection in section.subsections %}
-                    
-                        <li class="list-group-item"><a class="icon-{{ subsection.folder|lower  }}" href="#subsec_{{ subsection.num|replace('-','_') }}">{{ subsection.title }}</a></li>
-                    
-
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
+        <!-- Copier ici un item déployable -->
+        <li class="panel panel-default">
+            <h4 class="panel-title">
+                <a href="#sec_{{section.num|replace('-','_')}}">{{ section.num }} {{ section.title }}</a>
+            </h4>
+            <ul class="nav list-group">
+                {% for subsection in section.subsections %}
+                    <li class="list-group-item">
+                        <a class="icon-{{ subsection.folder|lower  }}" href="#subsec_{{ subsection.num|replace('-','_') }}">{{ subsection.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
         {% endfor %}
         <!-- Stop ici un item déployable -->
-    </div>
+    </ul>
 </div>
 <!-- Fin menu gauche -->
 
