@@ -20,17 +20,20 @@
         {% endfor %}
         <!-- Stop ici un item déployable -->
     </ul>
+    <button type="button" class="navmenu-fixed-left navmenu-fixed-left navbar-offcanvas-toggle menugauchebtn collapsed hidden-md hidden-lg" data-toggle="offcanvas"  data-canvas="div.content" data-target="#menugauche"  id="menugauche-sm-left">
+    	<span class="icon-chevron-left"> </span>
 </div>
-<!-- Fin menu gauche -->
-
-<!-- TODO : ajouter menu gauche version reduite  --> 
-
-<button type="button" class="navmenu-fixed-left navmenu-fixed-left navbar-offcanvas-toggle menugauchebtn collapsed hidden-md hidden-lg" data-toggle="offcanvas" data-target="#menugauche" data-canvas="body" id="menugauche-sm">
-	<span class="icon-chevron-right"> </span>
-</button>
-
+<!-- Fin menu gauche classique -->
+<!-- menu gauche replié (bouton chevron seul)-->
+<!-- <div class="menugauche navmenu-fixed-left navbar-offcanvas-toggle menugauchebtn collapsed hidden-md hidden-lg" role="navigation" id="menugauche-sm2">
+	 <span data-toggle="collapse" data-target="#menugauche-sm2"><button type="button" class="navmenu-fixed-left navbar-offcanvas-toggle collapsed hidden-md hidden-lg" data-toggle="offcanvas" data-target="#menugauche" data-canvas="body" id="menugauche-sm"><span class="icon-chevron-right"> </span></button></span>
+</div> -->
+<!--  bouton chevron -->
 
 <div id="content">
+<button type="button" class="navmenu-fixed-left navmenu-fixed-left navbar-offcanvas-toggle menugauchebtn collapsed hidden-md hidden-lg" data-toggle="offcanvas"  data-canvas="div.content" data-target="#menugauche"  id="menugauche-sm">
+	<span class="icon-chevron-right"> </span>
+</button>
     <!-- Margin top 4 em -->
     <!-- Début contenu droite -->
     <ol class="breadcrumb">
@@ -41,17 +44,11 @@
         </li>
         <li><a href="#">{{module.menutitle}}</a></li>
         <li class="active">Cours</li>
-        <!-- FIXME : set dynamically  -->
     </ol>
 
     <div class="contenudroite">
-        <!-- OK, garder -->
-        <button type="button" class="navmenu-fixed-left navmenu-fixed-left navbar-offcanvas-toggle menugauchebtn collapsed hidden-md hidden-lg" data-toggle="offcanvas" data-target="#menugauche" data-canvas="body">
-            <span class="icon-chevron-right"> </span>
-        </button>
-        
         {% for section in module.sections %}
-            {% if loop.first %}{% set firstsec = true %}{% else %}{% set firstsec = false %}{% endif%}
+            {% if loop.first %}{% set firstsec = false %}{% else %}{% set firstsec = false %}{% endif%}
             <section  id="sec_{{ section.num|replace('-','_') }}">
             <h1 class="icon-section title blue">{{ section.num|replace('-','.') }}. {{ section.title }}</h1>
                 {% for sub in section.subsections %}

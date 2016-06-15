@@ -37,24 +37,28 @@ a, a:link, a:hover, a:active, a:visited {
 
 @media (min-width: 992px) {
 
-  body {
-    padding-left: 300px;
-  }
- 
- #content {
+	body {
+	padding-left: 300px;
+	}
+
+	#content {
 	 padding-left:0 !important;
- }
- 
- #menugauche {
+	}
+
+	#menugauche {
 	 top:3.6em;
- }
- 
- .breadcrumb {
+	}
+
+	.breadcrumb {
 	 position:fixed;
 	 width:100%;
- } 
+	} 
  
-	}
+}
+/* empêche de désactiver le overflow en mode menu déplié*/
+body{
+	overflow: auto!important;
+}
 	
 /* ---------------------------------------------------------*/
 /* STYLES TEXTES */
@@ -99,12 +103,29 @@ iframe {
 
 #menugauche {
 	top:3.2em;
+	z-index: 1031; /* so that it stays above unfolding button*/
+	direction: rtl;
+}
+#menugauche h1{
+	direction: ltr;
+}
+#accordion{
+	direction: ltr;
 }
 
- #menugauche-sm {
+#menugauche-sm {
 	 top:3.2em;
-	 left:3.8em;
+	 left:1.73em;
  }
+/* bouton chevron 'gauche' pour replier le menu */
+#menugauche-sm-left{
+	top:3.2em;
+	margin-left: 299px;
+}
+/* add opacity to content when menu is unfolded*/
+#menugauche.in+#content{
+	opacity: 0.3;
+}
  
  #menugauche-sm2 h4 {
     margin-left: 0em !important;
@@ -129,8 +150,8 @@ iframe {
 
 /* Style menugauche statique*/ 
 .menugauche h1{
-	margin: 1em;
-	margin-left:2em;
+	margin-left:1em;
+	padding-bottom: 10px;
 	font-family: 'dynobold';
 	text-transform: capitalize;
 	font-size: 1.8em;
@@ -143,7 +164,8 @@ iframe {
 .menugauche .list-group-item {
 	border: none;
 	background-color: transparent !important;
-	margin-left:4.5em;
+	margin-left:3.5em;
+	padding: 8px 8px;
 }
 .menugauche .panel {
 	border: none;
@@ -239,7 +261,7 @@ iframe {
 
 #content {
 	padding-top: 3.2em;
-	padding-left:4.8em;
+	padding-left:1.6em;
 }
 
 .menugauche {
