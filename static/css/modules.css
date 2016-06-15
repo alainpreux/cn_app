@@ -234,6 +234,7 @@ iframe {
 	margin-bottom: 1em;
 	padding-left:3em;
 	display: block;
+	z-index: 1;
 }
 
 .breadcrumb > li + li::before {
@@ -355,4 +356,14 @@ iframe{
     border-style: solid;
     border-width: 9.5px 0 9.5px 17px;
     border-color: transparent transparent transparent rgba(255, 255, 255, 1);
+}
+
+
+/* Annexe */
+#sec_A {
+	padding-bottom: 20em;
+}
+
+#sec_A > p {
+	padding-top: 2em;
 }
