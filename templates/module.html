@@ -71,7 +71,7 @@
                                         {%if not firstsec%}style="display:none"{%endif%}></iframe></div>
                             {% endfor %}
                         {% endif %}
-                        {{ sub.html_src|safe }}
+                        {{ sub.html_src|safe|replace('../media', module.module+'/media') }}
                 </section>
             {% endfor %}
         </section>
