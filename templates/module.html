@@ -63,7 +63,7 @@
                         <h2 class="icon-{{sub.folder|lower}} title">{{ sub.num|replace('-','.') }}. {{ sub.title }}</h2>
                         {% if sub.videos|length > 0  %}
                             {% for video in sub.videos %}
-                        <!--  TODO : check video here and add fancy text -->
+                            <!--  TODO : check video here and add fancy text -->
                                 
                                 <div class="iframe_cont">
                                     {% if not firstsec %}{% include 'player_button.html'%}{%endif%}
@@ -71,7 +71,26 @@
                                         {%if not firstsec%}style="display:none"{%endif%}></iframe></div>
                             {% endfor %}
                         {% endif %}
-                        {{ sub.html_src|safe|replace('../media', module.module+'/media') }}
+                        {%set text = sub.html_src|safe|replace('../media', module.module+'/media') %}
+                        {% if sub.folder == 'webcontent' %}
+                        <!-- teaser: first 5 lines -->
+    					<div class="collapse hidden-text">
+                            <span data-toggle="collapse" data-target="#subsec_{{ sub.num|replace('-','_') }} .hidden-text" class="icon-minus-circled"><i>(Réduire le cours)</i></span>
+                            {{ text }}
+                            <span data-toggle="collapse" data-target="#subsec_{{ sub.num|replace('-','_') }} .hidden-text" class="icon-minus-circled"><i>(Réduire le cours)</i></span>
+    					</div>
+                        <div class="teaser">
+                            <p>
+                                {{ text|truncate(length=700, killwords=False, end='...')|replace('<div>', '')|replace('</div>', '')}}
+                            </p>
+                            <span data-toggle="collapse" data-target="#subsec_{{ sub.num|replace('-','_') }} .hidden-text" class="icon-plus-circled"><i>(Montrer la suite)</i></span>
+                            <div class="tease"></div>
+                        </div>
+                        <!-- <button type="button" data-toggle="collapse" data-target="#subsec_{{ sub.num|replace('-','_') }} .hidden-text" class="btn-odd btn-odd-primary btn-lg">lire la suite <span class="icon-plus-circled"></span></button> -->
+                        <!-- rest with a collapse -->
+                        {% else %}
+                            {{ text }}
+                        {% endif %}
                 </section>
             {% endfor %}
         </section>

@@ -359,6 +359,27 @@ iframe{
 }
 
 
+/* montrer / cacher les sections de cours */
+.hidden-text.in+div.teaser{
+	display: none;
+}
+
+.icon-plus-circled{
+	cursor: pointer;
+}
+.icon-minus-circled{
+	cursor: pointer;
+}
+.tease {
+    background: rgba(0, 0, 0, 0) url("https://www.mediapart.fr/images/articles/tease.png") repeat-x scroll left bottom;
+    /*bottom: 0;*/
+    height: 130px;
+    /*left: 0;*/
+    position: absolute;
+    width: 100%;
+	margin-top: -150px;
+}
+
 /* Annexe */
 #sec_A {
 	padding-bottom: 20em;
