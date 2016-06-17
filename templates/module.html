@@ -81,7 +81,7 @@
     					</div>
                         <div class="teaser">
                             <p>
-                                {{ text|truncate(length=700, killwords=False, end='...')|striptags}}
+                                {{ text|truncate(length=700, killwords=False, end='...')|replace('<div>', '')|replace('</div>', '')}}
                             </p>
                             <span data-toggle="collapse" data-target="#subsec_{{ sub.num|replace('-','_') }} .hidden-text" class="icon-plus-circled"><i>(Montrer la suite)</i></span>
                             <div class="tease"></div>
