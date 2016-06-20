@@ -82,8 +82,8 @@
 /* ---------------------------------------------------------*/
 
 .navbar-nav > li > a {
-    padding-bottom: 0.72em;
-    padding-top: 0.81em;
+    /*padding-bottom: 0.72em;
+    padding-top: 0.81em;*/
 }
 
 .navbar-nav {
@@ -182,6 +182,6 @@
 
 body {
 	font-family: 'Open sans', sans-serif;
-	padding-top: 3.2em;
+	padding-top: 3.6em;
 	/*font-size:160%;*/
 }

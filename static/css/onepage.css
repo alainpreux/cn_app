@@ -142,7 +142,7 @@ body {
 #header {
 	position:fixed;
 	overflow: hidden;
-	top:3.5em;
+	top:4em;
 	font-size:90%;
 	background: rgba(9,56,75,0.7);
 	min-height:0;
