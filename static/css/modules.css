@@ -280,6 +280,7 @@ iframe {
 	padding-right:5em;
 	padding-bottom:4em;
 	float: none;
+	max-width: 70%;
 }
 
 .contenudroite h2 {
@@ -360,24 +361,31 @@ iframe{
 
 
 /* montrer / cacher les sections de cours */
+
+
 .hidden-text.in+div.teaser{
 	display: none;
 }
-
-.icon-plus-circled{
+.teaser-button{
 	cursor: pointer;
 }
-.icon-minus-circled{
+.icon-plus-circled{
+	position: absolute;
+	margin-top: 270px;
+	z-index: 1;	
+}
+.teaser{
 	cursor: pointer;
+	height: 300px;
+	overflow: hidden;
+	/*margin-bottom: 2em;*/
 }
 .tease {
     background: rgba(0, 0, 0, 0) url("https://www.mediapart.fr/images/articles/tease.png") repeat-x scroll left bottom;
-    /*bottom: 0;*/
-    height: 130px;
-    /*left: 0;*/
+    height: 150px;
     position: absolute;
     width: 100%;
-	margin-top: -150px;
+	margin-top: 150px;
 }
 
 /* Annexe */
