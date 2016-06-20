@@ -40,7 +40,13 @@ a, a:link, a:hover, a:active, a:visited {
 	body {
 	padding-left: 300px;
 	}
-
+	
+	.contenudroite{
+		width: 700px;
+		
+	}
+	
+	
 	#content {
 	 padding-left:0 !important;
 	}
@@ -102,7 +108,7 @@ iframe {
 /* ---------------------------------------------------------*/
 
 #menugauche {
-	top:3.2em;
+	top:3.6em;
 	z-index: 1031; /* so that it stays above unfolding button*/
 	direction: rtl;
 }
@@ -114,12 +120,12 @@ iframe {
 }
 
 #menugauche-sm {
-	 top:3.2em;
+	 top:3.6em;
 	 left:1.73em;
  }
 /* bouton chevron 'gauche' pour replier le menu */
 #menugauche-sm-left{
-	top:3.2em;
+	top:3.6em;
 	margin-left: 299px;
 }
 /* add opacity to content when menu is unfolded*/
@@ -131,14 +137,14 @@ iframe {
     margin-left: 0em !important;
 }
  
- #menugauche-sm2 {
+ /*#menugauche-sm2 {
 	 top:3.2em;
  }
 
  #menugauche-sm2 h1{
 	margin-top: 1em;
 	margin-left:0.3em;
-}
+}*/
  
 .menugauchebtn {
 	background-color:#333333;
@@ -175,7 +181,7 @@ iframe {
 .menugauche a {
 	color:#fff;
 	font-weight:bold;
-    display: inline !important;
+    /*display: inline !important;*/
     padding: 0 !important;
 }
 .menugauche h4{
@@ -230,7 +236,7 @@ iframe {
     list-style: outside none none;
 	position:fixed;
 	width:100%;
-	top:3.2em;
+	top:3.6em;
 	margin-bottom: 1em;
 	padding-left:3em;
 	display: block;
@@ -277,10 +283,10 @@ iframe {
 .contenudroite {
 	padding-left:9em;
 	padding-top:2em;
-	padding-right:5em;
+	padding-right:2em;
 	padding-bottom:4em;
 	float: none;
-	max-width: 70%;
+	max-width: 700px;
 }
 
 .contenudroite h2 {
