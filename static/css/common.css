@@ -104,8 +104,10 @@
 /* ---------------------------------------------------------*/
 
 #menutop {
-	background: rgba(255,255,255,0.9);
+	/*background: rgba(255,255,255,0.9);*/
     z-index: 1031; /* cf bootstrap */
+    min-height: 3.9em;
+    border-bottom-width: 0px!important;
 }
 
 #menutop .logo {
@@ -163,6 +165,7 @@
 
 .dropdown-menu  li a:hover {
 		background-color:transparent !important;
+        color: #C84B24!important;
 }
 
 /* Reset padding dropdown */
@@ -182,6 +185,6 @@
 
 body {
 	font-family: 'Open sans', sans-serif;
-	padding-top: 3.6em;
+	padding-top: 3.9em;
 	/*font-size:160%;*/
 }

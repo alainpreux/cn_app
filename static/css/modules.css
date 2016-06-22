@@ -52,7 +52,7 @@ a, a:link, a:hover, a:active, a:visited {
 	}
 
 	#menugauche {
-	 top:3.6em;
+	 top:3.9em;
 	}
 
 	.breadcrumb {
@@ -108,9 +108,9 @@ iframe {
 /* ---------------------------------------------------------*/
 
 #menugauche {
-	top:3.6em;
 	z-index: 1031; /* so that it stays above unfolding button*/
 	direction: rtl;
+	top:3.9em;
 }
 #menugauche h1{
 	direction: ltr;
@@ -120,12 +120,12 @@ iframe {
 }
 
 #menugauche-sm {
-	 top:3.6em;
+	 top:3.9em;
 	 left:1.73em;
  }
 /* bouton chevron 'gauche' pour replier le menu */
 #menugauche-sm-left{
-	top:3.6em;
+	top:3.9em;
 	margin-left: 299px;
 }
 /* add opacity to content when menu is unfolded*/
@@ -236,7 +236,7 @@ iframe {
     list-style: outside none none;
 	position:fixed;
 	width:100%;
-	top:3.6em;
+	top:3.9em;
 	margin-bottom: 1em;
 	padding-left:3em;
 	display: block;
