@@ -42,7 +42,7 @@ a, a:link, a:hover, a:active, a:visited {
 	}
 	
 	.contenudroite{
-		width: 700px;
+		width: 800px;
 		
 	}
 	
@@ -63,7 +63,8 @@ a, a:link, a:hover, a:active, a:visited {
 }
 /* empêche de désactiver le overflow en mode menu déplié*/
 body{
-	overflow: auto!important;
+	overflow-x: hidden;
+	overflow-y: auto!important;
 }
 	
 /* ---------------------------------------------------------*/
@@ -92,7 +93,7 @@ h3 {
 }
 
 p {
-	font-size:120%;
+	/*font-size:120%;*/
 	color: #4C4C4C;
 }
 
@@ -241,7 +242,7 @@ span.sec-title{
 /* ---------------------------------------------------------*/
 
 .breadcrumb {
-	background: rgba(220,222,222,0.9);
+	background: rgba(220,222,222,1);
 	border-radius: 0;
     list-style: outside none none;
 	position:fixed;
@@ -250,7 +251,7 @@ span.sec-title{
 	margin-bottom: 1em;
 	padding-left:3em;
 	display: block;
-	z-index: 1;
+	z-index: 2;
 }
 
 .breadcrumb > li + li::before {
@@ -291,12 +292,13 @@ span.sec-title{
 }
 
 .contenudroite {
-	padding-left:9em;
+	padding-left:4em;
 	padding-top:2em;
 	padding-right:2em;
 	padding-bottom:4em;
 	float: none;
-	max-width: 700px;
+	max-width: 800px;
+	margin: auto;
 }
 
 .contenudroite h2 {
@@ -329,8 +331,8 @@ section:before {
 }
 
 .play_thumb{
-    width: 320px;
-    height:180px;
+    width: 480px;
+    height:270px;
 }
 
 .iframe_cont {
@@ -339,8 +341,8 @@ section:before {
 
 iframe{
 	border: solid 3px #DCDEDE;
-    width: 320px;
-    height:180px;
+    width: 480px;
+    height:270px;
 }
 
 .play_thumb img{
@@ -355,8 +357,8 @@ iframe{
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 5px;
     position: relative;
-    top:33%;
-    left:39%;
+	top: 35.5%;
+	left: 42.5%;
 }
 
 .play-button:hover {
@@ -387,28 +389,43 @@ iframe{
 }
 .icon-plus-circled{
 	position: absolute;
-	margin-top: 270px;
+	margin-top: 170px;
 	z-index: 1;	
 }
 .teaser{
 	cursor: pointer;
-	height: 300px;
+	height: 200px;
 	overflow: hidden;
 	/*margin-bottom: 2em;*/
 }
 .tease {
     background: rgba(0, 0, 0, 0) url("https://www.mediapart.fr/images/articles/tease.png") repeat-x scroll left bottom;
-    height: 150px;
+    height: 125px;
     position: absolute;
     width: 100%;
-	margin-top: 150px;
+	margin-top: 75px;
 }
 
 /* Annexe */
+.annex-sep{
+	width:80%;
+	border-top: 1px solid white;
+	margin: 5% 5% 5% 10%;
+}
+
 #sec_A {
 	padding-bottom: 20em;
 }
 
 #sec_A > p {
 	padding-top: 2em;
+}
+
+[href="#sec_A"]{
+	color: #AFA70E!important;
+}
+
+[href="#sec_A"] .sec-title {
+	width: 70%;
+	margin-left: -1.5em;
 }

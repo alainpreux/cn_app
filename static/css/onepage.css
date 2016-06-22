@@ -7,6 +7,9 @@ body {
 	position:relative;
 }
 
+
+
+
 /* ---------------------------------------------------------*/
 /* TEXTE */
 /* ---------------------------------------------------------*/	
@@ -144,9 +147,17 @@ body {
 	overflow: hidden;
 	top:4em;
 	font-size:90%;
-	background: rgba(9,56,75,0.7);
+	background: rgba(9,56,75,1);
 	min-height:0;
 	padding-top: 0.5em;
+}
+
+@media (min-width: 992px) {
+	#header{
+		padding-left: 7.5%;
+		padding-right: 7.5%;
+	}
+
 }
 
 #header .nav li {
@@ -155,8 +166,8 @@ body {
     background: url( "../img/puce.svg");
     background-size: 1em;
 	background-repeat:no-repeat;
-	background-position: 0.5em 0.5em;
-	padding-left: 1.3em;   /* width of the image plus a little extra padding */
+	background-position: 0.1em 0.6em;
+	padding-left: 0.7em;   /* width of the image plus a little extra padding */
 }
 
 #header .nav a {
@@ -181,8 +192,8 @@ body {
 	background-color: transparent !important;
 	background-size: 1em;
 	background-repeat: no-repeat;
-	background-position: 0.5em 0.5em;
-	padding-left: 1.3em;  /* width of the image plus a little extra padding */
+	background-position: 0.1em 0.6em;
+	padding-left: 0.7em;   /* width of the image plus a little extra padding */
 }
 
 #header .nav li.active a {

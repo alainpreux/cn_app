@@ -263,7 +263,7 @@ class Activite(AnyActivity):
                                         
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
-        self.title = 'Activite'
+        self.title = 'Activité'
         self.folder = 'Activite'
         
 class ActiviteAvancee(AnyActivity):
