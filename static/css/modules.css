@@ -71,12 +71,13 @@ body{
 /* ---------------------------------------------------------*/
 
 h1 {
-	font-family: 'dynobold';
+	/*font-family: 'dynobold';*/
+	/*font-weight: bold;*/
     padding-top: 1em;
 }
 
 h2 {
-	font-weight:bold;
+	/*font-weight:bold;*/
 	font-size:200%;
 	color: #C84B24;
 	margin-top:1em;
@@ -84,7 +85,7 @@ h2 {
 }
 
 h3 {
-	font-weight:bold;
+	/*font-weight:bold;*/
 	font-size:170%;
 	color: #AFA70E;
 	margin-top:1em;
@@ -180,21 +181,43 @@ iframe {
 }
 .menugauche a {
 	color:#fff;
-	font-weight:bold;
+	/*font-weight:bold;*/
     /*display: inline !important;*/
     padding: 0 !important;
 }
+.menugauche a:active {
+	color:#C84B24;
+	/*font-weight:bold;*/
+}
+.menugauche a:hover {
+	color:#AFA70E;
+	/*font-weight:bold;*/
+    background-color:transparent!important;
+}
 .menugauche h4{
-	font-weight:bold;
+	/*font-weight:bold;*/
 	text-decoration:none;
 	margin-left:2em;
 }
-
-.menugauche h4:first-letter {
-	font-size: 2em;
-	padding: 0.2em 0.4em 0 0;
-	vertical-align: middle;
+.menugauche h4:active{
+	color: #AFA70E;
 }
+span.sec-num{
+	display: inline-block;
+	font-size: 2em;
+}
+span.sec-title{
+	display: inline-block;
+	width: 90%;
+	vertical-align: top;
+	margin-bottom: 0.5em;
+	margin-top: 0.2em;
+	padding-left: 0.2em;
+}
+/*.menugauche h4:first-letter {
+	padding: 0.2em 0.4em 0 0;
+	vertical-align: bottom;
+}*/
 .menugauche .panel-group .panel-heading + .panel-collapse > .list-group, .panel-group .panel-heading + .panel-collapse > .panel-body {
     border-top: none;
 }
@@ -209,20 +232,7 @@ iframe {
 }
 .menugauche li.list-group-item.active a {
 	color:#C84B24;
-	font-weight:bold;
-}
-.menugauche a:hover {
-	color:#AFA70E;
-	font-weight:bold;
-    background-color:transparent!important;
-}
-/* h4 => titre de section*/ 
-.menugauche h4:active{
-	color: #AFA70E;
-}
-.menugauche a:active {
-	color:#C84B24;
-	font-weight:bold;
+	/*font-weight:bold;*/
 }
 
 

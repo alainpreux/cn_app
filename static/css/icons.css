@@ -340,7 +340,8 @@
 
 /* custom mapping */
 .icon-webcontent:before {
-  content: "\3d";
+  content: "\60";
+  /*content: "\3d";*/
 } 
 .icon-comprehension:before {
   content: "\7b";
