@@ -103,6 +103,7 @@ class Subsection:
     def __init__(self, section):
         self.section = section
         self.num = self.section.num+'-'+str(Subsection.num)
+        self.videos = []
         Subsection.num +=1
 
     def getFilename(self):

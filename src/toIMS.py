@@ -48,6 +48,13 @@ FILETYPES = {
 
 FOLDERS = ['Activite', 'ActiviteAvancee', 'Comprehension', 'webcontent', 'media', 'correction']
 
+FOLDERS_ACTIVITY = {
+    'Activite':'act',
+    'ActiviteAvancee':'actav',
+    'Comprehension':'test',
+    'webcontent':'',
+}
+
 CC_PROFILES = {
     'MULTICHOICE' : 'cc.multiple_choice.v0p1',
     'MULTIANSWER' : 'cc.multiple_response.v0p1',
@@ -272,6 +279,13 @@ def replaceLink(link):
     """ Replace __BASE__ in urls with base given in config file toIMSconfig.json """
     return link.replace("__BASE__/", '')
 
+def get_sec_videos(section):
+    videos_list = []
+    for sub in section["subsections"]:
+        for vid in sub["videos"]:
+            videos_list.append(vid)
+    return videos_list
+
 def generateIMSManifest(data):
     """ parse data from config file 'moduleX.config.json' and recreate imsmanifest.xml """
     # create magic yattag triple
@@ -309,22 +323,49 @@ def generateIMSManifest(data):
                 # add empty section as section "0 . Généralités" to avoid wrong numbering
                 with tag('item', identifier='section_generalites'):
                     with tag('title'):
-                        text('')
+                        # doc.asis('<![CDATA[<span class="ban-sec ban-howto"></span>]]>')
+                        doc.asis('')
                 for idA, section in enumerate(data["sections"]):
                     section_id = "sec_"+(str(idA))
+                    # sec_videos = get_sec_videos(section)
                     with tag('item', identifier=section_id):
                         with tag('title'):
-                            text(section['num']+' '+section['title'])
+                            doc.asis(section['num']+' '+section['title'])
+                            # if len(sec_videos) > 0:
+                            #     for video in sec_videos:
+                            #         video_id = video["video_link"].rsplit('/', 1)[1]
+                            #         doc.asis('<![CDATA[<span class="video-link"><a href="http://vimeo.com/'+video_id+'"></a></span>]]>')
+                        subsec_type_old = ''
+                        subsec_type = ''
                         for idB, subsection in enumerate(section["subsections"]):
+                            subsec_type_old = subsec_type
+                            subsec_type = subsection["folder"]
                             href = subsection["folder"]+'/'+subsection["filename"]
-                            # when adding moodle-test type change file suffix from .html to .xml
-                            if subsection["folder"] in ['auto-evaluation', 'devoirs', 'Activite', 'ActiviteAvancee', 'Comprehension']:
+                            # when adding moodle-test type change file suffix from .html.xml
+                            if subsec_type in ['auto-evaluation', 'devoirs', 'Activite', 'ActiviteAvancee', 'Comprehension']:
                                 href = href.replace('html', 'xml')
                             filename = href.rsplit('/',1)[1]
                             resources.append(filename)
                             with tag('item', identifier=("subsec_"+str(idA)+"_"+str(idB)), identifierref=("doc_"+str(idA)+"_"+str(idB))):
                                 with tag('title'):
-                                    text(subsection['num']+' '+subsection["title"])
+                                    if subsec_type == 'webcontent':
+                                        try: 
+                                            if len(subsection["videos"]) > 0:
+                                                for video in subsection["videos"]:
+                                                    video_id = video["video_link"].rsplit('/', 1)[1]
+                                                    doc.asis('<![CDATA['+subsection['num']+' '+subsection["title"]+'<span class="video-link"><a href="http://vimeo.com/'+video_id+'"></a></span>]]>')
+                                            else:
+                                                text(subsection['num']+' '+subsection["title"])
+                                        except Exception as e:
+                                            text(subsection['num']+' '+subsection["title"])
+                                    else:
+                                        # subsec_type != 'webcontent':
+                                        # print(" non webcontent stuff ! subsect type = %s type = %s" % (subsec_type, FOLDERS_ACTIVITY[subsec_type]))
+                                        if subsec_type != subsec_type_old:
+                                            doc.asis('<![CDATA[<span class="ban-sub ban-'+FOLDERS_ACTIVITY[subsec_type]+'">'+subsection['num']+' '+subsection["title"]+'</span>]]>')
+                                        else:
+                                            text(subsection['num']+' '+subsection["title"])
+                                
     # Print resources
     with tag('resources'):
         # retrieve images and add dependency when needed
