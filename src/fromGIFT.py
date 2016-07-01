@@ -261,7 +261,7 @@ class GiftQuestion():
 def clean_question_src(question):
     question = re.sub('<(span|strong)[^>]*>|</(strong|span)>', '', question)
     # question = re.sub('\\:', '', question) # remove \: in src txt
-    # question = re.sub('\\\:', '', question) # remove \: in src txt
+    question = re.sub('\\\:', ':', question) # remove \: in src txt
     # question = re.sub('\\=', '', question) # remove \= in src txt
     # question = re.sub('\\\=', '', question) # remove \= in src txt
 
