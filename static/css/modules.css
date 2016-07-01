@@ -305,6 +305,10 @@ span.sec-title{
 	margin-left: -1.73em;
 }
 
+.global_feedback h2{
+	margin-left: 0px!important;
+}
+
 .question ul{
     list-style: none;
 }

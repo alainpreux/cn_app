@@ -96,9 +96,10 @@
     <script>
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
-            $('.email').click(function(){
-                window.location.href='mailto:'+$(this).html().replace('point', '.')+'@univ-lille3.fr';
-            });
+            $('.email').click(function() {
+                login = $(this).html().replace('<span class="iamnotadot"></span>', '.')
+        		window.location.href = 'mailto:' + login + '@univ-lille3.fr';
+        	});
         });
     </script>
 
