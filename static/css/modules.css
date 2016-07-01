@@ -158,11 +158,12 @@ iframe {
 
 /* Style menugauche statique*/ 
 .menugauche h1{
-	margin-left:1em;
-	padding-bottom: 10px;
+	margin-left:0.5em;
+	padding-bottom: 20px;
 	font-family: 'dynobold';
 	text-transform: capitalize;
 	font-size: 1.8em;
+	padding-top: 0.4em
 }
 .menugauche .panel-default > .panel-heading {
 	border: none;
@@ -198,7 +199,7 @@ iframe {
 .menugauche h4{
 	/*font-weight:bold;*/
 	text-decoration:none;
-	margin-left:2em;
+	margin-left:1.3em;
 }
 .menugauche h4:active{
 	color: #AFA70E;
@@ -206,10 +207,11 @@ iframe {
 span.sec-num{
 	display: inline-block;
 	font-size: 2em;
+	margin-right: 0.3em;
 }
 span.sec-title{
 	display: inline-block;
-	width: 90%;
+	width: 85%;
 	vertical-align: top;
 	margin-bottom: 0.5em;
 	margin-top: 0.2em;
@@ -249,7 +251,7 @@ span.sec-title{
 	width:100%;
 	top:3.9em;
 	margin-bottom: 1em;
-	padding-left:3em;
+	padding-left:2em;
 	display: block;
 	z-index: 2;
 }
@@ -260,8 +262,8 @@ span.sec-title{
     content: "i ";
     padding: 0 5px;
 	vertical-align:middle;
-	padding-right: 2em;
-	padding-left: 2em;
+	padding-right: 1em;
+	padding-left: 1em;
 }
 
 .breadcrumb a {
@@ -302,7 +304,7 @@ span.sec-title{
 }
 
 .contenudroite h2 {
-	margin-left: -1.73em;
+	margin-left: -1.4em;
 }
 
 .global_feedback h2{
