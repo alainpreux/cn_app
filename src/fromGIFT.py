@@ -146,7 +146,7 @@ class GiftQuestion():
                                 answer_class = ''
                             with tag('li', klass=answer_class):
                                 doc.stag('input', type='radio', name="name")
-                                doc.asis(answer['answer_text'])
+                                doc.asis(answer['answer_text'].strip('</p>'))
                         elif self.type == 'MULTIANSWER':
                             if float(answer['credit']) > 0.0 and feedback_option:
                                 answer_class = 'right_answer'
@@ -154,7 +154,7 @@ class GiftQuestion():
                                 answer_class = ''
                             with tag('li', klass=answer_class):
                                 doc.stag('input', type='checkbox', name="name")
-                                doc.asis(answer['answer_text'])
+                                doc.asis(answer['answer_text'].strip('</p>'))
 
             if (feedback_option and len(self.global_feedback) > 1):
                 with tag('div', klass='global_feedback'):
@@ -261,7 +261,7 @@ class GiftQuestion():
 def clean_question_src(question):
     question = re.sub('<(span|strong)[^>]*>|</(strong|span)>', '', question)
     # question = re.sub('\\:', '', question) # remove \: in src txt
-    # question = re.sub('\\\:', '', question) # remove \: in src txt
+    question = re.sub('\\\:', ':', question) # remove \: in src txt
     # question = re.sub('\\=', '', question) # remove \= in src txt
     # question = re.sub('\\\=', '', question) # remove \= in src txt
 

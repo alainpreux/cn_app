@@ -1,0 +1,426 @@
+/* ---------------------------------------------------------*/
+
+
+/* GENERAL */
+
+
+/* ---------------------------------------------------------*/
+
+body {
+    position: relative;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* TEXTE */
+
+
+/* ---------------------------------------------------------*/
+
+.h1, .h2, .h3, h1, h2, h3 {
+    font-family: 'dynobold';
+    color: #e8900c;
+}
+.h1, h1 {
+    font-size: 300%;
+}
+.blue {
+    color: #0F6E96;
+}
+.green {
+    color: #AFA70E;
+}
+.red {
+    color: #C84B24;
+}
+.purple {
+    color: #802489;
+}
+.orange {
+    color: #e8900c;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* BOUTONS */
+
+
+/* ---------------------------------------------------------*/
+
+
+/* Pages impaires */
+
+.btn-odd {
+    padding: 3% 10%;
+    border: 2px solid #fff;
+    border-radius: 0;
+}
+.btn-odd:focus, .btn-odd:active:focus, .btn-odd.active:focus {
+    /* outline: 2px solid #fff;*/
+}
+.btn-odd-primary {
+    background: transparent;
+    color: #ffffff;
+}
+.btn-odd-primary:hover, .btn-odd-primary:focus, .btn-odd-primary:active, .btn-odd-primary.active, .open > .dropdown-toggle.btn-odd-primary {
+    background: #e8900c;
+}
+.btn-odd-primary:active, .btn-odd-primary.active {
+    background: #e8900c;
+    box-shadow: none;
+}
+
+/* Pages paires */
+
+.btn-even {
+    padding: 3% 10%;
+    border: 2px solid #09384b;
+    border-radius: 0;
+}
+.btn-even:focus, .btn-even:active:focus, .btn-even.active:focus {
+    /* outline: 2px solid #09384b;*/
+}
+.btn-even-primary {
+    background: transparent;
+    color: #09384b;
+}
+.btn-even-primary:hover, .btn-even-primary:focus, .btn-even-primary:active, .btn-even-primary.active, .open > .dropdown-toggle.btn-even-primary {
+    background: #e8900c;
+}
+.btn-even-primary:active, .btn-even-primary.active {
+    background: #e8900c;
+    box-shadow: none;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* PANELS */
+
+
+/* ---------------------------------------------------------*/
+
+
+/* Pages impaires */
+
+.panel-odd {
+    border-radius: 0;
+    background: #fff;
+    color: #09384b;
+    border: 2px solid #fff;
+    padding: 5%;
+    margin-top: 5%;
+    text-align: left;
+}
+
+/* Pages paires */
+
+.panel-even {
+    border-radius: 0;
+    background: #09384b;
+    color: #fff;
+    border: 2px solid #09384b;
+    padding: 5%;
+    margin-top: 5%;
+    text-align: left;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* STYLES IMAGES + TEXTE */
+
+
+/* ---------------------------------------------------------*/
+
+.image_text {
+    float: none;
+    clear: both;
+}
+.image_text img {
+    float: left;
+    width: 30%;
+    margin-right: 5%;
+    margin-bottom: 5%;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* SOUS-MENU ONE PAGE */
+
+#header {
+    position: fixed;
+    overflow: hidden;
+    top: 4em;
+    font-size: 90%;
+    background: rgba(9, 56, 75, 1);
+    min-height: 0;
+    padding-top: 0.5em;
+}
+@media (min-width: 992px) {
+    #header {
+        padding-left: 7.5%;
+        padding-right: 7.5%;
+    }
+}
+#header .nav li {
+    float: left;
+    list-style: none;
+    background: url("../img/puce.svg");
+    background-size: 1em;
+    background-repeat: no-repeat;
+    background-position: 0.1em 0.6em;
+    padding-left: 0.7em;
+    /* width of the image plus a little extra padding */
+}
+#header .nav a {
+    text-decoration: none;
+    padding: 5px 10px;
+    color: #fff;
+}
+#header .nav a:hover {
+    text-shadow: 0 0 5px #000;
+    color: #e8900c;
+    background-color: transparent !important;
+}
+#header .nav a:focus, #header .nav a:active:focus, #header .nav a:active {
+    background-color: transparent !important;
+    text-shadow: 0 0 5px #000;
+}
+#header .nav li.active {
+    background: url("../img/puce1.svg");
+    background-color: transparent !important;
+    background-size: 1em;
+    background-repeat: no-repeat;
+    background-position: 0.1em 0.6em;
+    padding-left: 0.7em;
+    /* width of the image plus a little extra padding */
+}
+#header .nav li.active a {
+    color: #e8900c;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* Menu plié */
+
+.sidemenu {
+    position: fixed;
+    top: 4em;
+    right: 0;
+    margin-right: 15px;
+    margin-top: 8px;
+    overflow: hidden;
+    z-index: 5000;
+}
+.btn-sidemenu {
+    width: 2.5em;
+    height: 2em;
+    border: 1px solid #fff;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+.btn-sidemenu:focus, .btn-sidemenu:active:focus, .btn-sidemenu.active:focus {
+    /* outline: 2px solid #09384b;*/
+}
+.btn-sidemenu-primary {
+    background: rgba(9, 56, 75, 0.7);
+    color: #fff;
+}
+.btn-sidemenu-primary:hover, .btn-sidemenu-primary:focus, .btn-sidemenu-primary:active, .btn-sidemenu-primary.active, .open > .dropdown-toggle.btn-sidemenu-primary {
+    background: rgba(232, 144, 12, 0.7);
+}
+.btn-sidemenu-primary:active, .btn-sidemenu-primary.active {
+    background: rgba(232, 144, 12, 0.7);
+    box-shadow: none;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* Pour javascript scroll */
+
+#test {
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* PAGES */
+
+
+/* ---------------------------------------------------------*/
+
+
+/* ---------------------------------------------------------*/
+
+
+/* PAGES - ALL*/
+
+.page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 7.5%;
+}
+
+/* Pages impaires */
+
+.section-odd {
+    background: #09384b;
+    color: #fff;
+}
+
+/* Pages paires */
+
+.section-even {
+    background: rgba(255, 255, 255, 0.7);
+    color: #09384b;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* PAGE 1 */
+
+#page1 img {
+    width: 60%;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* PAGE 2 - Culture Citoyenne */
+
+#page2 {
+    background: url(../img/01.png) no-repeat fixed 50% 0 / cover;
+}
+#page2 img {
+    width: 11em;
+    padding-top: 10%;
+    padding-bottom: 10%;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* PAGE 3 - Pari formation */
+
+#page3 img {
+    width: 9em;
+    margin-bottom: 5%;
+    margin-top: 5%;
+    border-radius: 0;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* PAGE 4 - Motivations */
+
+#page4 {
+    background: url(../img/02.png) no-repeat fixed 50% 0 / cover;
+}
+#page4 img {
+    height: 7em;
+    margin-bottom: 5%;
+}
+#page4 .btn-even {
+    margin-top: 2%;
+}
+.page4title {
+    font-size: 150%;
+    line-height: 1.5;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* PAGE 5 - Contenus pensés pour la réutilisation */
+
+#page5 img {
+    /*width:30%;*/
+    height: 10em;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* PAGE 6 - Modules */
+
+#page6 {
+    background: url(../img/03.png) no-repeat fixed 50% 0 / cover;
+}
+#page6 img {
+    height: 8em;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+.btn-modules{
+	min-width: 250px;
+	padding-left: 1em;
+padding-right: 1em;
+}
+/* ---------------------------------------------------------*/
+
+
+/* PAGE 7 - Contacts */
+
+#page7 {
+    position: relative;
+    /*z-index:-50;*/
+    padding-bottom: 15em;
+}
+#page7 img {
+    height: 8em;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+.email:after {
+    content: '@univ-lille3.fr';
+	
+}
+.email {
+    display: inline-block;
+    font-weight: bold;
+    cursor: pointer;
+}
+.iamnotadot:after{
+    content: '.';
+    
+}
+.no_display:after {
+    content: '.';
+}
+.no_display {
+    display: none;
+}
+
+/* ---------------------------------------------------------*/
+
+
+/* PAGE 7 -Footer */
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    text-align: center;
+}
+#footer img {
+    height: 4em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
