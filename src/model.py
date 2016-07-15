@@ -217,6 +217,17 @@ class AnyActivity(Subsection):
         for question in self.questions:
             gift_src+='\n'+question.gift_src+'\n'
         return gift_src
+        
+    
+    def toEdxProblemsList(self):
+        """
+        xml source code of all questions in EDX XML format
+        """
+        edx_xml_problem_list = ""
+        for question in self.questions:
+            edx_xml_problem_list += '\n'+question.toEdxXML()+'\n'
+        
+        return edx_xml_problem_list
     
     def toHTML(self, feedback_option=False):
         self.html_src = ''
@@ -353,6 +364,19 @@ class Section:
                 video_list += sub.videoIframeList()
         return video_list
     
+    def toEdxProblemsList(self):
+        """
+        xml source code of all questions in EDX XML format
+        """
+        edx_xml_problem_list = ""
+        for sub in self.subsections:
+            if isinstance(sub, AnyActivity):
+                # add subsection title 
+                edx_xml_problem_list += "<!-- "+sub.num+" "+sub.title+" -->\n\n"  
+                edx_xml_problem_list += sub.toEdxProblemsList() 
+        
+        return edx_xml_problem_list
+    
 class Module:
     """ Module structure"""
 
@@ -418,7 +442,16 @@ class Module:
             video_list += s.toVideoList()+'\n\n'
             
         return video_list
-
+    
+    def toEdxProblemsList(self):
+        """
+        xmlL source code of all questions in EDX XML format
+        """
+        edx_xml_problem_list = ""
+        for s in self.sections:
+            edx_xml_problem_list += s.toEdxProblemsList() 
+        
+        return edx_xml_problem_list
 
 class CourseProgram:
     """ A course program is made of one or several course modules """

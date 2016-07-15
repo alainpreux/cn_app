@@ -17,7 +17,13 @@ from lxml import html
 from yattag import indent
 from yattag import Doc
 
+from jinja2 import Template, Environment, FileSystemLoader
+
+
 import utils
+
+BASE_PATH = os.path.abspath(os.getcwd())
+TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates' )
 
 HEADER = """
     <!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0"></head><body>
@@ -163,6 +169,16 @@ class GiftQuestion():
         doc.asis('\n')
         return((doc.getvalue()))
     
+    def toEdxXML(self):
+        """ From a question object, write Open EDX XML representation """
+        jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
+        problem_template = jenv.get_template("edx_problem_template.xml")
+        if self.text_format == 'html':
+            q_text = self.text
+        else:
+            q_text = markdown.markdown(self.text, MARKDOWN_EXT)
+        return problem_template.render(q=self, q_text=q_text)
+    
     def parse_gift_src(self):
         # 1. Separate in 3 parts: q_prestate { q_answers } q_poststate
         split_1 = self.gift_src.split('{', 1)
@@ -229,7 +245,7 @@ class GiftQuestion():
         ### split answers
         right_answer_count = 0
         false_answer_count = 0
-
+        
         for answer_raw in re.findall('([~=][^~=]*)', q_answers):
             new_answer = {'credit':0,'answer_text':'','feedback':'','is_right':True}
             # MULTIANSWERS <=> right_answer_count =  AND false_answer_count > 0

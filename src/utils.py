@@ -89,6 +89,7 @@ def processModule(module,repoDir,outDir=None, feedback_option=False):
     m.toHTMLFiles(outDir, feedback_option)
     m.toXMLMoodle(outDir)
     write_file(m.toGift(), outDir, '', module+'.questions_bank.gift.txt')
+    write_file(m.toEdxProblemsList(), outDir, '', module+'.edx_problems_list.xml')
     write_file(m.toVideoList(), outDir, '', module+'.video_iframe_list.txt')
     mod_config = write_file(m.toJson(), outDir, '',  module+'.config.json')
     

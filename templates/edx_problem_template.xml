@@ -1,0 +1,45 @@
+<problem display_name="{{ q.title }}">
+    <legend>
+        {{ q_text }}
+    </legend>
+    {% if q.type == "MULTICHOICE" or q.type == "TRUEFALSE" %}
+    <multiplechoiceresponse>
+        <choicegroup type="MultipleChoice">
+            {% for a in q.answers %}
+            <choice correct="{{ 'true' if a.is_right else 'false'}}">{{a.answer_text}}
+                <choicehint>{{a.feedback}}</choicehint>
+            </choice>
+            {% endfor %}
+        </choicegroup>
+    </multiplechoiceresponse>
+    {% elif q.type == 'MULTIANSWER' %}
+    <choiceresponse>
+        <checkboxgroup>
+            {% for a in q.answers %}
+            {% set correctness = 'true' if a.credit|float > 0.0 else 'false' %}
+            <choice correct="{{correctness}}">
+                {{a.answer_text}}
+                <choicehint>
+                    {{a.feedback}}
+                </choicehint>
+            </choice >
+            {% endfor %}
+        </checkboxgroup>
+    </choiceresponse>
+    {% endif %}
+
+{#
+    <demandhint>
+        <hint>A fruit is the fertilized ovary from a flower.</hint>
+        <hint>A fruit contains seeds of the plant.</hint>
+    </demandhint> 
+#}
+    {% if q.global_feedback|length > 1 %}
+    <solution>
+        <div class="detailed-solution">
+            {{ q.global_feedback }}
+        </div>
+    </solution>
+    {% endif %}
+    
+</problem>
