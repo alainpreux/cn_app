@@ -11,6 +11,7 @@ import random
 from datetime import datetime 
 import time
 import logging
+import uuid
 
 from lxml import etree
 from lxml import html
@@ -66,8 +67,7 @@ class GiftQuestion():
 
     """
     def __init__(self):
-        now = datetime.utcnow()  
-        self.id = int(utils.totimestamp(now))
+        self.id = uuid.uuid4()
         self.gift_src = ''
         self.type = ''
         self.title = ''
@@ -177,7 +177,8 @@ class GiftQuestion():
             q_text = self.text
         else:
             q_text = markdown.markdown(self.text, MARKDOWN_EXT)
-        return problem_template.render(q=self, q_text=q_text)
+        result = problem_template.render(q=self, q_text=q_text)
+        return result.replace('<br>', '<br/>')
     
     def parse_gift_src(self):
         # 1. Separate in 3 parts: q_prestate { q_answers } q_poststate

@@ -1,3 +1,4 @@
+<!-- DEBUT problem {{q.title}} -->
 <problem display_name="{{ q.title }}">
     <legend>
         {{ q_text }}
@@ -6,8 +7,8 @@
     <multiplechoiceresponse>
         <choicegroup type="MultipleChoice">
             {% for a in q.answers %}
-            <choice correct="{{ 'true' if a.is_right else 'false'}}">{{a.answer_text}}
-                <choicehint>{{a.feedback}}</choicehint>
+            <choice correct="{{ 'true' if a.is_right else 'false'}}">{{a.answer_text|striptags}}
+                <choicehint>{{a.feedback|striptags}}</choicehint>
             </choice>
             {% endfor %}
         </choicegroup>
@@ -18,28 +19,28 @@
             {% for a in q.answers %}
             {% set correctness = 'true' if a.credit|float > 0.0 else 'false' %}
             <choice correct="{{correctness}}">
-                {{a.answer_text}}
+                {{a.answer_text|striptags}}
+                {% if a.feedback|length > 1 %}
                 <choicehint>
-                    {{a.feedback}}
+                    {{a.feedback|striptags}}
                 </choicehint>
-            </choice >
+                {% endif %}
+            </choice>
             {% endfor %}
         </checkboxgroup>
     </choiceresponse>
+    {% elif q.type == 'ESSAY' %}
+    {% include 'edx_problem_essay_script.xml' %}
+    <customresponse cfn="checkAnswerEssay">
+    	<textline size="40" correct_answer="" label="Problem Text"/>
+    </customresponse> 
+    
     {% endif %}
-
-{#
-    <demandhint>
-        <hint>A fruit is the fertilized ovary from a flower.</hint>
-        <hint>A fruit contains seeds of the plant.</hint>
-    </demandhint> 
-#}
     {% if q.global_feedback|length > 1 %}
-    <solution>
-        <div class="detailed-solution">
-            {{ q.global_feedback }}
-        </div>
+    <solution><div class="detailed-solution">
+            {{ q.global_feedback }}</div>
     </solution>
     {% endif %}
-    
 </problem>
+<!-- FIN problem {{q.title}} -->
+{#<demandhint>        <hint>A fruit is the fertilized ovary from a flower.</hint>        <hint>A fruit contains seeds of the plant.</hint>    </demandhint> #}
