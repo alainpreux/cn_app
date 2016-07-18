@@ -1,7 +1,7 @@
 <!-- DEBUT problem {{q.title}} -->
 <problem display_name="{{ q.title }}">
     <legend>
-        {{ q_text }}
+        <![CDATA[{{ q_text }}]]>
     </legend>
     {% if q.type == "MULTICHOICE" or q.type == "TRUEFALSE" %}
     <multiplechoiceresponse>
@@ -14,14 +14,14 @@
         </choicegroup>
     </multiplechoiceresponse>
     {% elif q.type == 'MULTIANSWER' %}
-    <choiceresponse>
+    <choiceresponse partial_credit="EDC">
         <checkboxgroup>
             {% for a in q.answers %}
             {% set correctness = 'true' if a.credit|float > 0.0 else 'false' %}
             <choice correct="{{correctness}}">
                 {{a.answer_text|striptags}}
                 {% if a.feedback|length > 1 %}
-                <choicehint>
+                <choicehint selected="true">
                     {{a.feedback|striptags}}
                 </choicehint>
                 {% endif %}
@@ -38,7 +38,9 @@
     {% endif %}
     {% if q.global_feedback|length > 1 %}
     <solution><div class="detailed-solution">
-            {{ q.global_feedback }}</div>
+        <![CDATA[
+{{ q.global_feedback }}]]>
+</div>
     </solution>
     {% endif %}
 </problem>

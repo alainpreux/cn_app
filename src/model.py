@@ -446,10 +446,12 @@ class Module:
     def toEdxProblemsList(self):
         """
         xmlL source code of all questions in EDX XML format
-        """
-        edx_xml_problem_list = ""
+        """ 
+        edx_xml_problem_list = '<library xblock-family="xblock.v1" display_name="Culture numérique" org="ULille3" library="'+self.menutitle+'">\n\n"'
         for s in self.sections:
             edx_xml_problem_list += s.toEdxProblemsList() 
+        
+        edx_xml_problem_list += "\n</library>"
         
         return edx_xml_problem_list
 

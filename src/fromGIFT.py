@@ -100,7 +100,7 @@ class GiftQuestion():
         m1 = re.search('(?P<titre>::.*::){0,1}\s*(?P<format>\[[^\]]*\]){0,1}\s*(?P<qtext>[^\{]*)', new_src, flags=re.M)
         if m1:
             if m1.group('qtext'):
-                qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT)
+                qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT, output_format='xhtml5')
                 qtext = GiftQuestion.add_target_blank(qtext)
                 new_src = new_src.replace(m1.group('qtext'), qtext)
             if m1.group('format'):    
@@ -112,7 +112,7 @@ class GiftQuestion():
             if m2.group('format'):
                 new_src = new_src.replace(m2.group('format'), '[html]')
             if m2.group('gf'):
-                gf = markdown.markdown(m2.group('gf'), MARKDOWN_EXT)
+                gf = markdown.markdown(m2.group('gf'), MARKDOWN_EXT, output_format='xhtml5')
                 gf = GiftQuestion.add_target_blank(gf)
                 pos = m2.start() # replace only in the relevant part of the string and not the entire string
                 new_src = new_src[:pos]+new_src[pos:].replace(m2.group('gf'), gf)
@@ -139,7 +139,7 @@ class GiftQuestion():
                     doc.asis(self.text)
                 else:
                     logging.info ("printing Markdown/ source = %s" % (self.text))
-                    html_text = markdown.markdown(self.text, MARKDOWN_EXT)
+                    html_text = markdown.markdown(self.text, MARKDOWN_EXT, output_format='xhtml5')
                     doc.asis(html_text)
             # If type MULTICHOICE, MULTIANSWER give choices
             if self.type in ['MULTICHOICE', 'MULTIANSWER', 'TRUEFALSE']:
@@ -176,7 +176,7 @@ class GiftQuestion():
         if self.text_format == 'html':
             q_text = self.text
         else:
-            q_text = markdown.markdown(self.text, MARKDOWN_EXT)
+            q_text = markdown.markdown(self.text, MARKDOWN_EXT, output_format='xhtml5')
         result = problem_template.render(q=self, q_text=q_text)
         return result.replace('<br>', '<br/>')
     
