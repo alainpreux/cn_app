@@ -447,7 +447,7 @@ class Module:
         """
         xmlL source code of all questions in EDX XML format
         """ 
-        edx_xml_problem_list = '<library xblock-family="xblock.v1" display_name="Culture numérique" org="ULille3" library="'+self.menutitle+'">\n\n"'
+        edx_xml_problem_list = '<library xblock-family="xblock.v1" display_name="'+self.module+'_'+self.menutitle+'" org="ULille3" library="'+self.module+'_'+self.menutitle+'">\n\n"'
         for s in self.sections:
             edx_xml_problem_list += s.toEdxProblemsList() 
         

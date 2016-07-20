@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from io import open
 import os
 import shutil
+import tarfile
 
 import model
 import logging
@@ -89,7 +90,10 @@ def processModule(module,repoDir,outDir=None, feedback_option=False):
     m.toHTMLFiles(outDir, feedback_option)
     m.toXMLMoodle(outDir)
     write_file(m.toGift(), outDir, '', module+'.questions_bank.gift.txt')
-    write_file(m.toEdxProblemsList(), outDir, '', module+'.edx_problems_list.xml')
+    # EDX library tar archive
+    tar = tarfile.open(os.path.join(outDir, module+".edx_problems_library.tar.gz"), "w:gz")
+    tar.add(write_file(m.toEdxProblemsList(), outDir, '', 'library.xml'))
+    tar.close
     write_file(m.toVideoList(), outDir, '', module+'.video_iframe_list.txt')
     mod_config = write_file(m.toJson(), outDir, '',  module+'.config.json')
     

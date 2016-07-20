@@ -1,7 +1,7 @@
 <!-- DEBUT problem {{q.title}} -->
-<problem display_name="{{ q.title }}">
+<problem display_name="{{ q.title }}" {% if q.type == "MULTICHOICE" or q.type == "TRUEFALSE" %}max_attempts="1"{%endif%}>
     <legend>
-        <![CDATA[{{ q_text }}]]>
+        {{ q_text }}
     </legend>
     {% if q.type == "MULTICHOICE" or q.type == "TRUEFALSE" %}
     <multiplechoiceresponse>
@@ -34,13 +34,10 @@
     <customresponse cfn="checkAnswerEssay">
     	<textline size="40" correct_answer="" label="Problem Text"/>
     </customresponse> 
-    
     {% endif %}
     {% if q.global_feedback|length > 1 %}
-    <solution><div class="detailed-solution">
-        <![CDATA[
-{{ q.global_feedback }}]]>
-</div>
+    <solution>
+        <div class="detailed-solution">{{ q.global_feedback }}</div>
     </solution>
     {% endif %}
 </problem>

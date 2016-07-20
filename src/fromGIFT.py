@@ -84,7 +84,9 @@ class GiftQuestion():
     @classmethod
     def add_target_blank(cls, html_src):
         try:
-            tree = html.fromstring(html_src)
+            parser = etree.XHTMLParser()
+            tree = etree.parse(StringIO(html_src), parser)
+            #tree = html.fromstring(html_src)
             for link in tree.xpath('//a'):
                 link.attrib['target']="_blank"
             html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
@@ -100,19 +102,19 @@ class GiftQuestion():
         m1 = re.search('(?P<titre>::.*::){0,1}\s*(?P<format>\[[^\]]*\]){0,1}\s*(?P<qtext>[^\{]*)', new_src, flags=re.M)
         if m1:
             if m1.group('qtext'):
-                qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT, output_format='xhtml5')
+                qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT, output_format='xhtml')
                 qtext = GiftQuestion.add_target_blank(qtext)
                 new_src = new_src.replace(m1.group('qtext'), qtext)
             if m1.group('format'):    
                 new_src = new_src.replace(m1.group('format'), '[html]')
         # B / same for global feedback if any)
-        p2 = re.compile('\{####(?P<format>\[[^\]]*\]){0,1}\s*(?P<gf>[^\}]*)', flags=re.M)
+        p2 = re.compile('####(?P<format>\[[^\]]*\]){0,1}\s*(?P<gf>[^\}]*)', flags=re.M)
         m2 = p2.search(self.gift_src)
         if m2:
             if m2.group('format'):
                 new_src = new_src.replace(m2.group('format'), '[html]')
             if m2.group('gf'):
-                gf = markdown.markdown(m2.group('gf'), MARKDOWN_EXT, output_format='xhtml5')
+                gf = markdown.markdown(m2.group('gf'), MARKDOWN_EXT, output_format='xhtml')
                 gf = GiftQuestion.add_target_blank(gf)
                 pos = m2.start() # replace only in the relevant part of the string and not the entire string
                 new_src = new_src[:pos]+new_src[pos:].replace(m2.group('gf'), gf)
@@ -139,7 +141,7 @@ class GiftQuestion():
                     doc.asis(self.text)
                 else:
                     logging.info ("printing Markdown/ source = %s" % (self.text))
-                    html_text = markdown.markdown(self.text, MARKDOWN_EXT, output_format='xhtml5')
+                    html_text = markdown.markdown(self.text, MARKDOWN_EXT, output_format='xhtml')
                     doc.asis(html_text)
             # If type MULTICHOICE, MULTIANSWER give choices
             if self.type in ['MULTICHOICE', 'MULTIANSWER', 'TRUEFALSE']:
@@ -176,7 +178,7 @@ class GiftQuestion():
         if self.text_format == 'html':
             q_text = self.text
         else:
-            q_text = markdown.markdown(self.text, MARKDOWN_EXT, output_format='xhtml5')
+            q_text = markdown.markdown(self.text, MARKDOWN_EXT, output_format='xhtml')
         result = problem_template.render(q=self, q_text=q_text)
         return result.replace('<br>', '<br/>')
     
