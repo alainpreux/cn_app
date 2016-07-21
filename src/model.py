@@ -343,6 +343,14 @@ class Section:
         for sub in self.subsections:
             sub.toHTMLFile(outDir, feedback_option)
     
+    def toCourseHTML(self):
+        courseHTML = ""
+        for sub in self.subsections:
+            if isinstance(sub, Cours):
+                courseHTML += "\n\n<!-- Subsection "+sub.num+" -->\n"
+                courseHTML += markdown.markdown(sub.src, MARKDOWN_EXT)
+        return courseHTML
+    
     def toXMLMoodle(self, outDir):
         for sub in self.subsections:
             sub.toXMLMoodle(outDir)
@@ -421,6 +429,13 @@ class Module:
     def toHTMLFiles(self, outDir, feedback_option=False):
         for s in self.sections:
             s.toHTMLFiles(outDir, feedback_option)
+    
+    def toCourseHTML(self):
+        courseHTML = ""
+        for sec in self.sections:
+            courseHTML += "\n\n<!-- Section "+sec.num+" -->\n"
+            courseHTML += sec.toCourseHTML()
+        return courseHTML
 
     def toXMLMoodle(self, outDir):
         for s in self.sections:

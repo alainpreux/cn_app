@@ -88,6 +88,8 @@ def processModule(module,repoDir,outDir=None, feedback_option=False):
 
     # write html,  XML, and JSon  files
     m.toHTMLFiles(outDir, feedback_option)
+    write_file(m.toCourseHTML(), outDir, '', module+'.course_only.html')
+    
     m.toXMLMoodle(outDir)
     write_file(m.toGift(), outDir, '', module+'.questions_bank.gift.txt')
     # EDX library tar archive
