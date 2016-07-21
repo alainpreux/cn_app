@@ -1,5 +1,5 @@
 <!-- DEBUT problem {{q.title}} -->
-<problem display_name="{{ q.title }}" {% if q.type == "MULTICHOICE" or q.type == "TRUEFALSE" %}max_attempts="1"{%endif%}>
+<problem display_name="{{ q.title }}" {% if q.type == "MULTICHOICE" or q.type == "TRUEFALSE" or q.type == 'MULTIANSWER' %}max_attempts="1"{%endif%}>
     <legend>
         {{ q_text }}
     </legend>
