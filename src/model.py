@@ -257,7 +257,7 @@ class Comprehension(AnyActivity):
                                         
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
-        self.title = 'Auto-évaluation'
+        self.title = 'Compréhension'
         self.folder = 'Comprehension'
         
 class Activite(AnyActivity):

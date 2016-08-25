@@ -10,7 +10,7 @@ import model
 import logging
 
 
-FOLDERS = ['Comprehension', 'Activite', 'ActiviteAvancee', 'cours', 'correction', 'webcontent']
+FOLDERS = ['Comprehension', 'Activite', 'ActiviteAvancee', 'webcontent']
 VERBOSITY = False
 
 
