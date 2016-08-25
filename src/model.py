@@ -290,42 +290,49 @@ class Section:
     def parse(self, f):
         body = ''
         self.lastLine = f.readline()
-        while self.lastLine and not reStartSection.match(self.lastLine):
-
-            # is it a new subsection ?
-            match = reStartSubsection.match(self.lastLine)
-            if match :
-                # should I create a subsection (text just below a section
-                # or between activities
+        while self.lastLine:
+            # is it a new section ?
+            match = reStartSection.match(self.lastLine)
+            if match:
+                # for sections with only text:
                 if body and not body.isspace():
                     self.subsections.append(Cours(self,src=body))
-                sub = Cours(self,file=f,title=match.group('title'))
-                self.subsections.append(sub)
-                # The next line is the last line read in the parse of the subsection
-                self.lastLine = sub.lastLine
-                body = ''
+                break
             else:
-                # is it an activity
-                match = reStartActivity.match(self.lastLine)
+                # is it a new subsection ?
+                match = reStartSubsection.match(self.lastLine)
                 if match :
-                    act = goodActivity(match)
-                    if act: 
-                        # should I create a subsection (text just below a section
-                        # or between activities
-                        if body and not body.isspace():
-                            self.subsections.append(Cours(self,src=body))
-                            body = '' 
-                        self.subsections.append(act(self,f))
-                        # read a new line after the end of blocks 
-                        self.lastLine = f.readline()
+                    # should I create a subsection (text just below a section
+                    # or between activities
+                    if body and not body.isspace():
+                        self.subsections.append(Cours(self,src=body))
+                    sub = Cours(self,file=f,title=match.group('title'))
+                    self.subsections.append(sub)
+                    # The next line is the last line read in the parse of the subsection
+                    self.lastLine = sub.lastLine
+                    body = ''
+                else:
+                    # is it an activity
+                    match = reStartActivity.match(self.lastLine)
+                    if match :
+                        act = goodActivity(match)
+                        if act: 
+                            # should I create a subsection (text just below a section
+                            # or between activities
+                            if body and not body.isspace():
+                                self.subsections.append(Cours(self,src=body))
+                                body = '' 
+                            self.subsections.append(act(self,f))
+                            # read a new line after the end of blocks 
+                            self.lastLine = f.readline()
+                        else:
+                            logging.warning ("Unknown activity type %s",self.lastLine)
+                            body += self.lastLine
+                            self.lastLine = f.readline()
                     else:
-                        logging.warning ("Unknown activity type %s",self.lastLine)
+                        # no match, add the line to the body and read a new line
                         body += self.lastLine
                         self.lastLine = f.readline()
-                else:
-                    # no match, add the line to the body and read a new line
-                    body += self.lastLine
-                    self.lastLine = f.readline()
         
 
     def toHTMLFiles(self,outDir, feedback_option=False):
