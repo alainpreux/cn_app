@@ -200,8 +200,8 @@ class AnyActivity(Subsection):
         self.parse(f)
         # make substitutions:change relative media links from media/ to absolute URL since media are 
         # difficult to pass on when described in GIFT format
-        self.src = self.src.replace('media/', BASE_URL+'/'+section.module+'/media/')
-        
+        #self.src = self.src.replace('media/', BASE_URL+'/'+section.module+'/media/')
+        self.src = re.sub('(\.\/)*media/', BASE_URL+'/'+section.module+'/media/', self.src)
         self.questions = process_questions(extract_questions(self.src))
 
 
