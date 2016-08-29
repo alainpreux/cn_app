@@ -12,7 +12,31 @@ import logging
 
 FOLDERS = ['Comprehension', 'Activite', 'ActiviteAvancee', 'webcontent']
 VERBOSITY = False
+DEFAULT_VIDEO_THUMB_URL = 'https://i.vimeocdn.com/video/536038298_640.jpg'
 
+def fetch_vimeo_thumb(video_link):
+    """ fetch video thumbnail for vimeo videos """
+    # get video id
+    video_id = video_link.rsplit('/', 1)[1]
+    logging.info ("== video ID = %s" % video_id)
+    try: 
+        response = requests.request('GET', VIDEO_THUMB_API_URL+video_id+'.json')
+        data = response.json()[0]
+        image_link = data['thumbnail_large']
+        image_link = image_link.replace('wepb', 'jpg')
+    except Exception:
+        logging.exception (" ----------------  error while fetching video %s" % (video_link))
+        image_link = DEFAULT_VIDEO_THUMB_URL    
+    return image_link
+
+def get_video_src(video_link):
+    """ get video src link for iframe embed. 
+        FIXME : Supports only vimeo so far """
+    src_link = video_link
+    if not('player.vimeo.com/video' in video_link):
+        vid = video_link.rsplit('/', 1)[1]
+        src_link = 'https://player.vimeo.com/video/'+vid
+    return src_link
 
 def totimestamp(dt, epoch=datetime(1970,1,1)):
     td = dt - epoch

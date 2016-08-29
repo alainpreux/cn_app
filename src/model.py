@@ -68,29 +68,6 @@ class ComplexEncoder(json.JSONEncoder):
             return d
         return json.JSONEncoder.default(self, obj)
 
-
-def fetch_video_thumb(video_link):
-    """
-        fetch video thumbnail
-        FIXME: vimeo-only code
-        FIXME: is it useful ??? 
-    """
-    # get video id
-    video_id = video_link.rsplit('/', 1)[1]
-    logging.info ("== video ID = %s" % video_id)
-    try: 
-        # fetch json
-        response = requests.request('GET', VIDEO_THUMB_API_URL+video_id+'.json')
-        data = response.json()[0]
-        # copy image link
-        image_link = data['thumbnail_large']
-        image_link = image_link.replace('wepb', 'jpg')
-    except Exception:
-        #raise
-        logging.exception (" ----------------  error while fetching video %s" % (video_link))
-        image_link = DEFAULT_VIDEO_THUMB_URL    
-    
-    return image_link
     
 
 class Subsection:
@@ -166,40 +143,23 @@ class Cours(Subsection):
         self.html_src = self.html_src.replace('media/', '../media/')
         
         return self.html_src
-                
-    def get_video_src(self, video_link):
-        """ get video src link for iframe embed. 
-            FIXME : Supports only vimeo so far """
-        src_link = video_link
-        if not('player.vimeo.com/video' in video_link):
-            vid = video_link.rsplit('/', 1)[1]
-            src_link = 'https://player.vimeo.com/video/'+vid
-        return src_link
-        
+                        
     def detectVideoLinks(self):
-        videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.lien_video\s*.*}', self.src, flags=re.M)
+        videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.cours_video\s*.*}', self.src, flags=re.M)
         for video_match in videos_findall:
-            video_link = video_match[1].strip()
-            #image_link = fetch_video_thumb(video_link)
-            image_link = DEFAULT_VIDEO_THUMB_URL
             new_video = {
                 'video_title':video_match[0],
-                'video_link':video_link,
-                'video_src_link':self.get_video_src(video_link),
-                'video_thumbnail':image_link
+                'video_link':video_match[1].strip(),
+                'video_src_link':utils.get_video_src(video_match[1].strip()),
+                'video_thumbnail':DEFAULT_VIDEO_THUMB_URL
             }
             self.videos.append(new_video)
-            # FIXME append image in video link anchor
-            #img = html.fromstring('<img src="'+image_link+'"></img>')
-            #video_link.append(img)
-
         return (len(videos_findall) > 0)
 
     def videoIframeList(self):
         video_list = "\n"+self.num+' '+self.title+'\n'
         for v in self.videos:
-            video_list += '<iframe src='+v['video_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'
-        
+            video_list += '<iframe src='+v['video_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'    
         return video_list
     
 class AnyActivity(Subsection):
