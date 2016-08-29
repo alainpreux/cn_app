@@ -159,7 +159,7 @@ class Cours(Subsection):
     def videoIframeList(self):
         video_list = "\n"+self.num+' '+self.title+'\n'
         for v in self.videos:
-            video_list += '<iframe src='+v['video_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'    
+            video_list += '<iframe src='+v['video_src_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'    
         return video_list
     
 class AnyActivity(Subsection):

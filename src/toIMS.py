@@ -46,7 +46,7 @@ FILETYPES = {
     'cours' : 'webcontent',
 }
 
-FOLDERS = ['Activite', 'ActiviteAvancee', 'Comprehension', 'webcontent', 'media', 'correction']
+FOLDERS = ['Activite', 'ActiviteAvancee', 'Comprehension', 'webcontent', 'media']
 
 FOLDERS_ACTIVITY = {
     'Activite':'act',
@@ -75,45 +75,29 @@ HEADER_TEST = """<?xml version="1.0" encoding="UTF-8"?>
 
 DEFAULT_QTI_META = {
     'cc_profile' : 'cc.exam.v0p1',
-    'qmd_assessmenttype' : 'Examination'
+    'qmd_assessmenttype' : 'Examination',
+    'qmd_scoretype':'Percentage',
+    'qmd_feedbackpermitted':'Yes',
+    'qmd_hintspermitted':'Yes',
+    'qmd_solutionspermitted':'Yes',
+    'cc_maxattempts':'unlimited'   
 }
 
 def set_qti_metadata(max_attempts):
     
-    qtimetadata = """
-    <!--  Metadata  -->
-    <qtimetadata>
-      <qtimetadatafield>
-        <fieldlabel>cc_profile</fieldlabel>
-        <fieldentry>cc.exam.v0p1</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>qmd_assessmenttype</fieldlabel>
-        <fieldentry>Examination</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>qmd_scoretype</fieldlabel>
-        <fieldentry>Percentage</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>qmd_feedbackpermitted</fieldlabel>
-        <fieldentry>Yes</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>qmd_hintspermitted</fieldlabel>
-        <fieldentry>Yes</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>qmd_solutionspermitted</fieldlabel>
-        <fieldentry>Yes</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>cc_maxattempts</fieldlabel>
-        <fieldentry>"""
-
-    qtimetadata_tail = "</fieldentry></qtimetadatafield></qtimetadata>"
+    meta, tag, text = Doc().tagtext()
+    meta.asis("<!--  Metadata  -->")
+    metadata = DEFAULT_QTI_META
+    metadata['cc_maxattempts'] = max_attempts
+    with tag('qtimetadata'):
+        for key, value in metadata.iteritems():
+            with tag('qtimetadatafield'):
+                with tag('fieldlabel'):
+                    text(key)
+                with tag('fieldentry'):
+                    text(value)
     
-    return qtimetadata+str(max_attempts)+qtimetadata_tail
+    return indent(meta.getvalue())
 
 def create_ims_test(questions, test_id, test_title):
     """
@@ -267,11 +251,10 @@ def create_empty_ims_test(id, num, title, max_attempts):
     """
         create empty imsc test source code
     """
-    src = ""
-    src+=HEADER_TEST
-    src+='<assessment ident="'+id+'" title="'+num+' '+title+'">\n'
-    src+=set_qti_metadata(max_attempts)
-    src+="</assessment></questestinterop>\n"
+    src = HEADER_TEST
+    src += '<assessment ident="'+id+'" title="'+num+' '+title+'">\n'
+    src += set_qti_metadata(max_attempts)
+    src += "</assessment></questestinterop>\n"
 
     return src
 
@@ -331,10 +314,6 @@ def generateIMSManifest(data):
                     with tag('item', identifier=section_id):
                         with tag('title'):
                             doc.asis(section['num']+' '+section['title'])
-                            # if len(sec_videos) > 0:
-                            #     for video in sec_videos:
-                            #         video_id = video["video_link"].rsplit('/', 1)[1]
-                            #         doc.asis('<![CDATA[<span class="video-link"><a href="http://vimeo.com/'+video_id+'"></a></span>]]>')
                         subsec_type_old = ''
                         subsec_type = ''
                         for idB, subsection in enumerate(section["subsections"]):
@@ -352,8 +331,7 @@ def generateIMSManifest(data):
                                         try: 
                                             if len(subsection["videos"]) > 0:
                                                 for video in subsection["videos"]:
-                                                    video_id = video["video_link"].rsplit('/', 1)[1]
-                                                    doc.asis('<![CDATA['+subsection['num']+' '+subsection["title"]+'<span class="video-link"><a href="http://vimeo.com/'+video_id+'"></a></span>]]>')
+                                                    doc.asis('<![CDATA['+subsection['num']+' '+subsection["title"]+'<span class="video-link"><a href="'+video["video_link"]+'"></a></span>]]>')
                                             else:
                                                 text(subsection['num']+' '+subsection["title"])
                                         except Exception as e:

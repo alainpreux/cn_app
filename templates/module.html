@@ -76,7 +76,7 @@
                                 
                                 <div class="iframe_cont">
                                     {% if not firstsec %}{% include 'player_button.html'%}{%endif%}
-                                    <iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" {% if not firstsec %}data-{%endif%}src="{{video.video_link}}" 
+                                    <iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" {% if not firstsec %}data-{%endif%}src="{{video.video_src_link}}" 
                                         {%if not firstsec%}style="display:none"{%endif%}></iframe></div>
                             {% endfor %}
                         {% endif %}
