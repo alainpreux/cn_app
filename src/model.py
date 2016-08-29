@@ -154,7 +154,7 @@ class Cours(Subsection):
                 tree = html.fromstring(self.html_src)
                 for vl in tree.xpath('//a[contains(@class, "lien_video")]'):
                     vl.text = vl.text+" (vers la video)"
-                    # change href to this format http://vimeo.com/[id]
+                    # change href to this format http://vimeo.com/[id] if link is like https://player.vimeo.com/video/122104260
                     video_id = vl.attrib['href'].rsplit('/', 1)[1]
                     vl.attrib['href'] = 'http://vimeo.com/'+video_id
 
@@ -167,15 +167,25 @@ class Cours(Subsection):
         
         return self.html_src
                 
+    def get_video_src(self, video_link):
+        """ get video src link for iframe embed. 
+            FIXME : Supports only vimeo so far """
+        src_link = video_link
+        if not('player.vimeo.com/video' in video_link):
+            vid = video_link.rsplit('/', 1)[1]
+            src_link = 'https://player.vimeo.com/video/'+vid
+        return src_link
+        
     def detectVideoLinks(self):
-        videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.lien_video\s*}', self.src, flags=re.M)
+        videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.lien_video\s*.*}', self.src, flags=re.M)
         for video_match in videos_findall:
-            video_link = video_match[1]
+            video_link = video_match[1].strip()
             #image_link = fetch_video_thumb(video_link)
             image_link = DEFAULT_VIDEO_THUMB_URL
             new_video = {
                 'video_title':video_match[0],
-                'video_link':(video_match[1]).strip(),
+                'video_link':video_link,
+                'video_src_link':self.get_video_src(video_link),
                 'video_thumbnail':image_link
             }
             self.videos.append(new_video)
@@ -199,7 +209,7 @@ class AnyActivity(Subsection):
         self.src = ''
         self.parse(f)
         # make substitutions:change relative media links from media/ to absolute URL since media are 
-        # difficult to pass on when described in GIFT format
+        # difficult to be imported in Moodle when described in GIFT format
         #self.src = self.src.replace('media/', BASE_URL+'/'+section.module+'/media/')
         self.src = re.sub('(\.\/)*media/', BASE_URL+'/'+section.module+'/media/', self.src)
         self.questions = process_questions(extract_questions(self.src))
