@@ -78,18 +78,20 @@ def createDirs(outDir):
             shutil.rmtree(new_folder, ignore_errors=True)
             os.makedirs(new_folder)
     
-def processModule(module,repoDir,outDir=None, feedback_option=False):
+def processModule(args,repoDir,outDir, module):
     """ fetch markdown files from [repoDir]/[module]/ folder. 
         [repoDir] has to be given as absolute path. [module] is just the name of the module
         If no outDir given, build files directly in same folder, else in [repoDir]/[outDir]/[module]/
     """
+    # Folders
     moduleDir = os.path.join(repoDir, module)
     if not outDir:
-        outDir = moduleDir
+        moduleOutDir = moduleDir
     else:
-        outDir = os.path.join(repoDir,outDir,module)
+        moduleOutDir = os.path.join(repoDir,outDir,module)
+    createDirs(moduleOutDir)
 
-    # Fetch first md file in module folder
+    # Fetch md file 
     filein = None
     for file in os.listdir(moduleDir):
         if '.md' in file:
@@ -100,21 +102,17 @@ def processModule(module,repoDir,outDir=None, feedback_option=False):
         return false
     else:
         logging.info ("found MarkDown file : %s" % filein)
-        
 
-    # create folders
-    createDirs(outDir)
-
+    # Parse md file
     with open(filein, encoding='utf-8') as md_file:
-        # parse md 
         m = model.Module(md_file, module)
 
     # write html,  XML, and JSon  files
-    m.toHTMLFiles(outDir, feedback_option)
-    m.toXMLMoodle(outDir)
-    write_file(m.toGift(), outDir, '', module+'.questions_bank.gift.txt')
-    write_file(m.toVideoList(), outDir, '', module+'.video_iframe_list.txt')
-    mod_config = write_file(m.toJson(), outDir, '',  module+'.config.json')
+    m.toHTMLFiles(moduleOutDir, args.feedback)
+    m.toXMLMoodle(moduleOutDir)
+    write_file(m.toGift(), moduleOutDir, '', module+'.questions_bank.gift.txt')
+    write_file(m.toVideoList(), moduleOutDir, '', module+'.video_iframe_list.txt')
+    mod_config = write_file(m.toJson(), moduleOutDir, '',  module+'.config.json')
     
     # We return module object and link to json-serialized file
     return m, mod_config
