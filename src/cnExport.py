@@ -67,7 +67,7 @@ def processModule(args, repoDir, outDir, module):
     # Fetch and parse md file
     filein = utils.fetchMarkdownFile(moduleDir)
     with open(filein, encoding='utf-8') as md_file:
-        m = model.Module(md_file, module)
+        m = model.Module(md_file, module, args.baseUrl)
 
     # write html, XML, and JSon files
     m.toHTMLFiles(moduleOutDir, args.feedback)
