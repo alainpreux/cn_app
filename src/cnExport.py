@@ -26,27 +26,28 @@ BASE_PATH = os.path.abspath(os.getcwd())
 TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates' )
 
     
-def parse_content(href, module, outModuleDir, rewrite_iframe_src=True):
-    """ open file and replace media links and src for iframes """
-    try:
-        with open(href, 'r', encoding='utf-8') as file:
-            htmltext = file.read()
-    except Exception as e:
-        logging.exception("Exception reading %s: %s " % (href,e))
-        return ''
-    if not htmltext:
-        return ''
-    tree = html.fromstring(htmltext)
-    # Rewrite image links: for each module file, media dir is one step above (../media/)
-    # with html export, medias are accessed from index.html in root dir, so we have 
-    # to reconstruct the whole path
-    try:
-        for element, attribute, link, pos in tree.iterlinks():
-            newlink = link.replace("../media", module+"/media")
-            element.set(attribute, newlink)
-    except Exception as e:
-        logging.exception("Exception rewriting/removing links %s" % e)
-    return html.tostring(tree, encoding='utf-8').decode('utf-8')
+# def parse_content(href, module, outModuleDir, rewrite_iframe_src=True):
+#     """ open file and replace media links and src for iframes """
+#     try:
+#         with open(href, 'r', encoding='utf-8') as file:
+#             htmltext = file.read()
+#     except Exception as e:
+#         logging.exception("Exception reading %s: %s " % (href,e))
+#         return ''
+#     if not htmltext:
+#         return ''
+#     tree = html.fromstring(htmltext)
+#     # Rewrite image links: for each module file, media dir is one step above (../media/)
+#     # with html export, medias are accessed from index.html in root dir, so we have 
+#     # to reconstruct the whole path
+#     try:
+#         for element, attribute, link, pos in tree.iterlinks():
+#             newlink = link.replace("../media", module+"/media")
+#             element.set(attribute, newlink)
+#     except Exception as e:
+#         logging.exception("Exception rewriting/removing links %s" % e)
+#     return html.tostring(tree, encoding='utf-8').decode('utf-8')
+
 
 def writeHtml(module, outModuleDir, html):
     module_file_name = os.path.join(outModuleDir, module)+'.html'
@@ -160,25 +161,6 @@ def buildSite(course_obj, repoDir, outDir):
 
 
 
-def prepareDestination(outDir):
-    """ Create outDir and copy mandatory files""" 
-    # first erase exising dir
-    if os.path.exists(outDir):
-        shutil.rmtree(outDir)
-    if not os.path.isdir(outDir):
-       if not os.path.exists(outDir):
-           os.makedirs(outDir)
-       else:
-           print ("Cannot create %s " % (outDir))
-           sys.exit(0)
-    for d in ['static/js', 'static/img', 'static/svg', 'static/css', 'static/fonts']:
-        dest = os.path.join(outDir, d)
-        try :
-            shutil.copytree(d, dest)
-        except OSError as e:
-            logging.warn("%s already exists, going to overwrite it",d)
-            shutil.rmtree(dest)
-            shutil.copytree(d, dest)
     
             
 ############### main ################
@@ -219,7 +201,7 @@ if __name__ == "__main__":
         outDir = args.destination
     else: 
         outDir = os.path.join(repoDir, args.destination)
-    prepareDestination(outDir)
+    utils.prepareDestination(outDir)
     
     # ** Process repository ** 
     course_obj = processRepository(args, repoDir, outDir)

@@ -11,6 +11,7 @@ import logging
 
 
 FOLDERS = ['Comprehension', 'Activite', 'ActiviteAvancee', 'webcontent']
+STATIC_FOLDERS = ['static/js', 'static/img', 'static/svg', 'static/css', 'static/fonts']
 VERBOSITY = False
 DEFAULT_VIDEO_THUMB_URL = 'https://i.vimeocdn.com/video/536038298_640.jpg'
 
@@ -89,6 +90,27 @@ def copyMediaDir(repoDir, moduleOutDir, module):
             logging.warn("%s already exists. Going to delete it",mediaDir)
             shutil.rmtree(os.path.join(moduleOutDir,'media'))
             shutil.copytree(mediaDir, os.path.join(moduleOutDir,'media'))
+
+
+def prepareDestination(outDir):
+    """ Create outDir and copy mandatory files""" 
+    # first erase exising dir
+    if os.path.exists(outDir):
+        shutil.rmtree(outDir)
+    if not os.path.isdir(outDir):
+       if not os.path.exists(outDir):
+           os.makedirs(outDir)
+       else:
+           print ("Cannot create %s " % (outDir))
+           sys.exit(0)
+    for d in STATIC_FOLDERS:
+        dest = os.path.join(outDir, d)
+        try :
+            shutil.copytree(d, dest)
+        except OSError as e:
+            logging.warn("%s already exists, going to overwrite it",d)
+            shutil.rmtree(dest)
+            shutil.copytree(d, dest)
 
     
 def fetchMarkdownFile(moduleDir):
