@@ -307,7 +307,6 @@ class Section:
                 # Add category here
                 allGifts += "\n$CATEGORY: $course$/Quiz Bank '"+sub.num+' '+sub.title+"'\n\n"
                 allGifts += sub.toGift()
-        allGifts = allGifts.replace('media/', DEFAULT_BASE_URL+'/'+self.module+'/media/')
         return allGifts
     
     def toVideoList(self):
