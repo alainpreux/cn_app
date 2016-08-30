@@ -55,42 +55,42 @@ def writeHtml(module, outModuleDir, html):
     moduleHtml.close()
     
     
-def generateModuleHtml(data, module, outModuleDir):
-    """ parse data from config file 'moduleX.config.json' and generate a moduleX html file """
-    jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
-    module_template = jenv.get_template("module.html")
-    html = module_template.render(module=data)
-    writeHtml(module, outModuleDir, html)
-
 def processModule(args, repoDir, outDir, module):
     """ given input paramaters, process a module  """
-    outModuleDir = os.path.join(repoDir,outDir,module)
     
-    # generate config file: config file for each module is named [module_folder].config.json
-    mod_obj, mod_config = utils.processModule(args,repoDir,outDir,module)
-    
-    # Copy the media subdir if necessary to the dest 
-    mediaDir = os.path.join(repoDir, module, "media")
-    if os.path.isdir(mediaDir):
-        try :
-            shutil.copytree(mediaDir, os.path.join(outModuleDir,'media'))
-        except OSError as exception:
-            logging.warn("%s already exists. Going to delete it",mediaDir)
-            shutil.rmtree(os.path.join(outModuleDir,'media'))
-            shutil.copytree(mediaDir, os.path.join(outModuleDir,'media'))
+    moduleDir = os.path.join(repoDir, module)
+    moduleOutDir = os.path.join(outDir,module)
+    utils.createDirs(moduleOutDir)
+    utils.copyMediaDir(repoDir, moduleOutDir, module)
             
+    # Fetch and parse md file
+    filein = utils.fetchMarkdownFile(moduleDir)
+    with open(filein, encoding='utf-8') as md_file:
+        m = model.Module(md_file, module)
+
+    # write html, XML, and JSon files
+    m.toHTMLFiles(moduleOutDir, args.feedback)
+    m.toXMLMoodle(moduleOutDir)
+    utils.write_file(m.toGift(), moduleOutDir, '', module+'.questions_bank.gift.txt')
+    utils.write_file(m.toVideoList(), moduleOutDir, '', module+'.video_iframe_list.txt')
+    mod_config = utils.write_file(m.toJson(), moduleOutDir, '',  module+'.config.json')
+                
     # if chosen, generate IMS archive
     if args.ims:
-        mod_obj.ims_archive_path = toIMS.generateImsArchive(module, outModuleDir)
-        logging.warn('*Path to IMS = %s*' % mod_obj.ims_archive_path)
+        m.ims_archive_path = toIMS.generateImsArchive(module, moduleOutDir)
+        logging.warn('*Path to IMS = %s*' % m.ims_archive_path)
     
     # Generate module html file from JSON file
     with open(mod_config, encoding='utf-8') as mod_data_file:
         mod_data = json.load(mod_data_file)
-        mod_data['ims_archive_path'] = mod_obj.ims_archive_path
-    generateModuleHtml(mod_data, module, outModuleDir)
+        mod_data['ims_archive_path'] = m.ims_archive_path
+    jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
+    module_template = jenv.get_template("module.html")
+    html = module_template.render(module=mod_data)
+    writeHtml(module, moduleOutDir, html)
     
-    return mod_obj
+    # return module object
+    return m
 
 def processRepository(args, repoDir, outDir):
     """ takes arguments and directories and process repository  """
