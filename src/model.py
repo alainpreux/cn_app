@@ -35,7 +35,7 @@ import utils
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 VIDEO_THUMB_API_URL = 'https://vimeo.com/api/v2/video/'
 DEFAULT_VIDEO_THUMB_URL = 'https://i.vimeocdn.com/video/536038298_640.jpg'
-BASE_URL = 'http://culturenumerique.univ-lille3.fr'
+DEFAULT_BASE_URL = 'http://culturenumerique.univ-lille3.fr'
 
 # Regexps 
 reEndHead = re.compile('^#')
@@ -95,6 +95,9 @@ class Subsection:
 
     def toXMLMoodle(self, outDir):
         pass
+        
+    def absolutizeMediaLinks(self):
+        self.src = re.sub('\]\(\s*(\.\/)*\s*media/', ']('+self.section.base_url+'/'+self.section.module+'/media/', self.src)
     
 class Cours(Subsection):
     """ Class for a lecture"""
@@ -108,6 +111,7 @@ class Cours(Subsection):
         else:
             self.src=''
             self.parse(file)
+        self.absolutizeMediaLinks()
 
 
     def parse(self,f):
@@ -126,22 +130,7 @@ class Cours(Subsection):
     def toHTML(self, feedback_option=False):
         self.html_src = markdown.markdown(self.src, MARKDOWN_EXT)
         if self.detectVideoLinks() : 
-            # post-Processing video links
-            try:
-                tree = html.fromstring(self.html_src)
-                for vl in tree.xpath('//a[contains(@class, "lien_video")]'):
-                    vl.text = vl.text+" (vers la video)"
-                    # change href to this format http://vimeo.com/[id] if link is like https://player.vimeo.com/video/122104260
-                    video_id = vl.attrib['href'].rsplit('/', 1)[1]
-                    vl.attrib['href'] = 'http://vimeo.com/'+video_id
-
-                self.html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
-            except:
-                logging.exception("Exception with vimeo video links")
-        # FIXME : ugly hack; we should have a proper URL mechanism like the one in Django framework
-        # indirection for media link because files are splitted and put in folders
-        self.html_src = self.html_src.replace('media/', '../media/')
-        
+            logging.info("detected video links")            
         return self.html_src
                         
     def detectVideoLinks(self):
@@ -168,10 +157,7 @@ class AnyActivity(Subsection):
         Subsection.__init__(self,section)
         self.src = ''
         self.parse(f)
-        # make substitutions:change relative media links from media/ to absolute URL since media are 
-        # difficult to be imported in Moodle when described in GIFT format
-        #self.src = self.src.replace('media/', BASE_URL+'/'+section.module+'/media/')
-        self.src = re.sub('(\.\/)*media/', BASE_URL+'/'+section.module+'/media/', self.src)
+        self.absolutizeMediaLinks()            
         self.questions = process_questions(extract_questions(self.src))
 
 
@@ -248,11 +234,12 @@ class ActiviteAvancee(AnyActivity):
 class Section:
     num = 1
 
-    def __init__(self,title,f,module):
+    def __init__(self,title,f,module, base_url=DEFAULT_BASE_URL):
         self.title = title
         self.subsections = []
         self.num = str(Section.num)
         self.module = module
+        self.base_url = base_url
         self.parse(f)
         Section.num +=1
         Subsection.num=1 
@@ -320,7 +307,6 @@ class Section:
                 # Add category here
                 allGifts += "\n$CATEGORY: $course$/Quiz Bank '"+sub.num+' '+sub.title+"'\n\n"
                 allGifts += sub.toGift()
-        allGifts = allGifts.replace('media/', BASE_URL+'/'+self.module+'/media/')
         return allGifts
     
     def toVideoList(self):
@@ -333,7 +319,7 @@ class Section:
 class Module:
     """ Module structure"""
 
-    def __init__(self,f, module):
+    def __init__(self,f, module, base_url=DEFAULT_BASE_URL):
         self.sections = []
         Section.num = 1
         self.module = module
@@ -343,6 +329,7 @@ class Module:
         self.menutitle = 'Titre'
         self.author = 'culture numerique'
         self.css = 'http://culturenumerique.univ-lille3.fr/css/base.css'
+        self.base_url = base_url
         self.parse(f)
     
     def parseHead(self,f) :
@@ -365,7 +352,7 @@ class Module:
         l = self.parseHead(f)
         match = reStartSection.match(l)
         while l and match:
-            s = Section(match.group('title'),f, self.module)
+            s = Section(match.group('title'),f, self.module, self.base_url)
             self.sections.append( s )
             l = s.lastLine
             match = reStartSection.match(l)

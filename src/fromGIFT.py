@@ -159,8 +159,7 @@ class GiftQuestion():
             if (feedback_option and len(self.global_feedback) > 1):
                 with tag('div', klass='global_feedback'):
                     doc.asis('<b><em>Feedback:</em></b><br/>'+self.global_feedback)
-        doc.asis('\n')
-        doc.asis('\n')
+        doc.asis('\n\n')
         return((doc.getvalue()))
     
     def parse_gift_src(self):
@@ -260,11 +259,7 @@ class GiftQuestion():
     
 def clean_question_src(question):
     question = re.sub('<(span|strong)[^>]*>|</(strong|span)>', '', question)
-    # question = re.sub('\\:', '', question) # remove \: in src txt
     question = re.sub('\\\:', ':', question) # remove \: in src txt
-    # question = re.sub('\\=', '', question) # remove \= in src txt
-    # question = re.sub('\\\=', '', question) # remove \= in src txt
-
     return question
 
 def extract_questions(some_text):
@@ -304,7 +299,7 @@ def extract_questions(some_text):
             new_question = clean_question_src(new_question)
             questions_src.append(new_question)
 
-    logging.info(" ^^^^^^^^^^^^  Extracted  %d questions" % (len(questions_src)))
+    logging.info(" Extracted  %d questions" % (len(questions_src)))
     return questions_src
 
 
@@ -314,7 +309,6 @@ def process_questions(questions_src):
     """
     question_objects = []
     for q_src in questions_src:
-        #pprint(" ++++++  Processing new question len of questions_src = %d src = %s " % (len(questions_src), q_src))
         q_obj = GiftQuestion()
         q_obj.gift_src = q_src
         q_obj.md_src_to_html()

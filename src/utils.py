@@ -11,6 +11,7 @@ import logging
 
 
 FOLDERS = ['Comprehension', 'Activite', 'ActiviteAvancee', 'webcontent']
+STATIC_FOLDERS = ['static/js', 'static/img', 'static/svg', 'static/css', 'static/fonts']
 VERBOSITY = False
 DEFAULT_VIDEO_THUMB_URL = 'https://i.vimeocdn.com/video/536038298_640.jpg'
 
@@ -77,19 +78,43 @@ def createDirs(outDir):
             # remove then create
             shutil.rmtree(new_folder, ignore_errors=True)
             os.makedirs(new_folder)
-    
-def processModule(module,repoDir,outDir=None, feedback_option=False):
-    """ fetch markdown files from [repoDir]/[module]/ folder. 
-        [repoDir] has to be given as absolute path. [module] is just the name of the module
-        If no outDir given, build files directly in same folder, else in [repoDir]/[outDir]/[module]/
-    """
-    moduleDir = os.path.join(repoDir, module)
-    if not outDir:
-        outDir = moduleDir
-    else:
-        outDir = os.path.join(repoDir,outDir,module)
 
-    # Fetch first md file in module folder
+
+def copyMediaDir(repoDir, moduleOutDir, module):
+    """ Copy the media subdir if necessary to the dest """
+    mediaDir = os.path.join(repoDir, module, "media")
+    if os.path.isdir(mediaDir):
+        try :
+            shutil.copytree(mediaDir, os.path.join(moduleOutDir,'media'))
+        except OSError as exception:
+            logging.warn("%s already exists. Going to delete it",mediaDir)
+            shutil.rmtree(os.path.join(moduleOutDir,'media'))
+            shutil.copytree(mediaDir, os.path.join(moduleOutDir,'media'))
+
+
+def prepareDestination(outDir):
+    """ Create outDir and copy mandatory files""" 
+    # first erase exising dir
+    if os.path.exists(outDir):
+        shutil.rmtree(outDir)
+    if not os.path.isdir(outDir):
+       if not os.path.exists(outDir):
+           os.makedirs(outDir)
+       else:
+           print ("Cannot create %s " % (outDir))
+           sys.exit(0)
+    for d in STATIC_FOLDERS:
+        dest = os.path.join(outDir, d)
+        try :
+            shutil.copytree(d, dest)
+        except OSError as e:
+            logging.warn("%s already exists, going to overwrite it",d)
+            shutil.rmtree(dest)
+            shutil.copytree(d, dest)
+
+    
+def fetchMarkdownFile(moduleDir):
+    # Fetch md file 
     filein = None
     for file in os.listdir(moduleDir):
         if '.md' in file:
@@ -100,21 +125,7 @@ def processModule(module,repoDir,outDir=None, feedback_option=False):
         return false
     else:
         logging.info ("found MarkDown file : %s" % filein)
-        
-
-    # create folders
-    createDirs(outDir)
-
-    with open(filein, encoding='utf-8') as md_file:
-        # parse md 
-        m = model.Module(md_file, module)
-
-    # write html,  XML, and JSon  files
-    m.toHTMLFiles(outDir, feedback_option)
-    m.toXMLMoodle(outDir)
-    write_file(m.toGift(), outDir, '', module+'.questions_bank.gift.txt')
-    write_file(m.toVideoList(), outDir, '', module+'.video_iframe_list.txt')
-    mod_config = write_file(m.toJson(), outDir, '',  module+'.config.json')
     
-    # We return module object and link to json-serialized file
-    return m, mod_config
+    return filein
+    
+    
