@@ -44,7 +44,7 @@ FILETYPES = {
     'cours' : 'webcontent',
 }
 
-# FIXME : media folder can now be discarded since all media are linked absolutely
+# media folder is no longer copied along since all media are linked absolutely
 FOLDERS = ['Activite', 'ActiviteAvancee', 'Comprehension', 'webcontent']
 
 FOLDERS_ACTIVITY = {
@@ -341,24 +341,6 @@ def generateIMSManifest(data):
                                 
     # Print resources
     with tag('resources'):
-        # NO LONGER NEEDED # retrieve images and add dependency when needed
-        # doc.asis("<!-- Media -->")
-        # media_dir ="media"
-        # images = {}
-        # try:
-        #     for idx, filename in enumerate(os.listdir(os.path.join(os.getcwd(), media_dir))):
-        #         if filename in resources:
-        #             pass # avoid duplicating resources
-        #         else:
-        #             doc_id = media_dir+"_"+str(idx)
-        #             images[filename] = doc_id # store img id for further reference
-        #             with tag('resource', identifier=doc_id, type="webcontent", href=media_dir+"/"+filename):
-        #                 doc.stag('file', href=media_dir+"/"+filename)
-        # except Exception as e:
-        #     logging.warn("[toIMS] No media found for this module : %s" % e)
-        #     pass
-        # 
-
         doc.asis("<!-- Webcontent -->")
         for idA, section in enumerate(data["sections"]):
             for idB, subsection in enumerate(section["subsections"]):
@@ -370,19 +352,6 @@ def generateIMSManifest(data):
                     href = href.replace('html', 'xml')
                 with tag('resource', identifier=doc_id, type=file_type, href=href):
                      doc.stag('file', href=href)
-                    #  NO LONGER NEEDED 
-                    # add dependency if needed (html only)
-                    #  if file_type in ["webcontent", "cours", "correction"]:
-                    #     try:
-                    #         html_doc = html.parse(href)
-                    #         for img in html_doc.xpath('//@src'):
-                    #             img_filename = img.rsplit('/', 1)[1]
-                    #             if img_filename in images:
-                    #                 # add dependency
-                    #                 doc.stag('dependency', identifierref=images[img_filename])
-                    #     except:
-                    #         logging.error(" [toIMS]Error while parsing doc: %s" % (href))
-                    #         continue
 
     doc.asis("</manifest>")
     imsfile = open('imsmanifest.xml', 'w', encoding='utf-8')
