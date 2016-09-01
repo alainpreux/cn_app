@@ -131,6 +131,7 @@ class Cours(Subsection):
         self.html_src = markdown.markdown(self.src, MARKDOWN_EXT)
         if self.detectVideoLinks() : 
             logging.info("detected video links")            
+        self.html_src = utils.iframize_video_anchors(self.html_src, 'lien_video')
         return self.html_src
                         
     def detectVideoLinks(self):

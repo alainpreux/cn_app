@@ -1,10 +1,18 @@
+from __future__ import division
 # -*- coding: utf-8 -*-
 
-from __future__ import division
-from datetime import datetime, timedelta
-from io import open
 import os
 import shutil
+import requests
+
+from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
+from io import open
+from lxml import etree
+from lxml import html
+from urlparse import urlparse
+
+
 
 import model
 import logging
@@ -30,14 +38,64 @@ def fetch_vimeo_thumb(video_link):
         image_link = DEFAULT_VIDEO_THUMB_URL    
     return image_link
 
+def get_embed_code_for_url(url):
+    """
+    parses a given url and retrieve embed code
+    """
+    hostname = url and urlparse(url).hostname
+    # VIMEO case
+    if hostname == "vimeo.com":
+        # For vimeo videos, use OEmbed API
+        params = { 'url': url, 'format':'json', 'api':False }
+        try:
+            r = requests.get('https://vimeo.com/api/oembed.json', params=params)
+            r.raise_for_status()
+        except Exception as e:
+            return hostname, '<p>Error getting video from provider ({error})</p>'.format(error=e)
+        res = r.json()
+        return hostname, res['html']
+        
+    # CanalU.tv
+    elif hostname == "www.canal-u.tv":
+        # build embed url from template : https://www.canal-u.tv/video/universite_de_tous_les_savoirs/pourquoi_il_fait_nuit.1207 == hostname/video/[channel]/[videoname] 
+        embed_code = """<iframe src="{0}/embed.1/{1}?width=100%&amp;height=100%&amp" width="550" height="306" frameborder="0" allowfullscreen scrolling="no"></iframe>""".format(url.rsplit('/', 1)[0],url.split('/')[-1])
+        return hostname, embed_code
+    
+    # not supported
+    else:
+        return hostname, '<p>Unsupported video provider ({0})</p>'.format(hostname)
+
 def get_video_src(video_link):
     """ get video src link for iframe embed. 
-        FIXME : Supports only vimeo so far """
-    src_link = video_link
-    if not('player.vimeo.com/video' in video_link):
-        vid = video_link.rsplit('/', 1)[1]
-        src_link = 'https://player.vimeo.com/video/'+vid
+        FIXME : Supports only vimeo and canal-u.tv so far """
+    host, embed = get_embed_code_for_url(video_link)
+    soup = BeautifulSoup(embed, 'html.parser')
+    try:
+        src_link = soup.iframe['src']
+    except Exception as e:
+        src_link = '' 
     return src_link
+
+def iframize_video_anchors(htmlsrc, anchor_class):
+    """ given a piece of html code, scan for video anchors 
+        filtered by given class and add corresponding video iframe code before each anchor
+        nb. uses get_embed_code_for_url()
+    """
+    if anchor_class not in htmlsrc:
+        return htmlsrc
+    soup = BeautifulSoup(htmlsrc, 'html.parser')
+    anchor_list = soup.find_all('a', class_=anchor_class)
+    if len(anchor_list) < 1:
+        return htmlsrc
+    for anchor in anchor_list:
+        host, embed = get_embed_code_for_url(anchor['href'])
+        embed_soup = BeautifulSoup(embed, 'html.parser')
+        video_div = soup.new_tag('div', class_='video')
+        if embed_soup.iframe:
+            embed_soup.iframe.wrap(video_div)
+            anchor.insert_before(video_div)
+    return soup.prettify()
+    
 
 def totimestamp(dt, epoch=datetime(1970,1,1)):
     td = dt - epoch
