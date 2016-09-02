@@ -35,7 +35,7 @@ import utils
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 VIDEO_THUMB_API_URL = 'https://vimeo.com/api/v2/video/'
 DEFAULT_VIDEO_THUMB_URL = 'https://i.vimeocdn.com/video/536038298_640.jpg'
-BASE_URL = 'http://culturenumerique.univ-lille3.fr'
+DEFAULT_BASE_URL = 'http://culturenumerique.univ-lille3.fr'
 
 # Regexps 
 reEndHead = re.compile('^#')
@@ -68,29 +68,6 @@ class ComplexEncoder(json.JSONEncoder):
             return d
         return json.JSONEncoder.default(self, obj)
 
-
-def fetch_video_thumb(video_link):
-    """
-        fetch video thumbnail
-        FIXME: vimeo-only code
-        FIXME: is it useful ??? 
-    """
-    # get video id
-    video_id = video_link.rsplit('/', 1)[1]
-    logging.info ("== video ID = %s" % video_id)
-    try: 
-        # fetch json
-        response = requests.request('GET', VIDEO_THUMB_API_URL+video_id+'.json')
-        data = response.json()[0]
-        # copy image link
-        image_link = data['thumbnail_large']
-        image_link = image_link.replace('wepb', 'jpg')
-    except Exception:
-        #raise
-        logging.exception (" ----------------  error while fetching video %s" % (video_link))
-        image_link = DEFAULT_VIDEO_THUMB_URL    
-    
-    return image_link
     
 
 class Subsection:
@@ -118,6 +95,9 @@ class Subsection:
 
     def toXMLMoodle(self, outDir):
         pass
+        
+    def absolutizeMediaLinks(self):
+        self.src = re.sub('\]\(\s*(\.\/)*\s*media/', ']('+self.section.base_url+'/'+self.section.module+'/media/', self.src)
     
 class Cours(Subsection):
     """ Class for a lecture"""
@@ -131,6 +111,7 @@ class Cours(Subsection):
         else:
             self.src=''
             self.parse(file)
+        self.absolutizeMediaLinks()
 
 
     def parse(self,f):
@@ -149,47 +130,26 @@ class Cours(Subsection):
     def toHTML(self, feedback_option=False):
         self.html_src = markdown.markdown(self.src, MARKDOWN_EXT)
         if self.detectVideoLinks() : 
-            # post-Processing video links
-            try:
-                tree = html.fromstring(self.html_src)
-                for vl in tree.xpath('//a[contains(@class, "lien_video")]'):
-                    vl.text = vl.text+" (vers la video)"
-                    # change href to this format http://vimeo.com/[id]
-                    video_id = vl.attrib['href'].rsplit('/', 1)[1]
-                    vl.attrib['href'] = 'http://vimeo.com/'+video_id
-
-                self.html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
-            except:
-                logging.exception("Exception with vimeo video links")
-        # FIXME : ugly hack; we should have a proper URL mechanism like the one in Django framework
-        # indirection for media link because files are splitted and put in folders
-        self.html_src = self.html_src.replace('media/', '../media/')
-        
+            logging.info("detected video links")            
+        self.html_src = utils.iframize_video_anchors(self.html_src, 'lien_video')
         return self.html_src
-                
+                        
     def detectVideoLinks(self):
-        videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.lien_video\s*}', self.src, flags=re.M)
+        videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.cours_video\s*.*}', self.src, flags=re.M)
         for video_match in videos_findall:
-            video_link = video_match[1]
-            #image_link = fetch_video_thumb(video_link)
-            image_link = DEFAULT_VIDEO_THUMB_URL
             new_video = {
                 'video_title':video_match[0],
-                'video_link':(video_match[1]).strip(),
-                'video_thumbnail':image_link
+                'video_link':video_match[1].strip(),
+                'video_src_link':utils.get_video_src(video_match[1].strip()),
+                'video_thumbnail':DEFAULT_VIDEO_THUMB_URL
             }
             self.videos.append(new_video)
-            # FIXME append image in video link anchor
-            #img = html.fromstring('<img src="'+image_link+'"></img>')
-            #video_link.append(img)
-
         return (len(videos_findall) > 0)
 
     def videoIframeList(self):
         video_list = "\n"+self.num+' '+self.title+'\n'
         for v in self.videos:
-            video_list += '<iframe src='+v['video_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'
-        
+            video_list += '<iframe src='+v['video_src_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'    
         return video_list
     
 class AnyActivity(Subsection):
@@ -198,10 +158,7 @@ class AnyActivity(Subsection):
         Subsection.__init__(self,section)
         self.src = ''
         self.parse(f)
-        # make substitutions:change relative media links from media/ to absolute URL since media are 
-        # difficult to pass on when described in GIFT format
-        self.src = self.src.replace('media/', BASE_URL+'/'+section.module+'/media/')
-        
+        self.absolutizeMediaLinks()            
         self.questions = process_questions(extract_questions(self.src))
 
 
@@ -268,7 +225,7 @@ class Comprehension(AnyActivity):
                                         
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
-        self.title = 'Auto-évaluation'
+        self.title = 'Compréhension'
         self.folder = 'Comprehension'
         
 class Activite(AnyActivity):
@@ -289,11 +246,12 @@ class ActiviteAvancee(AnyActivity):
 class Section:
     num = 1
 
-    def __init__(self,title,f,module):
+    def __init__(self,title,f,module, base_url=DEFAULT_BASE_URL):
         self.title = title
         self.subsections = []
         self.num = str(Section.num)
         self.module = module
+        self.base_url = base_url
         self.parse(f)
         Section.num +=1
         Subsection.num=1 
@@ -301,42 +259,49 @@ class Section:
     def parse(self, f):
         body = ''
         self.lastLine = f.readline()
-        while self.lastLine and not reStartSection.match(self.lastLine):
-
-            # is it a new subsection ?
-            match = reStartSubsection.match(self.lastLine)
-            if match :
-                # should I create a subsection (text just below a section
-                # or between activities
+        while self.lastLine:
+            # is it a new section ?
+            match = reStartSection.match(self.lastLine)
+            if match:
+                # for sections with only text:
                 if body and not body.isspace():
                     self.subsections.append(Cours(self,src=body))
-                sub = Cours(self,file=f,title=match.group('title'))
-                self.subsections.append(sub)
-                # The next line is the last line read in the parse of the subsection
-                self.lastLine = sub.lastLine
-                body = ''
+                break
             else:
-                # is it an activity
-                match = reStartActivity.match(self.lastLine)
+                # is it a new subsection ?
+                match = reStartSubsection.match(self.lastLine)
                 if match :
-                    act = goodActivity(match)
-                    if act: 
-                        # should I create a subsection (text just below a section
-                        # or between activities
-                        if body and not body.isspace():
-                            self.subsections.append(Cours(self,src=body))
-                            body = '' 
-                        self.subsections.append(act(self,f))
-                        # read a new line after the end of blocks 
-                        self.lastLine = f.readline()
+                    # should I create a subsection (text just below a section
+                    # or between activities
+                    if body and not body.isspace():
+                        self.subsections.append(Cours(self,src=body))
+                    sub = Cours(self,file=f,title=match.group('title'))
+                    self.subsections.append(sub)
+                    # The next line is the last line read in the parse of the subsection
+                    self.lastLine = sub.lastLine
+                    body = ''
+                else:
+                    # is it an activity
+                    match = reStartActivity.match(self.lastLine)
+                    if match :
+                        act = goodActivity(match)
+                        if act: 
+                            # should I create a subsection (text just below a section
+                            # or between activities
+                            if body and not body.isspace():
+                                self.subsections.append(Cours(self,src=body))
+                                body = '' 
+                            self.subsections.append(act(self,f))
+                            # read a new line after the end of blocks 
+                            self.lastLine = f.readline()
+                        else:
+                            logging.warning ("Unknown activity type %s",self.lastLine)
+                            body += self.lastLine
+                            self.lastLine = f.readline()
                     else:
-                        logging.warning ("Unknown activity type %s",self.lastLine)
+                        # no match, add the line to the body and read a new line
                         body += self.lastLine
                         self.lastLine = f.readline()
-                else:
-                    # no match, add the line to the body and read a new line
-                    body += self.lastLine
-                    self.lastLine = f.readline()
         
 
     def toHTMLFiles(self,outDir, feedback_option=False):
@@ -362,7 +327,6 @@ class Section:
                 # Add category here
                 allGifts += "\n$CATEGORY: $course$/Quiz Bank '"+sub.num+' '+sub.title+"'\n\n"
                 allGifts += sub.toGift()
-        allGifts = allGifts.replace('media/', BASE_URL+'/'+self.module+'/media/')
         return allGifts
     
     def toVideoList(self):
@@ -388,7 +352,7 @@ class Section:
 class Module:
     """ Module structure"""
 
-    def __init__(self,f, module):
+    def __init__(self,f, module, base_url=DEFAULT_BASE_URL):
         self.sections = []
         Section.num = 1
         self.module = module
@@ -398,6 +362,7 @@ class Module:
         self.menutitle = 'Titre'
         self.author = 'culture numerique'
         self.css = 'http://culturenumerique.univ-lille3.fr/css/base.css'
+        self.base_url = base_url
         self.parse(f)
     
     def parseHead(self,f) :
@@ -420,7 +385,7 @@ class Module:
         l = self.parseHead(f)
         match = reStartSection.match(l)
         while l and match:
-            s = Section(match.group('title'),f, self.module)
+            s = Section(match.group('title'),f, self.module, self.base_url)
             self.sections.append( s )
             l = s.lastLine
             match = reStartSection.match(l)

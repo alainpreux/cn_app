@@ -19,8 +19,6 @@ from yattag import Doc
 
 import model
 
-
-
 # utf8 hack, python 2 only !!
 if sys.version_info[0] == 2:
     reload(sys)
@@ -46,7 +44,8 @@ FILETYPES = {
     'cours' : 'webcontent',
 }
 
-FOLDERS = ['Activite', 'ActiviteAvancee', 'Comprehension', 'webcontent', 'media', 'correction']
+# media folder is no longer copied along since all media are linked absolutely
+FOLDERS = ['Activite', 'ActiviteAvancee', 'Comprehension', 'webcontent']
 
 FOLDERS_ACTIVITY = {
     'Activite':'act',
@@ -75,45 +74,29 @@ HEADER_TEST = """<?xml version="1.0" encoding="UTF-8"?>
 
 DEFAULT_QTI_META = {
     'cc_profile' : 'cc.exam.v0p1',
-    'qmd_assessmenttype' : 'Examination'
+    'qmd_assessmenttype' : 'Examination',
+    'qmd_scoretype':'Percentage',
+    'qmd_feedbackpermitted':'Yes',
+    'qmd_hintspermitted':'Yes',
+    'qmd_solutionspermitted':'Yes',
+    'cc_maxattempts':'unlimited'   
 }
 
 def set_qti_metadata(max_attempts):
     
-    qtimetadata = """
-    <!--  Metadata  -->
-    <qtimetadata>
-      <qtimetadatafield>
-        <fieldlabel>cc_profile</fieldlabel>
-        <fieldentry>cc.exam.v0p1</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>qmd_assessmenttype</fieldlabel>
-        <fieldentry>Examination</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>qmd_scoretype</fieldlabel>
-        <fieldentry>Percentage</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>qmd_feedbackpermitted</fieldlabel>
-        <fieldentry>Yes</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>qmd_hintspermitted</fieldlabel>
-        <fieldentry>Yes</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>qmd_solutionspermitted</fieldlabel>
-        <fieldentry>Yes</fieldentry>
-      </qtimetadatafield>
-      <qtimetadatafield>
-        <fieldlabel>cc_maxattempts</fieldlabel>
-        <fieldentry>"""
-
-    qtimetadata_tail = "</fieldentry></qtimetadatafield></qtimetadata>"
+    meta, tag, text = Doc().tagtext()
+    meta.asis("<!--  Metadata  -->")
+    metadata = DEFAULT_QTI_META
+    metadata['cc_maxattempts'] = max_attempts
+    with tag('qtimetadata'):
+        for key, value in metadata.iteritems():
+            with tag('qtimetadatafield'):
+                with tag('fieldlabel'):
+                    text(key)
+                with tag('fieldentry'):
+                    text(value)
     
-    return qtimetadata+str(max_attempts)+qtimetadata_tail
+    return indent(meta.getvalue())
 
 def create_ims_test(questions, test_id, test_title):
     """
@@ -146,7 +129,6 @@ def create_ims_test(questions, test_id, test_title):
                                 with tag('fieldlabel'):
                                     text("cc_profile")
                                 with tag('fieldentry'):
-                                    #print ("question = %s \ntype ? %s \n" % (question.text, question.type ))
                                     try:
                                         text(CC_PROFILES[question.type])
                                     except:
@@ -188,10 +170,8 @@ def create_ims_test(questions, test_id, test_title):
                         with tag('outcomes'):
                             doc.stag('decvar', varname='SCORE', vartype='Decimal', minvalue="0", maxvalue="100")
                         # respconditions pour décrire quelle est la bonne réponse, les interactions, etc
-                        ## pour afficher le ne pourrait-elle pas feedback general
                         if question.global_feedback != '':
                             with tag('respcondition', title='General feedback', kontinue='Yes'):
-                            #with tag('respcondition', title='General feedback'):
                                 with tag('conditionvar'):
                                     doc.stag('other')
                                 doc.stag('displayfeedback', feedbacktype="Response", linkrefid='general_fb')
@@ -267,11 +247,10 @@ def create_empty_ims_test(id, num, title, max_attempts):
     """
         create empty imsc test source code
     """
-    src = ""
-    src+=HEADER_TEST
-    src+='<assessment ident="'+id+'" title="'+num+' '+title+'">\n'
-    src+=set_qti_metadata(max_attempts)
-    src+="</assessment></questestinterop>\n"
+    src = HEADER_TEST
+    src += '<assessment ident="'+id+'" title="'+num+' '+title+'">\n'
+    src += set_qti_metadata(max_attempts)
+    src += "</assessment></questestinterop>\n"
 
     return src
 
@@ -331,10 +310,6 @@ def generateIMSManifest(data):
                     with tag('item', identifier=section_id):
                         with tag('title'):
                             doc.asis(section['num']+' '+section['title'])
-                            # if len(sec_videos) > 0:
-                            #     for video in sec_videos:
-                            #         video_id = video["video_link"].rsplit('/', 1)[1]
-                            #         doc.asis('<![CDATA[<span class="video-link"><a href="http://vimeo.com/'+video_id+'"></a></span>]]>')
                         subsec_type_old = ''
                         subsec_type = ''
                         for idB, subsection in enumerate(section["subsections"]):
@@ -352,15 +327,13 @@ def generateIMSManifest(data):
                                         try: 
                                             if len(subsection["videos"]) > 0:
                                                 for video in subsection["videos"]:
-                                                    video_id = video["video_link"].rsplit('/', 1)[1]
-                                                    doc.asis('<![CDATA['+subsection['num']+' '+subsection["title"]+'<span class="video-link"><a href="http://vimeo.com/'+video_id+'"></a></span>]]>')
+                                                    doc.asis('<![CDATA['+subsection['num']+' '+subsection["title"]+'<span class="video-link"><a href="'+video["video_link"]+'"></a></span>]]>')
                                             else:
                                                 text(subsection['num']+' '+subsection["title"])
                                         except Exception as e:
                                             text(subsection['num']+' '+subsection["title"])
                                     else:
                                         # subsec_type != 'webcontent':
-                                        # print(" non webcontent stuff ! subsect type = %s type = %s" % (subsec_type, FOLDERS_ACTIVITY[subsec_type]))
                                         if subsec_type != subsec_type_old:
                                             doc.asis('<![CDATA[<span class="ban-sub ban-'+FOLDERS_ACTIVITY[subsec_type]+'">'+subsection['num']+' '+subsection["title"]+'</span>]]>')
                                         else:
@@ -368,24 +341,6 @@ def generateIMSManifest(data):
                                 
     # Print resources
     with tag('resources'):
-        # retrieve images and add dependency when needed
-        doc.asis("<!-- Media -->")
-        media_dir ="media"
-        images = {}
-        try:
-            for idx, filename in enumerate(os.listdir(os.path.join(os.getcwd(), media_dir))):
-                if filename in resources:
-                    pass # avoid duplicating resources
-                else:
-                    doc_id = media_dir+"_"+str(idx)
-                    images[filename] = doc_id # store img id for further reference
-                    with tag('resource', identifier=doc_id, type="webcontent", href=media_dir+"/"+filename):
-                        doc.stag('file', href=media_dir+"/"+filename)
-        except Exception as e:
-            logging.warn("[toIMS] No media found for this module : %s" % e)
-            pass
-        
-
         doc.asis("<!-- Webcontent -->")
         for idA, section in enumerate(data["sections"]):
             for idB, subsection in enumerate(section["subsections"]):
@@ -397,18 +352,6 @@ def generateIMSManifest(data):
                     href = href.replace('html', 'xml')
                 with tag('resource', identifier=doc_id, type=file_type, href=href):
                      doc.stag('file', href=href)
-                     # add dependency if needed (html only)
-                     if file_type in ["webcontent", "cours", "correction"]:
-                        try:
-                            html_doc = html.parse(href)
-                            for img in html_doc.xpath('//@src'):
-                                img_filename = img.rsplit('/', 1)[1]
-                                if img_filename in images:
-                                    # add dependency
-                                    doc.stag('dependency', identifierref=images[img_filename])
-                        except:
-                            logging.error(" [toIMS]Error while parsing doc: %s" % (href))
-                            continue
 
     doc.asis("</manifest>")
     imsfile = open('imsmanifest.xml', 'w', encoding='utf-8')
