@@ -16,6 +16,16 @@ Install the requirements with pip:
 $ pip install -r requirements.txt
 ```
 
+Depending on your system, some python libraries depend on system-modules. For Debian-based distribution, make sure the following packages are installed:
+
+- libxml2-dev
+- libxslt-dev
+- python-libxml2
+- python-libxslt1
+- python-dev
+- zlib1g-dev
+
+
 ## Export script src/CnExport.py
 
 This script takes module structure as input, parses the module's markdown files `moduleX/moduletitle.md` and generates a web site export presenting course's modules in a user-friendly fashion. General usage is:
