@@ -8,3 +8,4 @@ collectedstatics
 repo_data*
 *NOGIT
 venv
+site_settings.py

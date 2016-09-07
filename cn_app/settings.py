@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
+# load site-specific settings 
+from site_settings import *
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -19,18 +22,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPOS_DIR = os.path.join(BASE_DIR, 'repo_data','repositories')
 GENERATED_SITES_URL = "sites"
 GENERATED_SITES_DIR = os.path.join(BASE_DIR, 'repo_data', GENERATED_SITES_URL)
-# 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#v^rw2==%hi4qh_y4xv)l9d1i&1_!)rgsclb$!vmyg5%gw(*bx'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['culturenumerique-lille3.fr', '127.0.0.1']
-
 
 # Application definition
 
@@ -76,18 +67,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cn_app.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
@@ -119,7 +98,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
@@ -156,3 +134,4 @@ LOGGING = {
         },
     },
 }
+
