@@ -149,7 +149,16 @@ def copyMediaDir(repoDir, moduleOutDir, module):
             shutil.rmtree(os.path.join(moduleOutDir,'media'))
             shutil.copytree(mediaDir, os.path.join(moduleOutDir,'media'))
 
-
+def create_empty_file(filedir, filename):
+    """ Given a file dir path and name, create it anew """
+    filepath = os.path.join(filedir, filename)
+    if not os.path.exists(filedir):
+        os.makedirs(filedir)
+    if os.path.isfile(filepath):
+        shutil.rmtree(filepath)
+    open(filepath, 'a').close() 
+    return filepath
+    
 def prepareDestination(outDir):
     """ Create outDir and copy mandatory files""" 
     # first erase exising dir

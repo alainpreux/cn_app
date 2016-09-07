@@ -24,7 +24,7 @@ import model
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 BASE_PATH = os.path.abspath(os.getcwd())
 TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates' )
-
+LOGFILE = 'logs/cnExport.log'
     
 def writeHtml(module, outModuleDir, html):
     module_file_name = os.path.join(outModuleDir, module)+'.html'
@@ -162,7 +162,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     # ** Logging **
-    logging.basicConfig(filename='logs/toHTML.log',filemode='w',level=getattr(logging, args.logLevel))
+    logfile = utils.create_empty_file('logs', 'cnExport.log')
+    logging.basicConfig(filename=logfile,filemode='w',level=getattr(logging, args.logLevel))
 
     # ** Paths and directories **
     if os.path.isabs(args.repository):
