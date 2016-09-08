@@ -25,6 +25,13 @@ Depending on your system, some python libraries depend on system-modules. For De
 - python-dev
 - zlib1g-dev
 
+For the Django web app cn_app to work, you need to copy `cn_app/site_settings.template.py` as `cn_app/site_settings.py`:
+ ```
+ $ cp cn_app/site_settings.template.py cn_app/site_settings.py
+
+ ```
+
+and change the settings depending on your running environment (dev, production, domain name, database, etc)
 
 ## Export script src/CnExport.py
 
