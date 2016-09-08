@@ -20,7 +20,9 @@ from jinja2 import Template, Environment, FileSystemLoader
 
 import utils
 import toIMS
+import toEDX
 import model
+
 
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 BASE_PATH = os.path.abspath(os.getcwd())
@@ -46,7 +48,6 @@ def processModule(args, repoDir, outDir, module):
     filein = utils.fetchMarkdownFile(moduleDir)
     with open(filein, encoding='utf-8') as md_file:
         m = model.Module(md_file, module, args.baseUrl)
-
     # write html, XML, and JSon files
     m.toXMLMoodle(moduleOutDir)
     m.toHTMLFiles(moduleOutDir, args.feedback)
@@ -56,10 +57,12 @@ def processModule(args, repoDir, outDir, module):
     
     # EDX files
     if args.edx:
-        utils.write_file(m.toCourseHTML(), moduleOutDir, '', module+'.course_only.html')
-        tar = tarfile.open(os.path.join(moduleOutDir, module+".edx_problems_library.tar.gz"), "w:gz")
-        tar.add(utils.write_file(m.toEdxProblemsList(), moduleOutDir, '', 'library.xml'))
-        tar.close
+        # utils.write_file(m.toCourseHTML(), moduleOutDir, '', module+'.course_only.html')
+        # 
+        # tar = tarfile.open(os.path.join(moduleOutDir, module+".edx_problems_library.tar.gz"), "w:gz")
+        # tar.add(utils.write_file(m.toEdxProblemsList(), moduleOutDir, '', 'library.xml'))
+        # tar.close
+        toEDX.generateEDXArchive(m, moduleOutDir)
                     
     # if chosen, generate IMS archive
     if args.ims:
@@ -98,6 +101,7 @@ def buildSite(course_obj, repoDir, outDir):
     """ Generate full site from result of parsing repository """    
     
     jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
+    jenv.filters['slugify'] = utils.cnslugify
     site_template = jenv.get_template("site_layout.html")
     #if found, copy logo.png, else use default
     logo_files = glob.glob(os.path.join(repoDir, 'logo.*'))

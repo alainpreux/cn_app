@@ -4,21 +4,21 @@
             "drop_count": 2, 
             "min_count": 12, 
             "short_label": "Comp", 
-            "type": "Compr\u00e9hension", 
+            "type": "Comprehension", 
             "weight": 0.4
         }, 
         {
             "drop_count": 2, 
             "min_count": 12, 
             "short_label": "Act", 
-            "type": "Activit\u00e9", 
+            "type": "Activite", 
             "weight": 0.3
         }, 
         {
             "drop_count": 2, 
             "min_count": 12, 
             "short_label": "ActAv", 
-            "type": "Activit\u00e9 Avanc\u00e9e", 
+            "type": "Activite Avancee", 
             "weight": 0.3
         }
     ], 

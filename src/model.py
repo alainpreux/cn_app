@@ -158,9 +158,9 @@ class AnyActivity(Subsection):
         Subsection.__init__(self,section)
         self.src = ''
         self.parse(f)
-        self.absolutizeMediaLinks()            
         self.questions = process_questions(extract_questions(self.src))
-
+        self.absolutizeMediaLinks()            
+        
 
     def parse(self,f):
         ''' Read lines in f until the end of the activity '''
@@ -168,11 +168,13 @@ class AnyActivity(Subsection):
         while self.lastLine and not reEndActivity.match(self.lastLine):
             self.src += self.lastLine
             self.lastLine = f.readline()
-    
+
+
     def toGift(self):
         gift_src=''
         for question in self.questions:
             gift_src+='\n'+question.gift_src+'\n'
+        #self.gift_src = gift_src
         return gift_src
         
     

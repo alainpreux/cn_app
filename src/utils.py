@@ -12,6 +12,7 @@ from io import open
 from lxml import etree
 from lxml import html
 from urlparse import urlparse
+from slugify import slugify
 
 import model
 import logging
@@ -21,6 +22,7 @@ FOLDERS = ['Comprehension', 'Activite', 'ActiviteAvancee', 'webcontent']
 STATIC_FOLDERS = ['static/js', 'static/img', 'static/svg', 'static/css', 'static/fonts']
 VERBOSITY = False
 DEFAULT_VIDEO_THUMB_URL = 'https://i.vimeocdn.com/video/536038298_640.jpg'
+
 
 def fetch_vimeo_thumb(video_link):
     """ fetch video thumbnail for vimeo videos """
@@ -36,6 +38,7 @@ def fetch_vimeo_thumb(video_link):
         logging.exception (" ----------------  error while fetching video %s" % (video_link))
         image_link = DEFAULT_VIDEO_THUMB_URL    
     return image_link
+
 
 def get_embed_code_for_url(url):
     """
@@ -64,6 +67,7 @@ def get_embed_code_for_url(url):
     else:
         return hostname, '<p>Unsupported video provider ({0})</p>'.format(hostname)
 
+
 def get_video_src(video_link):
     """ get video src link for iframe embed. 
         FIXME : Supports only vimeo and canal-u.tv so far """
@@ -74,6 +78,7 @@ def get_video_src(video_link):
     except Exception as e:
         src_link = '' 
     return src_link
+
 
 def iframize_video_anchors(htmlsrc, anchor_class):
     """ given a piece of html code, scan for video anchors 
@@ -182,31 +187,11 @@ def fetchMarkdownFile(moduleDir):
         return false
     else:
         logging.info ("found MarkDown file : %s" % filein)
-<<<<<<< HEAD
-        
 
-    # create folders
-    createDirs(outDir)
-
-    with open(filein, encoding='utf-8') as md_file:
-        # parse md 
-        m = model.Module(md_file, module)
-
-    # write html,  XML, and JSon  files
-    m.toHTMLFiles(outDir, feedback_option)
-    write_file(m.toCourseHTML(), outDir, '', module+'.course_only.html')
-    
-    m.toXMLMoodle(outDir)
-    write_file(m.toGift(), outDir, '', module+'.questions_bank.gift.txt')
-    # EDX library tar archive
-    tar = tarfile.open(os.path.join(outDir, module+".edx_problems_library.tar.gz"), "w:gz")
-    tar.add(write_file(m.toEdxProblemsList(), outDir, '', 'library.xml'))
-    tar.close
-    write_file(m.toVideoList(), outDir, '', module+'.video_iframe_list.txt')
-    mod_config = write_file(m.toJson(), outDir, '',  module+'.config.json')
-=======
->>>>>>> 0444c8610fb55904377254966b4ffd6270b9e158
-    
     return filein
     
+
+def cnslugify(value):
+    """ Meant to be used as a tag in Jinja2 template, return the input string "value" turned into slugified version """ 
+    return slugify(value)
     
