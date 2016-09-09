@@ -132,7 +132,9 @@ class Cours(Subsection):
         if self.detectVideoLinks() : 
             logging.info("detected video links")            
         self.html_src = utils.iframize_video_anchors(self.html_src, 'lien_video')
+        self.html_src = utils.add_target_blank(self.html_src)
         return self.html_src
+                        
                         
     def detectVideoLinks(self):
         videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.cours_video\s*.*}', self.src, flags=re.M)

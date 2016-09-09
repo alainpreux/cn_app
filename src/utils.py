@@ -65,6 +65,7 @@ def get_embed_code_for_url(url):
     else:
         return hostname, '<p>Unsupported video provider ({0})</p>'.format(hostname)
 
+
 def get_video_src(video_link):
     """ get video src link for iframe embed. 
         FIXME : Supports only vimeo and canal-u.tv so far """
@@ -75,6 +76,18 @@ def get_video_src(video_link):
     except Exception as e:
         src_link = '' 
     return src_link
+
+
+def add_target_blank(html_src):
+    try:
+        tree = html.fromstring(html_src)
+        for link in tree.xpath('//a'):
+            link.attrib['target']="_blank"
+        html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
+    except:
+        logging.exception("=== Error finding anchors in html src: %s" % html_src)
+    return html_src
+
 
 def iframize_video_anchors(htmlsrc, anchor_class):
     """ given a piece of html code, scan for video anchors 

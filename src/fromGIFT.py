@@ -28,7 +28,7 @@ FOOTER = """
     """
 
 MARKDOWN_EXT = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'superscript']
-
+#MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 # GIFT syntax (from https://docs.moodle.org/28/en/GIFT_format):
     # * Questions separated by new line
     # * Question made of 3 parts:
@@ -75,16 +75,7 @@ class GiftQuestion():
         self.feedback_for_right = '' # for TRUEFALSE questions, given when giving the right answer
         self.feedback_for_wrong = '' # for TRUEFALSE questions, given when giving the wrong answer
     
-    @classmethod
-    def add_target_blank(cls, html_src):
-        try:
-            tree = html.fromstring(html_src)
-            for link in tree.xpath('//a'):
-                link.attrib['target']="_blank"
-            html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
-        except:
-            logging.exception("=== Error finding anchors in html src: %s" % html_src)
-        return html_src
+    
         
     
     def md_src_to_html(self):
@@ -95,7 +86,7 @@ class GiftQuestion():
         if m1:
             if m1.group('qtext'):
                 qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT)
-                qtext = GiftQuestion.add_target_blank(qtext)
+                qtext = utils.add_target_blank(qtext)
                 new_src = new_src.replace(m1.group('qtext'), qtext)
             if m1.group('format'):    
                 new_src = new_src.replace(m1.group('format'), '[html]')
@@ -107,13 +98,14 @@ class GiftQuestion():
                 new_src = new_src.replace(m2.group('format'), '[html]')
             if m2.group('gf'):
                 gf = markdown.markdown(m2.group('gf'), MARKDOWN_EXT)
-                gf = GiftQuestion.add_target_blank(gf)
+                gf = utils.add_target_blank(gf)
                 pos = m2.start() # replace only in the relevant part of the string and not the entire string
                 new_src = new_src[:pos]+new_src[pos:].replace(m2.group('gf'), gf)
     
     
         # C FIXME : should also check for per-answer feedbacks
         # convert self src
+        self.old_src = self.gift_src
         self.gift_src = new_src
         
         return new_src
@@ -260,6 +252,8 @@ class GiftQuestion():
 def clean_question_src(question):
     question = re.sub('<(span|strong)[^>]*>|</(strong|span)>', '', question)
     question = re.sub('\\\:', ':', question) # remove \: in src txt
+    if ('\\n' in question):
+        question = question.replace('\\n', '')
     return question
 
 def extract_questions(some_text):
