@@ -26,7 +26,7 @@ def create_repo_dir(dir_name, repo_url):
             shutil.rmtree(repo_path)
             os.makedirs(repo_path)
         os.chdir(repo_path)
-        git_cmd = ("git clone %s . --depth 1" % repo_url)
+        git_cmd = ("git clone %s . --depth 1 --no-single-branch" % repo_url)
         subprocess.check_output(git_cmd.split())
     except Exception as e:
         logger.error("Problem when creating and syncing dir %s with url %s \n Error : %s " % ( dir_name, repo_url, e))
