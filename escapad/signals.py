@@ -26,8 +26,8 @@ def create_repo_dir(dir_name, repo_url):
             shutil.rmtree(repo_path)
             os.makedirs(repo_path)
         os.chdir(repo_path)
-        git_cmd = ("git clone %s ." % repo_url)
-        subprocess.check_output(git_cmd.split())    
+        git_cmd = ("git clone %s . --depth 1" % repo_url)
+        subprocess.check_output(git_cmd.split())
     except Exception as e:
         logger.error("Problem when creating and syncing dir %s with url %s \n Error : %s " % ( dir_name, repo_url, e))
         os.chdir(current_path)
@@ -40,7 +40,7 @@ def create_repo_dir(dir_name, repo_url):
 
 @receiver(post_delete, sender=Repository)
 def delete_repo_dir(instance, **kwargs):
-    """ utility function to delete repo dir 
+    """ utility function to delete repo dir
     FIXME : and generated sites also!"""
     repo_path = os.path.join(settings.REPOS_DIR, instance.slug)
     try:
