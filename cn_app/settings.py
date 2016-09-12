@@ -12,8 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-
-# load site-specific settings 
+# Site specifi settings defined in another file
 from site_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -23,6 +22,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPOS_DIR = os.path.join(BASE_DIR, 'repo_data','repositories')
 GENERATED_SITES_URL = "sites"
 GENERATED_SITES_DIR = os.path.join(BASE_DIR, 'repo_data', GENERATED_SITES_URL)
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+
+STATIC_URL = '/static/'
+STATIC_ROOT = "collectedstatics/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "repo_data"),
+]
+
 
 # Application definition
 
@@ -99,14 +109,3 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
-
-STATIC_URL = '/static/'
-STATIC_ROOT = "collectedstatics/"
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "repo_data"),
-]
-
