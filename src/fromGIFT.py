@@ -8,7 +8,7 @@ import json
 import markdown
 import zipfile
 import random
-from datetime import datetime 
+from datetime import datetime
 import time
 import logging
 
@@ -27,8 +27,8 @@ FOOTER = """
     </body></html>
     """
 
-MARKDOWN_EXT = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'superscript']
-#MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
+#MARKDOWN_EXT = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'superscript']
+MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 # GIFT syntax (from https://docs.moodle.org/28/en/GIFT_format):
     # * Questions separated by new line
     # * Question made of 3 parts:
@@ -60,7 +60,7 @@ class GiftQuestion():
 
     """
     def __init__(self):
-        now = datetime.utcnow()  
+        now = datetime.utcnow()
         self.id = int(utils.totimestamp(now))
         self.gift_src = ''
         self.type = ''
@@ -74,10 +74,10 @@ class GiftQuestion():
         self.global_feedback_format = '[markdown]'
         self.feedback_for_right = '' # for TRUEFALSE questions, given when giving the right answer
         self.feedback_for_wrong = '' # for TRUEFALSE questions, given when giving the wrong answer
-    
-    
-        
-    
+
+
+
+
     def md_src_to_html(self):
         """ Convert question or feedback src from markdown to html ( useful for easier export) """
         new_src = self.gift_src
@@ -88,7 +88,7 @@ class GiftQuestion():
                 qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT)
                 qtext = utils.add_target_blank(qtext)
                 new_src = new_src.replace(m1.group('qtext'), qtext)
-            if m1.group('format'):    
+            if m1.group('format'):
                 new_src = new_src.replace(m1.group('format'), '[html]')
         # B / same for global feedback if any)
         p2 = re.compile('\{####(?P<format>\[[^\]]*\]){0,1}\s*(?P<gf>[^\}]*)', flags=re.M)
@@ -101,15 +101,15 @@ class GiftQuestion():
                 gf = utils.add_target_blank(gf)
                 pos = m2.start() # replace only in the relevant part of the string and not the entire string
                 new_src = new_src[:pos]+new_src[pos:].replace(m2.group('gf'), gf)
-    
-    
+
+
         # C FIXME : should also check for per-answer feedbacks
         # convert self src
         self.old_src = self.gift_src
         self.gift_src = new_src
-        
+
         return new_src
-        
+
 
     def to_html(self, feedback_option=False):
         """ From a question object, write HTML representation """
@@ -153,7 +153,7 @@ class GiftQuestion():
                     doc.asis('<b><em>Feedback:</em></b><br/>'+self.global_feedback)
         doc.asis('\n\n')
         return((doc.getvalue()))
-    
+
     def parse_gift_src(self):
         # 1. Separate in 3 parts: q_prestate { q_answers } q_poststate
         split_1 = self.gift_src.split('{', 1)
@@ -205,7 +205,7 @@ class GiftQuestion():
                 self.feedback_for_right = m2.group('right_fb')
             if q_answers.startswith(('F','FALSE')):
                 self.question_is_true = False # default is True
-                new_answers = [{'answer_text' : 'Vrai', 'is_right' :False, 'feedback' : self.feedback_for_wrong, 'credit':0}, 
+                new_answers = [{'answer_text' : 'Vrai', 'is_right' :False, 'feedback' : self.feedback_for_wrong, 'credit':0},
                     {'answer_text' : 'Faux', 'is_right' :True, 'feedback' : self.feedback_for_right, 'credit':100}]
             else:
                 new_answers = [{'answer_text' : 'Vrai', 'is_right' :True, 'feedback' : self.feedback_for_right, 'credit':100},                      {'answer_text' : 'Faux', 'is_right' :False, 'feedback' : self.feedback_for_wrong, 'credit':0}]
@@ -247,8 +247,8 @@ class GiftQuestion():
             self.type = 'MULTICHOICE'
         elif self.type == '': # FIXME we should recognize NUMERIC and MATCHING here
             self.type = 'ESSAY'
-    
-    
+
+
 def clean_question_src(question):
     question = re.sub('<(span|strong)[^>]*>|</(strong|span)>', '', question)
     question = re.sub('\\\:', ':', question) # remove \: in src txt
