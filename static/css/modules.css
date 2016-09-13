@@ -318,7 +318,10 @@ span.sec-title{
 .questiontext ul {
 	list-style: circle!important;
 	padding-left: 1em;
-
+}
+.global_feedback ul {
+	list-style: circle!important;
+	padding-left: 1em;
 }
 .question ul{
     list-style: none;

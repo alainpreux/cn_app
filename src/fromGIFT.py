@@ -91,7 +91,7 @@ class GiftQuestion():
             if m1.group('format'):
                 new_src = new_src.replace(m1.group('format'), '[html]')
         # B / same for global feedback if any)
-        p2 = re.compile('\{####(?P<format>\[[^\]]*\]){0,1}\s*(?P<gf>[^\}]*)', flags=re.M)
+        p2 = re.compile('####\s*(?P<format>\[[^\]]*\]){0,1}\s*(?P<gf>[^\}]*)', flags=re.M)
         m2 = p2.search(self.gift_src)
         if m2:
             if m2.group('format'):
