@@ -120,7 +120,7 @@ class GiftQuestion():
         with tag('div', klass='question'):
             with tag('h3', klass='questiontitle'):
                 text(self.title)
-            with tag('p', klass='questiontext'):
+            with tag('div', klass='questiontext'):
                 if self.text_format == 'html':
                     doc.asis(self.text)
                 else:

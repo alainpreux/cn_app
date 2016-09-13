@@ -40,13 +40,13 @@ a, a:link, a:hover, a:active, a:visited {
 	body {
 	padding-left: 300px;
 	}
-	
+
 	.contenudroite{
 		width: 800px;
-		
+
 	}
-	
-	
+
+
 	#content {
 	 padding-left:0 !important;
 	}
@@ -58,15 +58,15 @@ a, a:link, a:hover, a:active, a:visited {
 	.breadcrumb {
 	 position:fixed;
 	 width:100%;
-	} 
- 
+	}
+
 }
 /* empêche de désactiver le overflow en mode menu déplié*/
 body{
 	overflow-x: hidden;
 	overflow-y: auto!important;
 }
-	
+
 /* ---------------------------------------------------------*/
 /* STYLES TEXTES */
 /* ---------------------------------------------------------*/
@@ -98,7 +98,7 @@ p {
 }
 
 hr {
-	border: 1px solid  #AFA70E;		
+	border: 1px solid  #AFA70E;
 }
 
 iframe {
@@ -106,7 +106,7 @@ iframe {
 }
 
 /* ---------------------------------------------------------*/
-/* MENU GAUCHE 
+/* MENU GAUCHE
 /* ---------------------------------------------------------*/
 
 #menugauche {
@@ -134,11 +134,11 @@ iframe {
 #menugauche.in+#content{
 	opacity: 0.3;
 }
- 
+
  #menugauche-sm2 h4 {
     margin-left: 0em !important;
 }
- 
+
  /*#menugauche-sm2 {
 	 top:3.2em;
  }
@@ -147,7 +147,7 @@ iframe {
 	margin-top: 1em;
 	margin-left:0.3em;
 }*/
- 
+
 .menugauchebtn {
 	background-color:#333333;
 	border:none;
@@ -156,7 +156,7 @@ iframe {
 }
 /* Added by Freddy */
 
-/* Style menugauche statique*/ 
+/* Style menugauche statique*/
 .menugauche h1{
 	margin-left:0.5em;
 	padding-bottom: 20px;
@@ -225,7 +225,7 @@ span.sec-title{
     border-top: none;
 }
 
-/* Style menugauche pour interactions et dépliage du menu */ 
+/* Style menugauche pour interactions et dépliage du menu */
 .menugauche li > ul.list-group{
 	display: none;
 }
@@ -311,9 +311,19 @@ span.sec-title{
 	margin-left: 0px!important;
 }
 
+.questiontext{
+	padding-top: 0.5em;
+}
+
+.questiontext ul {
+	list-style: circle!important;
+	padding-left: 1em;
+
+}
 .question ul{
     list-style: none;
 }
+
 
 .question ul > li > input{
     margin-right: 0.5em;
@@ -321,13 +331,13 @@ span.sec-title{
 
 /* Added by Freddy */
 
-/* offset pour les ancres */ 
-section:before { 
-    display: block; 
-    content: " "; 
-    margin-top: -90px; 
-    height: 90px; 
-    visibility: hidden; 
+/* offset pour les ancres */
+section:before {
+    display: block;
+    content: " ";
+    margin-top: -90px;
+    height: 90px;
+    visibility: hidden;
 }
 
 
@@ -359,7 +369,7 @@ iframe{
 
 .play-button {
     height: 40px;
-    width: 65px;    
+    width: 65px;
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 5px;
     position: relative;
@@ -396,7 +406,7 @@ iframe{
 .icon-plus-circled{
 	position: absolute;
 	margin-top: 170px;
-	z-index: 1;	
+	z-index: 1;
 }
 .teaser{
 	cursor: pointer;
