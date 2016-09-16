@@ -1,11 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import datetime
 import json
 import mimetypes
-import os.path
-import subprocess
 import logging
-import datetime
+import os
+import shlex
+import subprocess
+import sys
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -17,13 +19,7 @@ from django.views.generic import View
 from .models import Repository
 
 logger = logging.getLogger(__name__)
-# Create your views here.
 
-
-import shlex
-#import logging
-#import subprocess
-from StringIO import StringIO
 
 def run_shell_command(command_line):
     command_line_args = shlex.split(command_line)
@@ -35,33 +31,26 @@ def run_shell_command(command_line):
             command_line_args,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
+            env={'PYTHONPATH': os.pathsep.join(sys.path)},
         )
-
         process_output, _ =  command_line_process.communicate()
-
-        # process_output is now a string, not a file,
-        # you may want to do:
-        # process_output = StringIO(process_output)
-        #log_subprocess_output(process_output)
         logger.warn(process_output)
-    except (OSError, CalledProcessError) as exception:
-        logger.warn('Exception occured: ' + str(exception))
+        returncode = command_line_process.returncode
+    except (OSError, ValueError) as exception:
         logger.warn('Subprocess failed')
-        return False
+        logger.warn('Exception occured: ' + str(exception))
+        return False, 'no output'
     else:
-        # no exception was raised
         logger.warn('Subprocess finished')
-
-    return True
-
-def index(request):
-    return HttpResponse(u"Liste des dépôt")
+    if returncode == 0:
+        return True, process_output
+    else:
+        return False, process_output
 
 class BuildView(View):
     """
     A view for generating site from Repository
     """
-
     http_method_names = ['get', 'post']
 
     @csrf_exempt
@@ -93,18 +82,16 @@ class BuildView(View):
         # 3. build with BASE_PATH/src/toHTML.py
         os.chdir(settings.BASE_DIR)
         build_cmd = ("python src/cnExport.py -r %s -d %s -u %s -i" % (repo_path, build_path, base_url))
-        try:
-            #subprocess.check_output(build_cmd.split())
-			run_shell_command(build_cmd)
-        except Exception as e:
-            os.chdir(settings.BASE_DIR)
-            return {"success":"false", "reason":"error when running command"}
-
-        # Normal conclusion
+        success, output = run_shell_command(build_cmd)
+        # go back to BASE_DIR and check output
         os.chdir(settings.BASE_DIR)
-        repo_object.last_compiled = datetime.datetime.now()
-        repo_object.save()
-        return({"success":"true"})
+        # FIXME: output should not be displayed for security reasons, since it is logged internaly to debug.log
+        if success:
+            repo_object.last_compiled = datetime.datetime.now()
+            repo_object.save()
+            return({"success":"true", "output":output})
+        else:
+            return {"success":"false", "reason":output}
 
     def post(self, request, slug, *args, **kwargs):
         res = self.build_repo(slug, request)
@@ -117,3 +104,7 @@ class BuildView(View):
 def visit_site(request, slug):
     """ Just a redirection to static generated site """
     return redirect(os.path.join(settings.STATIC_URL, settings.GENERATED_SITES_URL, slug, 'index.html'))
+
+def index(request):
+    # FIXME : useless now
+    return HttpResponse(u"Liste des dépôt")
