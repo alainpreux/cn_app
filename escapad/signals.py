@@ -29,12 +29,12 @@ def create_repo_dir(dir_name, repo_url):
         git_cmd = ("git clone %s . --depth 1 --no-single-branch" % repo_url)
         subprocess.check_output(git_cmd.split())
     except Exception as e:
-        logger.error("Problem when creating and syncing dir %s with url %s \n Error : %s " % ( dir_name, repo_url, e))
+        logger.error("%s | Problem when creating and syncing dir %s with url %s \n Error : %s " % ( timezone.now(), dir_name, repo_url, e))
         os.chdir(current_path)
         return False
     # In any case, go back to current_path
     os.chdir(current_path)
-    logger.warning(" successful creation of repo %s with url %s" % (dir_name, repo_url))
+    logger.warning("%s | successful creation of repo %s with url %s" % (timezone.now(), dir_name, repo_url))
     return True
 
 
@@ -71,8 +71,8 @@ def resync_repo_dir(sender, instance, update_fields, **kwargs):
 
 @receiver(post_save, sender=Repository)
 def sync_repo_dir(sender, instance, created, update_fields, **kwargs):
-    """ Create a dir repo_user/repo_name with clone of repo_url """
-    logger.warning(" %s | creating repo dir ! create = %s, update_fields = %s" % (timezone.now(), created, update_fields))
+    """ Create a dir named [slug] with clone of repo_url """
+    logger.warning(" %s | creating repo dir ?= %s | update_fields = %s" % (timezone.now(), created, update_fields))
     if update_fields == {'repo_synced'}:
         return
     if created: #new record

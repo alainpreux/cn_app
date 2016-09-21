@@ -13,6 +13,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.generic import View
 
@@ -24,7 +25,7 @@ logger = logging.getLogger(__name__)
 def run_shell_command(command_line):
     command_line_args = shlex.split(command_line)
 
-    logger.warn('Subprocess: "' + command_line + '"')
+    logger.warn('%s | Subprocess: %s ' % (timezone.now(), command_line))
 
     try:
         command_line_process = subprocess.Popen(
@@ -37,11 +38,11 @@ def run_shell_command(command_line):
         logger.warn(process_output)
         returncode = command_line_process.returncode
     except (OSError, ValueError) as exception:
-        logger.warn('Subprocess failed')
+        logger.warn('%s | Subprocess failed' % timezone.now())
         logger.warn('Exception occured: ' + str(exception))
         return False, 'no output'
     else:
-        logger.warn('Subprocess finished')
+        logger.warn('%s | Subprocess finished' % timezone.now())
     if returncode == 0:
         return True, process_output
     else:
@@ -62,23 +63,22 @@ class BuildView(View):
         repo_path = os.path.join(settings.REPOS_DIR, slug)
         build_path = os.path.join(settings.GENERATED_SITES_DIR, slug)
         base_url = request.build_absolute_uri(os.path.join(settings.STATIC_URL, settings.GENERATED_SITES_URL, slug))
-        logger.warn("Post to buidl view ! repo_path = %s" % repo_path)
-        logger.warn("+++ Base URL = %s" % base_url)
+        logger.warn("%s | Post to buidl view ! repo_path = %s | Base URL = %s" % (timezone.now(), repo_path, base_url))
 
         repo_object = Repository.objects.all().filter(slug=slug)[0]
         try:
             os.chdir(repo_path)
         except Exception as e:
             return {"success":"false", "reason":"repo not existing, or not synced"}
+
         # 2. git pull origin [branch:'master']
-        git_cmd1 = "git checkout %s " %  repo_object.default_branch
-        git_cmd2 = "git pull origin %s" % repo_object.default_branch
-        try:
-            subprocess.check_output(git_cmd1.split())
-            subprocess.check_output(git_cmd2.split())
-        except Exception as e:
-            os.chdir(settings.BASE_DIR)
-            return {"success":"false", "reason":"error with git pull origin master command"}
+        git_cmds = [("git checkout %s " %  repo_object.default_branch), ("git pull origin %s" % repo_object.default_branch)]
+        for git_cmd in git_cmds:
+            success, output = run_shell_command(git_cmd)
+            if not(success):
+                os.chdir(settings.BASE_DIR)
+                return {"success":"false", "reason":output}
+
         # 3. build with BASE_PATH/src/toHTML.py
         os.chdir(settings.BASE_DIR)
         build_cmd = ("python src/cnExport.py -r %s -d %s -u %s -i" % (repo_path, build_path, base_url))
