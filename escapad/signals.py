@@ -40,18 +40,15 @@ def create_repo_dir(dir_name, repo_url):
 
 @receiver(post_delete, sender=Repository)
 def delete_repo_dir(instance, **kwargs):
-    """ utility function to delete repo dir
-    FIXME : and generated sites also!"""
+    """ utility function to delete repo and sites dir """
     repo_path = os.path.join(settings.REPOS_DIR, instance.slug)
-    try:
-        shutil.rmtree(repo_path)
-    except Exception as e:
-        logger.error("Problem when deleting repo dir %s" %  repo_path)
     sites_path = os.path.join(settings.GENERATED_SITES_DIR, instance.slug)
-    try:
-        shutil.rmtree(sites_path)
-    except Exception as e:
-        logger.error("Problem when deleting sites dir %s" %  sites_path)
+    for path in [repo_path, sites_path]:
+        try:
+            shutil.rmtree(path)
+        except Exception as e:
+            logger.error("%s | Problem when deleting dir %s | error = %s" %  (timezone.now(), path, e))
+            return False
     return True
 
 

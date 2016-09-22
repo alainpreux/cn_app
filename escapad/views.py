@@ -102,8 +102,8 @@ class BuildView(View):
         return redirect(reverse('visit_site', args=(slug,)))
 
 def visit_site(request, slug):
-    """ Just a redirection to static generated site """
-    return redirect(os.path.join(settings.STATIC_URL, settings.GENERATED_SITES_URL, slug, 'index.html'))
+    """ Just a redirection to generated site """
+    return redirect(os.path.join(settings.GENERATED_SITES_URL, slug, 'index.html'))
 
 def index(request):
     # FIXME : useless now
