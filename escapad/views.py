@@ -62,7 +62,7 @@ class BuildView(View):
         # 1. cd to repo path
         repo_path = os.path.join(settings.REPOS_DIR, slug)
         build_path = os.path.join(settings.GENERATED_SITES_DIR, slug)
-        base_url = request.build_absolute_uri(os.path.join(settings.STATIC_URL, settings.GENERATED_SITES_URL, slug))
+        base_url = os.path.join(settings.GENERATED_SITES_URL, slug)
         logger.warn("%s | Post to buidl view ! repo_path = %s | Base URL = %s" % (timezone.now(), repo_path, base_url))
 
         repo_object = Repository.objects.all().filter(slug=slug)[0]
