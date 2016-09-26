@@ -29,29 +29,26 @@ def create_repo_dir(dir_name, repo_url):
         git_cmd = ("git clone %s . --depth 1 --no-single-branch" % repo_url)
         subprocess.check_output(git_cmd.split())
     except Exception as e:
-        logger.error("Problem when creating and syncing dir %s with url %s \n Error : %s " % ( dir_name, repo_url, e))
+        logger.error("%s | Problem when creating and syncing dir %s with url %s \n Error : %s " % ( timezone.now(), dir_name, repo_url, e))
         os.chdir(current_path)
         return False
     # In any case, go back to current_path
     os.chdir(current_path)
-    logger.warning(" successful creation of repo %s with url %s" % (dir_name, repo_url))
+    logger.warning("%s | successful creation of repo %s with url %s" % (timezone.now(), dir_name, repo_url))
     return True
 
 
 @receiver(post_delete, sender=Repository)
 def delete_repo_dir(instance, **kwargs):
-    """ utility function to delete repo dir
-    FIXME : and generated sites also!"""
+    """ utility function to delete repo and sites dir """
     repo_path = os.path.join(settings.REPOS_DIR, instance.slug)
-    try:
-        shutil.rmtree(repo_path)
-    except Exception as e:
-        logger.error("Problem when deleting repo dir %s" %  repo_path)
     sites_path = os.path.join(settings.GENERATED_SITES_DIR, instance.slug)
-    try:
-        shutil.rmtree(sites_path)
-    except Exception as e:
-        logger.error("Problem when deleting sites dir %s" %  sites_path)
+    for path in [repo_path, sites_path]:
+        try:
+            shutil.rmtree(path)
+        except Exception as e:
+            logger.error("%s | Problem when deleting dir %s | error = %s" %  (timezone.now(), path, e))
+            return False
     return True
 
 
@@ -71,8 +68,8 @@ def resync_repo_dir(sender, instance, update_fields, **kwargs):
 
 @receiver(post_save, sender=Repository)
 def sync_repo_dir(sender, instance, created, update_fields, **kwargs):
-    """ Create a dir repo_user/repo_name with clone of repo_url """
-    logger.warning(" %s | creating repo dir ! create = %s, update_fields = %s" % (timezone.now(), created, update_fields))
+    """ Create a dir named [slug] with clone of repo_url """
+    logger.warning(" %s | creating repo dir ?= %s | update_fields = %s" % (timezone.now(), created, update_fields))
     if update_fields == {'repo_synced'}:
         return
     if created: #new record

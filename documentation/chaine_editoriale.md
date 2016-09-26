@@ -118,7 +118,7 @@ Exemple:
 
 #### HTML et MarkDown dans les questions rédigées en GIFT
 
-Dans les questions rédigées en GIFT il est possible de rédiger le texte au format HTML ou Markdown en spécifiant devant chaque bloc la syntaxe ([voir explications à la fin de ce paragraphe](https://docs.moodle.org/28/en/GIFT_format#Percentage_Answer_Weights)).
+Dans les questions rédigées en GIFT il est possible de rédiger le texte au format HTML ou Markdown en spécifiant devant chaque bloc la syntaxe (voir explications à la fin de [ce paragraphe de la documentation Moodle sur le format GIFT](https://docs.moodle.org/28/en/GIFT_format#Percentage_Answer_Weights)).
 
 Dans le cas du Markdown, il y a cependant une limitation pour les listes (simples ou numérotées). En Markdown il faut laisser une ligne vide avant de commencer une liste:
 ```
@@ -128,19 +128,19 @@ Ingrédients:
 - pommes de terre
 
 ```
-... or dans la spécification GIFT, une ligne vide sépare 2 questions distinctes. Le compromis que nous adoptons ici consiste à dire qu'un simple passage à la ligne est conservé dans l'export texte **pour les activités uniquement et non le reste du texte de cours**. Les listes pourront donc être écrite à l'aide de `-` après un passage à la ligne:
-Par exemple:
+... or dans la spécification GIFT, une ligne vide sépare 2 questions distinctes. Les lignes vides pourront donc être indiquées dans un énoncé en GIFT avec le caractère de retour à la ligne "echappé" `\n`. Par exemple:
 ```
 Ingrédients:
+\n
 - carottes
 - pommes de terre
 
 ```  
-sera interprété comme ceci (en HTML):
+Qui permettra donc d'avoir une liste dans l'export HTML:
 ```
-<p>
-Ingrédients<br />
-- carottes<br />
-- pommes de terre<br />
-</p>
+Ingrédients:
+<ul>
+<li>carottes</li>
+<li>pommes de terre</li>
+</ul>
 ```
