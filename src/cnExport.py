@@ -60,14 +60,10 @@ def processModule(args, repoDir, outDir, module):
         logging.warn('*Path to IMS = %s*' % m.ims_archive_path)
 
     # Generate module html file from JSON file
-    # FIXME: we should use module oject instead of the file
-    with open(mod_config, encoding='utf-8') as mod_data_file:
-        mod_data = json.load(mod_data_file)
-        mod_data['ims_archive_path'] = m.ims_archive_path
     jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
     module_template = jenv.get_template("module.html")
-    html = module_template.render(module=mod_data)
-    # FIXME:
+    html = module_template.render(module=m)
+    # FIXME: we should simply pass the html string and not write a file
     writeHtml(module, moduleOutDir, html)
 
     # return module object
