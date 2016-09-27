@@ -18,35 +18,11 @@ from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.generic import View
 
 from .models import Repository
-
+from .utils import run_shell_command
 logger = logging.getLogger(__name__)
 
 
-def run_shell_command(command_line):
-    command_line_args = shlex.split(command_line)
 
-    logger.warn('%s | Subprocess: %s ' % (timezone.now(), command_line))
-
-    try:
-        command_line_process = subprocess.Popen(
-            command_line_args,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            env={'PYTHONPATH': os.pathsep.join(sys.path)},
-        )
-        process_output, _ =  command_line_process.communicate()
-        logger.warn(process_output)
-        returncode = command_line_process.returncode
-    except (OSError, ValueError) as exception:
-        logger.warn('%s | Subprocess failed' % timezone.now())
-        logger.warn('Exception occured: ' + str(exception))
-        return False, 'no output'
-    else:
-        logger.warn('%s | Subprocess finished' % timezone.now())
-    if returncode == 0:
-        return True, process_output
-    else:
-        return False, process_output
 
 class BuildView(View):
     """
