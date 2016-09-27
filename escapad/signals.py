@@ -12,6 +12,7 @@ from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 
 from escapad.models import Repository
+from escapad.utils import cnrmtree
 
 logger = logging.getLogger(__name__) # see in cn_app.settings.py logger declaration
 
@@ -23,7 +24,7 @@ def create_repo_dir(dir_name, repo_url):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
         else:
-            shutil.rmtree(repo_path)
+            cnrmtree(repo_path)
             os.makedirs(repo_path)
         os.chdir(repo_path)
         git_cmd = ("git clone %s . --depth 1 --no-single-branch" % repo_url)
@@ -45,7 +46,7 @@ def delete_repo_dir(instance, **kwargs):
     sites_path = os.path.join(settings.GENERATED_SITES_DIR, instance.slug)
     for path in [repo_path, sites_path]:
         try:
-            shutil.rmtree(path)
+            cnrmtree(path)
         except Exception as e:
             logger.error("%s | Problem when deleting dir %s | error = %s" %  (timezone.now(), path, e))
             return False
