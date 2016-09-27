@@ -37,7 +37,7 @@ VIDEO_THUMB_API_URL = 'https://vimeo.com/api/v2/video/'
 DEFAULT_VIDEO_THUMB_URL = 'https://i.vimeocdn.com/video/536038298_640.jpg'
 DEFAULT_BASE_URL = 'http://culturenumerique.univ-lille3.fr'
 
-# Regexps 
+# Regexps
 reEndHead = re.compile('^#')
 reStartSection = re.compile('^#\s+(?P<title>.*)$')
 reStartSubsection = re.compile('^##\s+(?P<title>.*)$')
@@ -53,7 +53,7 @@ def goodActivity(match):
         if isclass(act):
             return act
     return None
-    
+
 
 class ComplexEncoder(json.JSONEncoder):
     ''' Encoder for Json serialization: just delete recursive structures'''
@@ -68,13 +68,13 @@ class ComplexEncoder(json.JSONEncoder):
             return d
         return json.JSONEncoder.default(self, obj)
 
-    
+
 
 class Subsection:
-    """ 
+    """
     Abstract class for any type of subsection: lectures and activities
     - folders property equals the type (name of the class)
-    - num subsection number based on the section number 
+    - num subsection number based on the section number
     """
     num = 1
     def __init__(self, section):
@@ -89,16 +89,16 @@ class Subsection:
 
     def toHTMLFile(self,outDir, feedback_option):
         utils.write_file(self.toHTML(feedback_option), outDir, self.folder, self.getFilename())
-        
+
     def toGift(self):
         return ''
 
     def toXMLMoodle(self, outDir):
         pass
-        
+
     def absolutizeMediaLinks(self):
         self.src = re.sub('\]\(\s*(\.\/)*\s*media/', ']('+self.section.base_url+'/'+self.section.module+'/media/', self.src)
-    
+
 class Cours(Subsection):
     """ Class for a lecture"""
     def __init__(self, section, file=None, src='' ,title = 'Cours'):
@@ -120,23 +120,23 @@ class Cours(Subsection):
         while self.lastLine and not reStartSection.match(self.lastLine) and not reStartSubsection.match(self.lastLine) :
             # Is it really the end of the section?
             # blocks that are not activities are included!
-            match = reStartActivity.match(self.lastLine) 
+            match = reStartActivity.match(self.lastLine)
             if match and goodActivity(match):
                 return
             self.src += self.lastLine
             self.lastLine = f.readline()
 
-            
+
     def toHTML(self, feedback_option=False):
         self.html_src = markdown.markdown(self.src, MARKDOWN_EXT)
-        if self.detectVideoLinks() : 
-            logging.info("detected video links")            
+        if self.parseVideoLinks() : 
+            logging.info("detected video links")
         self.html_src = utils.iframize_video_anchors(self.html_src, 'lien_video')
         self.html_src = utils.add_target_blank(self.html_src)
         return self.html_src
-                        
-                        
-    def detectVideoLinks(self):
+
+
+    def parseVideoLinks(self):
         videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.cours_video\s*.*}', self.src, flags=re.M)
         for video_match in videos_findall:
             new_video = {
@@ -151,16 +151,16 @@ class Cours(Subsection):
     def videoIframeList(self):
         video_list = "\n"+self.num+' '+self.title+'\n'
         for v in self.videos:
-            video_list += '<iframe src='+v['video_src_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'    
+            video_list += '<iframe src='+v['video_src_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'
         return video_list
-    
+
 class AnyActivity(Subsection):
     """ Abstract class for any activity """
     def __init__(self,section,f):
         Subsection.__init__(self,section)
         self.src = ''
         self.parse(f)
-        self.absolutizeMediaLinks()            
+        self.absolutizeMediaLinks()
         self.questions = process_questions(extract_questions(self.src))
 
 
@@ -170,13 +170,13 @@ class AnyActivity(Subsection):
         while self.lastLine and not reEndActivity.match(self.lastLine):
             self.src += self.lastLine
             self.lastLine = f.readline()
-    
+
     def toGift(self):
         gift_src=''
         for question in self.questions:
             gift_src+='\n'+question.gift_src+'\n'
         return gift_src
-    
+
     def toHTML(self, feedback_option=False):
         self.html_src = ''
         for question in self.questions:
@@ -197,9 +197,9 @@ class AnyActivity(Subsection):
             logging.exception("=== Error finding anchors in html src: %s" % self.html_src)
 
         return self.html_src
-    
+
     def toXMLMoodle(self,outDir):
-        # a) depending on the type, get max number of attempts for the test 
+        # a) depending on the type, get max number of attempts for the test
         if isinstance(self, Comprehension):
             max_attempts = '1'
         else:
@@ -213,26 +213,26 @@ class AnyActivity(Subsection):
         utils.write_file(xml_src, outDir, self.folder , xml_filename)
 
 class Comprehension(AnyActivity):
-                                        
+
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
         self.title = 'Compréhension'
         self.folder = 'Comprehension'
-        
+
 class Activite(AnyActivity):
-                                        
+
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
         self.title = 'Activité'
         self.folder = 'Activite'
-        
+
 class ActiviteAvancee(AnyActivity):
-                                        
+
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
         self.title = 'Activité avancée'
         self.folder = 'ActiviteAvancee'
-        
+
 
 class Section:
     num = 1
@@ -245,8 +245,8 @@ class Section:
         self.base_url = base_url
         self.parse(f)
         Section.num +=1
-        Subsection.num=1 
-        
+        Subsection.num=1
+
     def parse(self, f):
         body = ''
         self.lastLine = f.readline()
@@ -276,14 +276,14 @@ class Section:
                     match = reStartActivity.match(self.lastLine)
                     if match :
                         act = goodActivity(match)
-                        if act: 
+                        if act:
                             # should I create a subsection (text just below a section
                             # or between activities
                             if body and not body.isspace():
                                 self.subsections.append(Cours(self,src=body))
-                                body = '' 
+                                body = ''
                             self.subsections.append(act(self,f))
-                            # read a new line after the end of blocks 
+                            # read a new line after the end of blocks
                             self.lastLine = f.readline()
                         else:
                             logging.warning ("Unknown activity type %s",self.lastLine)
@@ -293,12 +293,12 @@ class Section:
                         # no match, add the line to the body and read a new line
                         body += self.lastLine
                         self.lastLine = f.readline()
-        
+
 
     def toHTMLFiles(self,outDir, feedback_option=False):
         for sub in self.subsections:
             sub.toHTMLFile(outDir, feedback_option)
-    
+
     def toXMLMoodle(self, outDir):
         for sub in self.subsections:
             sub.toXMLMoodle(outDir)
@@ -311,14 +311,14 @@ class Section:
                 allGifts += "\n$CATEGORY: $course$/Quiz Bank '"+sub.num+' '+sub.title+"'\n\n"
                 allGifts += sub.toGift()
         return allGifts
-    
+
     def toVideoList(self):
         video_list = ""
         for sub in self.subsections:
             if isinstance(sub, Cours) and len(sub.videos) > 0:
                 video_list += sub.videoIframeList()
         return video_list
-    
+
 class Module:
     """ Module structure"""
 
@@ -334,7 +334,7 @@ class Module:
         self.css = 'http://culturenumerique.univ-lille3.fr/css/base.css'
         self.base_url = base_url
         self.parse(f)
-    
+
     def parseHead(self,f) :
         """ Captures meta-data  """
         l = f.readline()
@@ -344,11 +344,11 @@ class Module:
                 setattr(self, m.group('meta').lower(), m.group('value'))
             l = f.readline()
         return l
-                
+
     def toJson(self):
         return json.dumps(self, sort_keys=True,
                           indent=4, separators=(',', ': '),cls=ComplexEncoder)
-    
+
     def parse(self,f):
         #  A. split sections
         ## up to first section
@@ -359,7 +359,7 @@ class Module:
             self.sections.append( s )
             l = s.lastLine
             match = reStartSection.match(l)
-                
+
 
     def toHTMLFiles(self, outDir, feedback_option=False):
         for s in self.sections:
@@ -368,28 +368,28 @@ class Module:
     def toXMLMoodle(self, outDir):
         for s in self.sections:
             s.toXMLMoodle(outDir)
-            
+
     def toGift(self):
         """a text resource with all questions with a category / used for import into moodle"""
-        questions_bank = ""     
+        questions_bank = ""
         for s in self.sections:
             questions_bank += s.toGift()
-    
+
         # write questions bank file
         return questions_bank
-    
+
     def toVideoList(self):
-        """ a text resource with all video iframe codes """ 
+        """ a text resource with all video iframe codes """
         video_list = ""
         for s in self.sections:
             video_list += s.toVideoList()+'\n\n'
-            
+
         return video_list
 
 
 class CourseProgram:
     """ A course program is made of one or several course modules """
-    
+
     def __init__(self, repository):
         """ A CP is initiated from a repository containing global paramaters file (logo.jpg, title.md, home.md)
          and folders moduleX containing module file and medias """
@@ -397,12 +397,12 @@ class CourseProgram:
         self.repository = repository
         self.title = 'Culture Numérique'
         self.logo_path = 'logo.png'
-        
+
 
 ############### main ################
 if __name__ == "__main__":
     import io
-    
+
     f = io.StringIO("""
 LANGUAGE:   FR
 TITLE:   Représentation numérique de l'information : Test Module
@@ -448,13 +448,13 @@ ceci est une acticité 3
 
 apres activite
 """)
-    
+
     m = Module(f)
 
     print (m.toJson())
 
     module_folder = "tmp"
     utils.createDirs(module_folder)
-    
+
     m.toHTMLFiles(module_folder)
     m.toXMLMoodle(module_folder)

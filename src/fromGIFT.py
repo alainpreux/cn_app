@@ -27,7 +27,6 @@ FOOTER = """
     </body></html>
     """
 
-#MARKDOWN_EXT = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'superscript']
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 # GIFT syntax (from https://docs.moodle.org/28/en/GIFT_format):
     # * Questions separated by new line

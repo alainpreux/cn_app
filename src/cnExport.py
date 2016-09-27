@@ -25,48 +25,51 @@ MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 BASE_PATH = os.path.abspath(os.getcwd())
 TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates' )
 LOGFILE = 'logs/cnExport.log'
-    
+
 def writeHtml(module, outModuleDir, html):
     module_file_name = os.path.join(outModuleDir, module)+'.html'
     moduleHtml = open(module_file_name, 'w', encoding='utf-8')
     moduleHtml.write(html)
     moduleHtml.close()
-    
-    
+
+
 def processModule(args, repoDir, outDir, module):
     """ given input paramaters, process a module  """
-    
+
     moduleDir = os.path.join(repoDir, module)
     moduleOutDir = os.path.join(outDir,module)
     utils.createDirs(moduleOutDir)
     utils.copyMediaDir(repoDir, moduleOutDir, module)
-            
+
     # Fetch and parse md file
     filein = utils.fetchMarkdownFile(moduleDir)
     with open(filein, encoding='utf-8') as md_file:
         m = model.Module(md_file, module, args.baseUrl)
 
+    # FIXME : simplify process
     # write html, XML, and JSon files
     m.toHTMLFiles(moduleOutDir, args.feedback)
-    m.toXMLMoodle(moduleOutDir)
+    m.toXMLMoodle(moduleOutDir) # FIXME: xmlMoodle should not be written if no IMS option
     utils.write_file(m.toGift(), moduleOutDir, '', module+'.questions_bank.gift.txt')
     utils.write_file(m.toVideoList(), moduleOutDir, '', module+'.video_iframe_list.txt')
-    mod_config = utils.write_file(m.toJson(), moduleOutDir, '',  module+'.config.json')
-                
+    mod_config = utils.write_file(m.toJson(), moduleOutDir, '',  module+'.config.json') # FIXME : this file should be optionnaly written
+
     # if chosen, generate IMS archive
     if args.ims:
         m.ims_archive_path = toIMS.generateImsArchive(module, moduleOutDir)
         logging.warn('*Path to IMS = %s*' % m.ims_archive_path)
-    
+
     # Generate module html file from JSON file
+    # FIXME: we should use module oject instead of the file
     with open(mod_config, encoding='utf-8') as mod_data_file:
         mod_data = json.load(mod_data_file)
         mod_data['ims_archive_path'] = m.ims_archive_path
     jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
     module_template = jenv.get_template("module.html")
     html = module_template.render(module=mod_data)
+    # FIXME:
     writeHtml(module, moduleOutDir, html)
-    
+
     # return module object
     return m
 
@@ -78,17 +81,17 @@ def processRepository(args, repoDir, outDir):
     if args.modules == None:
         listt = glob.glob("module[0-9]")
         args.modules = sorted(listt,key=lambda a: a.lstrip('module'))
-        
+
     for module in args.modules:
         logging.info("\nStart Processing %s", module)
         course_obj.modules.append(processModule(args, repoDir, outDir, module))
-    
+
     return course_obj
-     
+
 
 def buildSite(course_obj, repoDir, outDir):
-    """ Generate full site from result of parsing repository """    
-    
+    """ Generate full site from result of parsing repository """
+
     jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
     site_template = jenv.get_template("site_layout.html")
     #if found, copy logo.png, else use default
@@ -96,13 +99,13 @@ def buildSite(course_obj, repoDir, outDir):
     if len(logo_files) > 0:
         logo = logo_files[0]
     else:# use default one
-        logo = os.path.join(TEMPLATES_PATH, 'logo.png') 
+        logo = os.path.join(TEMPLATES_PATH, 'logo.png')
     try:
         shutil.copy(logo, outDir)
     except Exception as e:
         logging.warn(" Error while copying logo file %s" % e)
         pass
-    
+
     ## open and parse 1st line title.md
     try:
         title_file = os.path.join(repoDir, 'title.md')
@@ -111,8 +114,8 @@ def buildSite(course_obj, repoDir, outDir):
     except Exception as e:
         logging.warn(" Error while parsing title file %s" % e)
         pass
-    
-    # Create site index.html with home.md content    
+
+    # Create site index.html with home.md content
     ## open and parse home.md
     try:
         home_file = os.path.join(repoDir, 'home.md')
@@ -127,7 +130,7 @@ def buildSite(course_obj, repoDir, outDir):
     ## write index.html file
     html = site_template.render(course=course_obj, module_content=home_html,body_class="home")
     utils.write_file(html, os.getcwd(), outDir, 'index.html')
-    
+
     # Loop through modules
     for module in course_obj.modules:
         in_module_file = os.path.join(outDir, module.module, module.module+".html")
@@ -137,9 +140,6 @@ def buildSite(course_obj, repoDir, outDir):
         utils.write_file(html, os.getcwd(), outDir, module.module+'.html')
 
 
-
-    
-            
 ############### main ################
 if __name__ == "__main__":
 
@@ -148,7 +148,7 @@ if __name__ == "__main__":
         print ("reload default encoding")
         reload(sys)
         sys.setdefaultencoding('utf8')
-    
+
     # ** Parse arguments **
     parser = argparse.ArgumentParser(description="Parses markdown files and generates a website using index.tmpl in the current directory. Default is to process and all folders 'module*'.")
     group = parser.add_mutually_exclusive_group()
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--feedback", action='store_true', help="Set the destination dir", default=False)
     parser.add_argument("-i", "--ims", action='store_true', help="Also generate IMS archive for each module", default=False)
     args = parser.parse_args()
-    
+
     # ** Logging **
     logfile = utils.create_empty_file('logs', 'cnExport.log')
     logging.basicConfig(filename=logfile,filemode='w',level=getattr(logging, args.logLevel))
@@ -168,7 +168,7 @@ if __name__ == "__main__":
     # ** Paths and directories **
     if os.path.isabs(args.repository):
         repoDir = args.repository
-    else:    
+    else:
         repoDir = os.path.join(BASE_PATH, args.repository)
     logging.warn("repository directory path : %s" % repoDir)
     if not(os.path.exists(repoDir)):
@@ -177,16 +177,16 @@ if __name__ == "__main__":
         sys.exit("Error: cannot build within current directory.")
     if os.path.isabs(args.destination):
         outDir = args.destination
-    else: 
+    else:
         outDir = os.path.join(repoDir, args.destination)
     utils.prepareDestination(outDir)
-    
-    # ** Process repository ** 
+
+    # ** Process repository **
     course_obj = processRepository(args, repoDir, outDir)
-    
+
     # ** Build site **
-    buildSite(course_obj, repoDir, outDir)        
-        
+    buildSite(course_obj, repoDir, outDir)
+
     # ** Exit and print path to build files: **
     os.chdir(BASE_PATH)
     print("**Build successful!** See result in : %s" % outDir)
