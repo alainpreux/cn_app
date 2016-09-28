@@ -4,7 +4,7 @@
 application providing services to parse a escapad formated files
 
 ## Versions
-v 0.2 added template mechanism for home page
+v 0.3 Escapad deployed on escapad.univ-lille3.fr
 
 # Usage
 
@@ -25,14 +25,6 @@ Depending on your system, some python libraries depend on system-modules. For De
 - python-dev
 - zlib1g-dev
 
-For the Django web app cn_app to work, you need to copy `cn_app/site_settings.template.py` as `cn_app/site_settings.py`:
- ```
- $ cp cn_app/site_settings.template.py cn_app/site_settings.py
-
- ```
-
-and change the settings depending on your running environment (dev, production, domain name, database, etc)
-
 ## Export script src/CnExport.py
 
 This script takes module structure as input, parses the module's markdown files `moduleX/moduletitle.md` and generates a web site export presenting course's modules in a user-friendly fashion. General usage is:
@@ -43,17 +35,21 @@ $ python src/cnExport.py -r path/to/module_repository -d /path/to/destination/fo
 
 This will generate a web site for all modules contained in given repository. Optionnaly you can:
 
-- choose which module to export by specifying module folder's names separeted by space `-m module1 module2 `
+- choose which module to export by specifying module folder's names separated by space `-m module1 module2 `
 - choose to generate also IMS CC  archive for use in LMSs like Moodle, Blackboard, etc. `-i`
-- add feebacks and correct responses `-f`
-- specify a global config file for the modules `-c path/to/config/file`
-
-
+- add feebacks + answers to quizes `-f`
 
 ## Running the Web application locally
 
-First do the migrations:
+For the Django web app cn_app to work, you need to copy `cn_app/site_settings.template.py` as `cn_app/site_settings.py`:
 
+```
+ $ cp cn_app/site_settings.template.py cn_app/site_settings.py
+
+```
+and change the settings depending on your running environment (dev, production, domain name, database, etc) as explained in comments in the file.
+
+Then do the database migrations in order to bootstrap the database with the schemas needed by the application:
 ```
 $ python manage.py migrate
 ```
@@ -65,3 +61,7 @@ $ python manage.py runserver
 ```
 
 and go to web adress at `http://localhost:8000`
+
+## Esc@pad Syntax
+
+For the full 
