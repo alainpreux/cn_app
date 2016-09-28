@@ -2,3 +2,11 @@ __pycache__
 *.log
 repositories
 *.pyc
+*.sqlite*
+generatedsites
+collectedstatics
+repo_data*
+*NOGIT
+venv
+site_settings.py
+cnappenv

@@ -1,0 +1,356 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: "culture-numerique";
+  src:url("../fonts/culture-numerique.eot");
+  src:url("../fonts/culture-numerique.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/culture-numerique.woff") format("woff"),
+    url("../fonts/culture-numerique.ttf") format("truetype"),
+    url("../fonts/culture-numerique.svg#culture-numerique") format("svg");
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+[data-icon]:before {
+  font-family: "culture-numerique" !important;
+  content: attr(data-icon);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin-right:0.75em;
+}
+
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  font-family: "culture-numerique" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+    margin-right: 0.4em;
+    top: 0.2em;
+    position: relative;
+}
+
+.icon-android:before {
+  content: "\61";
+}
+.icon-apple:before {
+  content: "\62";
+}
+.icon-bars:before {
+  content: "\63";
+}
+.icon-bookmark:before {
+  content: "\64";
+}
+.icon-bookmark-o:before {
+  content: "\65";
+}
+.icon-bullseye:before {
+  content: "\66";
+}
+.icon-chevron-down:before {
+  content: "\67";
+}
+.icon-chevron-left:before {
+  content: "\68";
+}
+.icon-chevron-right:before {
+  content: "\69";
+}
+.icon-chevron-up:before {
+  content: "\6a";
+}
+.icon-cog:before {
+  content: "\6b";
+}
+.icon-download:before {
+  content: "\6c";
+}
+.icon-facebook:before {
+  content: "\6d";
+}
+.icon-facebook-official:before {
+  content: "\6e";
+}
+.icon-facebook-square:before {
+  content: "\6f";
+}
+.icon-git:before {
+  content: "\70";
+}
+.icon-git-square:before {
+  content: "\71";
+}
+.icon-github:before {
+  content: "\72";
+}
+.icon-google:before {
+  content: "\73";
+}
+.icon-google-plus:before {
+  content: "\74";
+}
+.icon-google-plus-square:before {
+  content: "\75";
+}
+.icon-internet-explorer:before {
+  content: "\76";
+}
+.icon-instagram:before {
+  content: "\77";
+}
+.icon-link:before {
+  content: "\78";
+}
+.icon-linkedin:before {
+  content: "\79";
+}
+.icon-linkedin-square:before {
+  content: "\7a";
+}
+.icon-linux:before {
+  content: "\41";
+}
+.icon-refresh:before {
+  content: "\42";
+}
+.icon-repeat:before {
+  content: "\43";
+}
+.icon-rss:before {
+  content: "\44";
+}
+.icon-rss-square:before {
+  content: "\45";
+}
+.icon-tag:before {
+  content: "\46";
+}
+.icon-user:before {
+  content: "\47";
+}
+.icon-windows:before {
+  content: "\48";
+}
+.icon-youtube:before {
+  content: "\49";
+}
+.icon-youtube-square:before {
+  content: "\4a";
+}
+.icon-youtube-play:before {
+  content: "\4b";
+}
+.icon-wrench:before {
+  content: "\4c";
+}
+.icon-vimeo-square:before {
+  content: "\4d";
+}
+.icon-vimeo:before {
+  content: "\4e";
+}
+.icon-alert:before {
+  content: "\4f";
+}
+.icon-issue-opened:before {
+  content: "\50";
+}
+.icon-at-sign:before {
+  content: "\51";
+}
+.icon-photo:before {
+  content: "\52";
+}
+.icon-pencil:before {
+  content: "\53";
+}
+.icon-paperclip:before {
+  content: "\54";
+}
+.icon-cc:before {
+  content: "\55";
+}
+.icon-cc-by:before {
+  content: "\56";
+}
+.icon-cc-nc:before {
+  content: "\57";
+}
+.icon-cc-nc-eu:before {
+  content: "\58";
+}
+.icon-cc-nc-jp:before {
+  content: "\59";
+}
+.icon-cc-nd:before {
+  content: "\5a";
+}
+.icon-cc-pd:before {
+  content: "\30";
+}
+.icon-cc-remix:before {
+  content: "\31";
+}
+.icon-cc-sa:before {
+  content: "\32";
+}
+.icon-cc-share:before {
+  content: "\33";
+}
+.icon-cc-zero:before {
+  content: "\34";
+}
+.icon-link-1:before {
+  content: "\35";
+}
+.icon-login:before {
+  content: "\36";
+}
+.icon-search:before {
+  content: "\37";
+}
+.icon-share:before {
+  content: "\38";
+}
+.icon-stop:before {
+  content: "\39";
+}
+.icon-star:before {
+  content: "\21";
+}
+.icon-star-empty:before {
+  content: "\22";
+}
+.icon-connection-0:before {
+  content: "\23";
+}
+.icon-connection-1:before {
+  content: "\24";
+}
+.icon-connection-2:before {
+  content: "\25";
+}
+.icon-connection-3:before {
+  content: "\26";
+}
+.icon-connection-4:before {
+  content: "\27";
+}
+.icon-enter:before {
+  content: "\28";
+}
+.icon-forbidden:before {
+  content: "\29";
+}
+.icon-pin:before {
+  content: "\2a";
+}
+.icon-web:before {
+  content: "\2b";
+}
+.icon-2sharks:before {
+  content: "\2c";
+}
+.icon-3sharks:before {
+  content: "\2d";
+}
+.icon-activity:before {
+  content: "\2e";
+}
+.icon-book:before {
+  content: "\2f";
+}
+.icon-chat:before {
+  content: "\3a";
+}
+.icon-computer:before {
+  content: "\3b";
+}
+.icon-contact:before {
+  content: "\3c";
+}
+.icon-course:before {
+  content: "\3d";
+}
+.icon-database:before {
+  content: "\3e";
+}
+.icon-document:before {
+  content: "\3f";
+}
+.icon-download-1:before {
+  content: "\40";
+}
+.icon-feedback:before {
+  content: "\5b";
+}
+.icon-folderopened:before {
+  content: "\5d";
+}
+.icon-shareweb:before {
+  content: "\5e";
+}
+.icon-sharedoc:before {
+  content: "\5f";
+}
+.icon-register:before {
+  content: "\60";
+}
+.icon-quizz:before {
+  content: "\7b";
+}
+.icon-question:before {
+  content: "\7c";
+}
+.icon-puzzle:before {
+  content: "\7d";
+}
+.icon-modules:before {
+  content: "\7e";
+}
+.icon-logo-cercle-vert:before {
+  content: "\5c";
+}
+.icon-link-2:before {
+  content: "\e000";
+}
+.icon-label:before {
+  content: "\e001";
+}
+.icon-home:before {
+  content: "\e002";
+}
+.icon-forum:before {
+  content: "\e003";
+}
+.icon-plus-circled:before {
+  content: "\e004";
+}
+
+/* custom mapping */
+.icon-webcontent:before {
+  content: "\60";
+  /*content: "\3d";*/
+} 
+.icon-comprehension:before {
+  content: "\7b";
+}
+.icon-activite:before {
+  content: "\2e";
+}
+.icon-activiteavancee:before {
+  content: "\2f";
+}

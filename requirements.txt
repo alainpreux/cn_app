@@ -1,3 +1,5 @@
+Django
+django_extensions
 lxml
 yattag
 python-slugify
@@ -5,3 +7,4 @@ markdown
 MarkdownSuperscript
 flask
 requests
+beautifulsoup4
