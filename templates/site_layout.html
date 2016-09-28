@@ -36,8 +36,12 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="index.html">
-                    <img class="hidden-xs logo" class="logo" src="static/img/logo_plat_vert.svg" alt="">
-                    <img class="visible-xs logo" src="static/img/logo_cercle_vert.svg" alt="">
+                  {% if logo == 'default'%}
+                      <img class="hidden-xs logo" class="logo" src="static/img/logo_plat_vert.svg" alt="">
+                  {% else %}
+                      <img class="hidden-xs logo" class="logo" src="{{logo}}" alt="">
+                  {% endif %}
+                  <img class="visible-xs logo" src="static/img/logo_cercle_vert.svg" alt="">
                 </a>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
@@ -70,10 +74,15 @@
         </div>
     </nav>
     <!-- end of fixed top navbar -->
-    {% block main_content %} 
-    
+    {% block main_content %}
+    {% if logo == 'default' or body_class == 'modules'%}
         {{ module_content | safe }}
-        
+    {% else %}
+        <div class="custom_home">
+            {{ module_content | safe }}
+        </div>
+    {% endif %}
+
     {% endblock %}
     <!-- Début footer -->
     <!-- <footer>

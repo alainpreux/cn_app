@@ -94,13 +94,13 @@ def buildSite(course_obj, repoDir, outDir):
     logo_files = glob.glob(os.path.join(repoDir, 'logo.*'))
     if len(logo_files) > 0:
         logo = logo_files[0]
-    else:# use default one
-        logo = os.path.join(TEMPLATES_PATH, 'logo.png')
-    try:
-        shutil.copy(logo, outDir)
-    except Exception as e:
-        logging.warn(" Error while copying logo file %s" % e)
-        pass
+        try:
+            shutil.copy(logo, outDir)
+        except Exception as e:
+            logging.warn(" Error while copying logo file %s" % e)
+            pass
+    else:# use default one set in template
+        logo = 'default'
 
     ## open and parse 1st line title.md
     try:
@@ -124,7 +124,7 @@ def buildSite(course_obj, repoDir, outDir):
         with open(os.path.join(TEMPLATES_PATH, 'default_home.html'), 'r', encoding='utf-8') as f:
             home_html = f.read()
     ## write index.html file
-    html = site_template.render(course=course_obj, module_content=home_html,body_class="home")
+    html = site_template.render(course=course_obj, module_content=home_html,body_class="home", logo=logo)
     utils.write_file(html, os.getcwd(), outDir, 'index.html')
 
     # Loop through modules
@@ -132,7 +132,7 @@ def buildSite(course_obj, repoDir, outDir):
         in_module_file = os.path.join(outDir, module.module, module.module+".html")
         with open(in_module_file, 'r', encoding='utf-8') as f:
             data=f.read()
-        html = site_template.render(course=course_obj, module_content=data, body_class="modules")
+        html = site_template.render(course=course_obj, module_content=data, body_class="modules", logo=logo)
         utils.write_file(html, os.getcwd(), outDir, module.module+'.html')
 
 

@@ -70,7 +70,7 @@
 
 .purple {
 	color: #802489;
-}	
+}
 
 .orange {
 	color:#e8900c;
@@ -195,4 +195,13 @@ body {
 	padding-top: 3.9em;
 	/*font-size:160%;*/
     font-size: 16px;
+}
+
+/* --------------------------------------------------*/
+/*               custom home                         */
+/*---------------------------------------------------*/
+.custom_home{
+  width: 60%;
+  margin: auto;
+  padding: inherit;
 }
