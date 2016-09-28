@@ -75,12 +75,12 @@
     </nav>
     <!-- end of fixed top navbar -->
     {% block main_content %}
-    {% if logo == 'default' or body_class == 'modules'%}
+    {% if body_class == 'home' and custom_home %}
+      <div class="custom_home">
         {{ module_content | safe }}
+      </div>
     {% else %}
-        <div class="custom_home">
-            {{ module_content | safe }}
-        </div>
+      {{ module_content | safe }}
     {% endif %}
 
     {% endblock %}

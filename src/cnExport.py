@@ -93,7 +93,7 @@ def buildSite(course_obj, repoDir, outDir):
     #if found, copy logo.png, else use default
     logo_files = glob.glob(os.path.join(repoDir, 'logo.*'))
     if len(logo_files) > 0:
-        logo = logo_files[0]
+        logo = logo_files[0].rsplit('/',1)[1]
         try:
             shutil.copy(logo, outDir)
         except Exception as e:
@@ -113,18 +113,20 @@ def buildSite(course_obj, repoDir, outDir):
 
     # Create site index.html with home.md content
     ## open and parse home.md
+    custom_home = False
     try:
         home_file = os.path.join(repoDir, 'home.md')
         with open(home_file, 'r', encoding='utf-8') as f:
             home_data = f.read()
         home_html = markdown.markdown(home_data, MARKDOWN_EXT)
+        custom_home = True
     except Exception as err:
         ## use default from template
         logging.error(" Cannot parse home markdown ")
         with open(os.path.join(TEMPLATES_PATH, 'default_home.html'), 'r', encoding='utf-8') as f:
             home_html = f.read()
     ## write index.html file
-    html = site_template.render(course=course_obj, module_content=home_html,body_class="home", logo=logo)
+    html = site_template.render(course=course_obj, module_content=home_html,body_class="home", logo=logo, custom_home=custom_home)
     utils.write_file(html, os.getcwd(), outDir, 'index.html')
 
     # Loop through modules
