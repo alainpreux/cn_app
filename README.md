@@ -64,4 +64,4 @@ and go to web adress at `http://localhost:8000`
 
 ## Esc@pad Syntax
 
-For the full 
+For the full explanations, visit [this page](documentation/chaine_editoriale.md)
