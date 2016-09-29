@@ -1,4 +1,5 @@
 Django
+django_extensions
 lxml
 yattag
 python-slugify

@@ -29,14 +29,14 @@ def fetch_vimeo_thumb(video_link):
     # get video id
     video_id = video_link.rsplit('/', 1)[1]
     logging.info ("== video ID = %s" % video_id)
-    try: 
+    try:
         response = requests.request('GET', VIDEO_THUMB_API_URL+video_id+'.json')
         data = response.json()[0]
         image_link = data['thumbnail_large']
         image_link = image_link.replace('wepb', 'jpg')
     except Exception:
         logging.exception (" ----------------  error while fetching video %s" % (video_link))
-        image_link = DEFAULT_VIDEO_THUMB_URL    
+        image_link = DEFAULT_VIDEO_THUMB_URL
     return image_link
 
 
@@ -56,32 +56,43 @@ def get_embed_code_for_url(url):
             return hostname, '<p>Error getting video from provider ({error})</p>'.format(error=e)
         res = r.json()
         return hostname, res['html']
-        
+
     # CanalU.tv
     elif hostname == "www.canal-u.tv":
-        # build embed url from template : https://www.canal-u.tv/video/universite_de_tous_les_savoirs/pourquoi_il_fait_nuit.1207 == hostname/video/[channel]/[videoname] 
+        # build embed url from template : https://www.canal-u.tv/video/universite_de_tous_les_savoirs/pourquoi_il_fait_nuit.1207 == hostname/video/[channel]/[videoname]
         embed_code = """<iframe src="{0}/embed.1/{1}?width=100%&amp;height=100%&amp" width="550" height="306" frameborder="0" allowfullscreen scrolling="no"></iframe>""".format(url.rsplit('/', 1)[0],url.split('/')[-1])
         return hostname, embed_code
-    
+
     # not supported
     else:
         return hostname, '<p>Unsupported video provider ({0})</p>'.format(hostname)
 
 
 def get_video_src(video_link):
-    """ get video src link for iframe embed. 
+    """ get video src link for iframe embed.
         FIXME : Supports only vimeo and canal-u.tv so far """
     host, embed = get_embed_code_for_url(video_link)
     soup = BeautifulSoup(embed, 'html.parser')
     try:
         src_link = soup.iframe['src']
     except Exception as e:
-        src_link = '' 
+        src_link = ''
     return src_link
 
 
+def add_target_blank(html_src):
+    try:
+        tree = html.fromstring(html_src)
+        for link in tree.xpath('//a'):
+            link.attrib['target']="_blank"
+        html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
+    except:
+        logging.exception("=== Error finding anchors in html src: %s" % html_src)
+    return html_src
+
+
 def iframize_video_anchors(htmlsrc, anchor_class):
-    """ given a piece of html code, scan for video anchors 
+    """ given a piece of html code, scan for video anchors
         filtered by given class and add corresponding video iframe code before each anchor
         nb. uses get_embed_code_for_url()
     """
@@ -98,13 +109,14 @@ def iframize_video_anchors(htmlsrc, anchor_class):
         if embed_soup.iframe:
             embed_soup.iframe.wrap(video_div)
             anchor.insert_before(video_div)
-    return soup.prettify()
-    
+    output = soup.prettify()
+    return output.replace('class_', 'class')
+
 
 def totimestamp(dt, epoch=datetime(1970,1,1)):
     td = dt - epoch
     # return td.total_seconds()
-    return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6 
+    return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
 
 
 def write_file(src, current_dir, target_folder, name):
@@ -129,7 +141,7 @@ def stitch_files(files, filename):
             with open(f, "r", encoding='utf-8') as infile:
                 outfile.write(infile.read())
     return outfile
-    
+
 def createDirs(outDir):
     for folder in FOLDERS :
         new_folder = os.path.join(outDir, folder)
@@ -153,9 +165,18 @@ def copyMediaDir(repoDir, moduleOutDir, module):
             shutil.rmtree(os.path.join(moduleOutDir,'media'))
             shutil.copytree(mediaDir, os.path.join(moduleOutDir,'media'))
 
+def create_empty_file(filedir, filename):
+    """ Given a file dir path and name, create it anew """
+    filepath = os.path.join(filedir, filename)
+    if not os.path.exists(filedir):
+        os.makedirs(filedir)
+    if os.path.isfile(filepath):
+        os.remove(filepath)
+    open(filepath, 'a').close()
+    return filepath
 
 def prepareDestination(outDir):
-    """ Create outDir and copy mandatory files""" 
+    """ Create outDir and copy mandatory files"""
     # first erase exising dir
     if os.path.exists(outDir):
         shutil.rmtree(outDir)
@@ -174,9 +195,9 @@ def prepareDestination(outDir):
             shutil.rmtree(dest)
             shutil.copytree(d, dest)
 
-    
+
 def fetchMarkdownFile(moduleDir):
-    # Fetch md file 
+    # Fetch md file
     filein = None
     for file in os.listdir(moduleDir):
         if '.md' in file:
@@ -189,9 +210,7 @@ def fetchMarkdownFile(moduleDir):
         logging.info ("found MarkDown file : %s" % filein)
 
     return filein
-    
 
 def cnslugify(value):
-    """ Meant to be used as a tag in Jinja2 template, return the input string "value" turned into slugified version """ 
+    """ Meant to be used as a tag in Jinja2 template, return the input string "value" turned into slugified version """
     return slugify(value)
-    

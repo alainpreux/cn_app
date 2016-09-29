@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """
 Django settings for cn_app project.
 
@@ -15,21 +16,14 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# used to store repositories files structure
-REPOS_DIR = os.path.join(BASE_DIR, 'repo_data','repositories')
-GENERATED_SITES_URL = "sites"
-GENERATED_SITES_DIR = os.path.join(BASE_DIR, 'repo_data', GENERATED_SITES_URL)
-# 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#v^rw2==%hi4qh_y4xv)l9d1i&1_!)rgsclb$!vmyg5%gw(*bx'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['culturenumerique-lille3.fr', '127.0.0.1']
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+STATIC_URL = '/static/'
+STATIC_ROOT = "collectedstatics/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    # os.path.join(BASE_DIR, "repo_data"),
+]
 
 
 # Application definition
@@ -76,18 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cn_app.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
@@ -120,39 +102,5 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
-
-STATIC_URL = '/static/'
-STATIC_ROOT = "collectedstatics/"
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "repo_data"),
-]
-
-# FIXME: logging maybe not suitable for production env (is it automatically redirect to log files ?)
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-        'apps_handler': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-        },
-        'escapad': {
-            'handlers': ['apps_handler'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-        },
-    },
-}
+# Site specifi settings defined in another file
+from site_settings import *

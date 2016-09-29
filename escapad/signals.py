@@ -12,6 +12,7 @@ from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 
 from escapad.models import Repository
+from escapad.utils import cnrmtree, run_shell_command
 
 logger = logging.getLogger(__name__) # see in cn_app.settings.py logger declaration
 
@@ -23,35 +24,32 @@ def create_repo_dir(dir_name, repo_url):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
         else:
-            shutil.rmtree(repo_path)
+            run_shell_command('rm -fR %s' % repo_path)
             os.makedirs(repo_path)
         os.chdir(repo_path)
-        git_cmd = ("git clone %s ." % repo_url)
-        subprocess.check_output(git_cmd.split())    
+        git_cmd = ("git clone %s . --depth 1 --no-single-branch" % repo_url)
+        subprocess.check_output(git_cmd.split())
     except Exception as e:
-        logger.error("Problem when creating and syncing dir %s with url %s \n Error : %s " % ( dir_name, repo_url, e))
+        logger.error("%s | Problem when creating and syncing dir %s with url %s \n Error : %s " % ( timezone.now(), dir_name, repo_url, e))
         os.chdir(current_path)
         return False
     # In any case, go back to current_path
     os.chdir(current_path)
-    logger.warning(" successful creation of repo %s with url %s" % (dir_name, repo_url))
+    logger.warning("%s | successful creation of repo %s with url %s" % (timezone.now(), dir_name, repo_url))
     return True
 
 
 @receiver(post_delete, sender=Repository)
 def delete_repo_dir(instance, **kwargs):
-    """ utility function to delete repo dir 
-    FIXME : and generated sites also!"""
+    """ utility function to delete repo and sites dir """
     repo_path = os.path.join(settings.REPOS_DIR, instance.slug)
-    try:
-        shutil.rmtree(repo_path)
-    except Exception as e:
-        logger.error("Problem when deleting repo dir %s" %  repo_path)
     sites_path = os.path.join(settings.GENERATED_SITES_DIR, instance.slug)
-    try:
-        shutil.rmtree(sites_path)
-    except Exception as e:
-        logger.error("Problem when deleting sites dir %s" %  sites_path)
+    for path in [repo_path, sites_path]:
+        try:
+            run_shell_command('rm -fR %s' % path)
+        except Exception as e:
+            logger.error("%s | Problem when deleting dir %s | error = %s" %  (timezone.now(), path, e))
+            return False
     return True
 
 
@@ -71,8 +69,8 @@ def resync_repo_dir(sender, instance, update_fields, **kwargs):
 
 @receiver(post_save, sender=Repository)
 def sync_repo_dir(sender, instance, created, update_fields, **kwargs):
-    """ Create a dir repo_user/repo_name with clone of repo_url """
-    logger.warning(" %s | creating repo dir ! create = %s, update_fields = %s" % (timezone.now(), created, update_fields))
+    """ Create a dir named [slug] with clone of repo_url """
+    logger.warning(" %s | creating repo dir ?= %s | update_fields = %s" % (timezone.now(), created, update_fields))
     if update_fields == {'repo_synced'}:
         return
     if created: #new record

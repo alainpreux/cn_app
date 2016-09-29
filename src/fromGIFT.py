@@ -8,7 +8,7 @@ import json
 import markdown
 import zipfile
 import random
-from datetime import datetime 
+from datetime import datetime
 import time
 import logging
 import uuid
@@ -34,8 +34,7 @@ FOOTER = """
     </body></html>
     """
 
-MARKDOWN_EXT = ['markdown.extensions.extra', 'markdown.extensions.nl2br', 'superscript']
-
+MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 # GIFT syntax (from https://docs.moodle.org/28/en/GIFT_format):
     # * Questions separated by new line
     # * Question made of 3 parts:
@@ -80,21 +79,7 @@ class GiftQuestion():
         self.global_feedback_format = '[markdown]'
         self.feedback_for_right = '' # for TRUEFALSE questions, given when giving the right answer
         self.feedback_for_wrong = '' # for TRUEFALSE questions, given when giving the wrong answer
-    
-    @classmethod
-    def add_target_blank(cls, html_src):
-        try:
-            parser = etree.XHTMLParser()
-            tree = etree.parse(StringIO(html_src), parser)
-            #tree = html.fromstring(html_src)
-            for link in tree.xpath('//a'):
-                link.attrib['target']="_blank"
-            html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
-        except:
-            logging.exception("=== Error finding anchors in html src: %s" % html_src)
-        return html_src
-        
-    
+
     def md_src_to_html(self):
         """ Convert question or feedback src from markdown to html ( useful for easier export) """
         new_src = self.gift_src
@@ -102,30 +87,31 @@ class GiftQuestion():
         m1 = re.search('(?P<titre>::.*::){0,1}\s*(?P<format>\[[^\]]*\]){0,1}\s*(?P<qtext>[^\{]*)', new_src, flags=re.M)
         if m1:
             if m1.group('qtext'):
-                qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT, output_format='xhtml')
-                qtext = GiftQuestion.add_target_blank(qtext)
+                qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT)
+                qtext = utils.add_target_blank(qtext)
                 new_src = new_src.replace(m1.group('qtext'), qtext)
-            if m1.group('format'):    
+            if m1.group('format'):
                 new_src = new_src.replace(m1.group('format'), '[html]')
         # B / same for global feedback if any)
-        p2 = re.compile('####(?P<format>\[[^\]]*\]){0,1}\s*(?P<gf>[^\}]*)', flags=re.M)
+        p2 = re.compile('####\s*(?P<format>\[[^\]]*\]){0,1}\s*(?P<gf>[^\}]*)', flags=re.M)
         m2 = p2.search(self.gift_src)
         if m2:
             if m2.group('format'):
                 new_src = new_src.replace(m2.group('format'), '[html]')
             if m2.group('gf'):
-                gf = markdown.markdown(m2.group('gf'), MARKDOWN_EXT, output_format='xhtml')
-                gf = GiftQuestion.add_target_blank(gf)
+                gf = markdown.markdown(m2.group('gf'), MARKDOWN_EXT)
+                gf = utils.add_target_blank(gf)
                 pos = m2.start() # replace only in the relevant part of the string and not the entire string
                 new_src = new_src[:pos]+new_src[pos:].replace(m2.group('gf'), gf)
-    
-    
+
+
         # C FIXME : should also check for per-answer feedbacks
         # convert self src
+        self.old_src = self.gift_src
         self.gift_src = new_src
-        
+
         return new_src
-        
+
 
     def to_html(self, feedback_option=False):
         """ From a question object, write HTML representation """
@@ -136,7 +122,7 @@ class GiftQuestion():
         with tag('div', klass='question'):
             with tag('h3', klass='questiontitle'):
                 text(self.title)
-            with tag('p', klass='questiontext'):
+            with tag('div', klass='questiontext'):
                 if self.text_format == 'html':
                     doc.asis(self.text)
                 else:
@@ -169,7 +155,7 @@ class GiftQuestion():
                     doc.asis('<b><em>Feedback:</em></b><br/>'+self.global_feedback)
         doc.asis('\n\n')
         return((doc.getvalue()))
-    
+
     def toEdxXML(self):
         """ From a question object, write Open EDX XML representation """
         jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
@@ -180,7 +166,7 @@ class GiftQuestion():
             q_text = markdown.markdown(self.text, MARKDOWN_EXT, output_format='xhtml')
         result = problem_template.render(q=self, q_text=q_text)
         return result.replace('<br>', '<br/>')
-    
+
     def parse_gift_src(self):
         # 1. Separate in 3 parts: q_prestate { q_answers } q_poststate
         split_1 = self.gift_src.split('{', 1)
@@ -232,7 +218,7 @@ class GiftQuestion():
                 self.feedback_for_right = m2.group('right_fb')
             if q_answers.startswith(('F','FALSE')):
                 self.question_is_true = False # default is True
-                new_answers = [{'answer_text' : 'Vrai', 'is_right' :False, 'feedback' : self.feedback_for_wrong, 'credit':0}, 
+                new_answers = [{'answer_text' : 'Vrai', 'is_right' :False, 'feedback' : self.feedback_for_wrong, 'credit':0},
                     {'answer_text' : 'Faux', 'is_right' :True, 'feedback' : self.feedback_for_right, 'credit':100}]
             else:
                 new_answers = [{'answer_text' : 'Vrai', 'is_right' :True, 'feedback' : self.feedback_for_right, 'credit':100},                      {'answer_text' : 'Faux', 'is_right' :False, 'feedback' : self.feedback_for_wrong, 'credit':0}]
@@ -247,7 +233,7 @@ class GiftQuestion():
         ### split answers
         right_answer_count = 0
         false_answer_count = 0
-        
+
         for answer_raw in re.findall('([~=][^~=]*)', q_answers):
             new_answer = {'credit':0,'answer_text':'','feedback':'','is_right':True}
             # MULTIANSWERS <=> right_answer_count =  AND false_answer_count > 0
@@ -274,11 +260,13 @@ class GiftQuestion():
             self.type = 'MULTICHOICE'
         elif self.type == '': # FIXME we should recognize NUMERIC and MATCHING here
             self.type = 'ESSAY'
-    
-    
+
+
 def clean_question_src(question):
     question = re.sub('<(span|strong)[^>]*>|</(strong|span)>', '', question)
     question = re.sub('\\\:', ':', question) # remove \: in src txt
+    if ('\\n' in question):
+        question = question.replace('\\n', '')
     return question
 
 def extract_questions(some_text):
