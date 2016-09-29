@@ -1,6 +1,6 @@
 <course 
-org="{{ module.author|slugify }}" course="{{ module.menutitle|slugify }}" language="{{module.language}}" 
-advanced_modules="{{ module.advanced_EDX_module_list }}" 
+org="{{ module.author|slugify }}" course="{{ module.menutitle|slugify }}" language="{{module.language}}"
+advanced_modules="{{ module.advanced_EDX_module_list }}"
 cert_html_view_enabled="true"  display_name="{{ module.title }}" graceperiod="" minimum_grade_credit="0.8" start="&quot;2030-01-01T00:00:00+00:00&quot;" >
 
     {%  for s in module.sections %}

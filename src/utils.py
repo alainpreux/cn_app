@@ -118,13 +118,16 @@ def totimestamp(dt, epoch=datetime(1970,1,1)):
     # return td.total_seconds()
     return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
 
-
+#FIXME: make it simpler with no current_dir param, but only target_folder
 def write_file(src, current_dir, target_folder, name):
     """
         given a "src" source string, write a file with "name" located in
         "current_dir"/"target_folder"
     """
-    filename = os.path.join(current_dir, target_folder, name)
+    target_folder = os.path.join(current_dir, target_folder)
+    if not(os.path.isdir(target_folder)):
+        os.makedirs(target_folder)
+    filename = os.path.join(target_folder, name)
     try:
         outfile = open(filename, 'wb')
         outfile.write(src)
