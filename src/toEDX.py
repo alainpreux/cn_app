@@ -20,9 +20,15 @@ from jinja2 import Template, Environment, FileSystemLoader
 import utils
 import model
 
+
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 BASE_PATH = os.path.abspath(os.getcwd())
 EDX_TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates', 'toEDX' )
+EDX_DEFAULT_FILES = {
+    'about':'overview.html',
+    'assets':'assets.xml',
+    'info':'updates.html'
+}
 EDX_ADVANCED_MODULE_LIST = ['cnvideo', 'library_content']
 EDX_GRADER_MAP = {
     'Activite':'Activite',
@@ -56,5 +62,12 @@ def generateEDXArchive(module, moduleOutDir):
             if sub.folder == 'webcontent': # these go to EDX/html/
                 utils.write_file(sub.html_src, edx_outdir, 'html', sub.filename )
             elif sub.folder in ('Activite', 'ActiviteAvancee', 'Comprehension'):
-                pass
+                for question in sub.questions:
+                    fname =  ('%s.xml' % question.id)
+                    fsrc = question.toEdxXML()
+                    utils.write_file(fsrc, edx_outdir, 'problem', fname )
+    # Add other files
+    for folder, dfile in EDX_DEFAULT_FILES.items():
+        shutil.copytree(os.path.join(EDX_TEMPLATES_PATH, folder), os.path.join(edx_outdir,folder))
+    # Write main course.xml file
     utils.write_file(course_xml, os.getcwd(), edx_outdir, 'course.xml')

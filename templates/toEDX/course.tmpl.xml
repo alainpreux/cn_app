@@ -1,4 +1,4 @@
-<course 
+<course
 org="{{ module.author|slugify }}" course="{{ module.menutitle|slugify }}" language="{{module.language}}"
 advanced_modules="{{ module.advanced_EDX_module_list }}"
 cert_html_view_enabled="true"  display_name="{{ module.title }}" graceperiod="" minimum_grade_credit="0.8" start="&quot;2030-01-01T00:00:00+00:00&quot;" >
@@ -19,7 +19,7 @@ cert_html_view_enabled="true"  display_name="{{ module.title }}" graceperiod="" 
             <sequential display_name="{{sub.title}}"  format="{{ grademap[sub.folder]}}" graded="true">
                 <vertical display_name="Unité"> <!-- Here only 1 vertical/subsection containing content and activities-->
                 {% for question in sub.questions %}
-                    {{ question.toEdxXML()}}
+                  <problem url_name="problem/{{ question.id }}.xml"/>
                 {% endfor %}
                 </vertical>
             </sequential>
