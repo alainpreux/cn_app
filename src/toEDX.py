@@ -71,3 +71,11 @@ def generateEDXArchive(module, moduleOutDir):
         shutil.copytree(os.path.join(EDX_TEMPLATES_PATH, folder), os.path.join(edx_outdir,folder))
     # Write main course.xml file
     utils.write_file(course_xml, os.getcwd(), edx_outdir, 'course.xml')
+
+    # pack it up into a tar archive
+    archive_file = os.path.join(moduleOutDir, ('%s_edx.tar.gz' % module.module))
+    with tarfile.open(archive_file, "w:gz") as tar:
+        for afile in os.listdir(edx_outdir):
+            print("file %s" % afile)
+            tar.add(os.path.join(edx_outdir, afile))
+    tar.close()
