@@ -27,7 +27,8 @@ EDX_TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates', 'toEDX' )
 EDX_DEFAULT_FILES = {
     'about':'overview.html',
     'assets':'assets.xml',
-    'info':'updates.html'
+    'info':'updates.html',
+    'policies':'assets.json'
 }
 EDX_ADVANCED_MODULE_LIST = ['cnvideo', 'library_content']
 EDX_GRADER_MAP = {
@@ -47,12 +48,6 @@ def generateEDXArchive(module, moduleOutDir):
     # Module data
     module.advanced_EDX_module_list = EDX_ADVANCED_MODULE_LIST.__str__()
 
-    # Load grading policy template
-    gpjson = os.path.join(EDX_TEMPLATES_PATH, 'policies', 'course', 'grading_policy.json')
-    with open(gpjson, encoding='utf-8') as data_file:
-        grading_policy = json.load(data_file)
-
-    course_xml = course_template.render(module=module, grademap=EDX_GRADER_MAP)
     # create EDX archive temp folder
     edx_outdir = os.path.join(moduleOutDir, 'EDX')
     os.makedirs(edx_outdir)
@@ -69,7 +64,16 @@ def generateEDXArchive(module, moduleOutDir):
     # Add other files
     for folder, dfile in EDX_DEFAULT_FILES.items():
         shutil.copytree(os.path.join(EDX_TEMPLATES_PATH, folder), os.path.join(edx_outdir,folder))
+
+    # Render and add policies/course files
+    course_policies_files =  ['grading_policy.json', 'policy.json']
+    for pfile in course_policies_files:
+        pfile_template = jenv.get_template(os.path.join('policies','course', pfile))
+        pjson = pfile_template.render(module=module)
+        utils.write_file(pjson, os.getcwd(), os.path.join(edx_outdir, 'policies', 'course'), pfile)
+
     # Write main course.xml file
+    course_xml = course_template.render(module=module, grademap=EDX_GRADER_MAP)
     utils.write_file(course_xml, os.getcwd(), edx_outdir, 'course.xml')
 
     # pack it up into a tar archive
