@@ -201,14 +201,7 @@ class AnyActivity(Subsection):
             if question.text_format in (("markdown")):
                 question.md_src_to_html()
         # add "target="_blank" to all anchors
-        try:
-            tree = html.fromstring(self.html_src)
-            for link in tree.xpath('//a'):
-                link.attrib['target']="_blank"
-            self.html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
-        except:
-            logging.exception("=== Error finding anchors in html src: %s" % self.html_src)
-
+        #self.html_src = utils.add_target_blank(self.html_src)
         return self.html_src
 
     def toXMLMoodle(self,outDir):
@@ -218,7 +211,6 @@ class AnyActivity(Subsection):
         else:
             max_attempts = 'unlimited'
         # b) write empty xml test file for moodle export FIXME: moodle specific, do it only when asked
-        #xml_src = create_empty_ims_test(self.num+'_'+slugify(self.title), self.num, self.title, max_attempts)
         xml_src = create_ims_test(self.questions, self.num+'_'+slugify(self.title), self.title)
         filename = self.getFilename()
         xml_filename = filename.replace('html', 'xml')

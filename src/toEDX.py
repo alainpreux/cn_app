@@ -70,6 +70,7 @@ def generateEDXArchive(module, moduleOutDir):
     for pfile in course_policies_files:
         pfile_template = jenv.get_template(os.path.join('policies','course', pfile))
         pjson = pfile_template.render(module=module)
+        pjson = json.dumps(json.loads(pjson),ensure_ascii=True,indent=4,separators=(',', ': '))
         utils.write_file(pjson, os.getcwd(), os.path.join(edx_outdir, 'policies', 'course'), pfile)
 
     # Write main course.xml file

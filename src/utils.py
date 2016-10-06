@@ -5,6 +5,7 @@ import os
 import shutil
 import tarfile
 import requests
+import markdown
 
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
@@ -17,6 +18,7 @@ from slugify import slugify
 import model
 import logging
 
+MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 
 FOLDERS = ['Comprehension', 'Activite', 'ActiviteAvancee', 'webcontent']
 STATIC_FOLDERS = ['static/js', 'static/img', 'static/svg', 'static/css', 'static/fonts']
@@ -79,7 +81,7 @@ def get_video_src(video_link):
         src_link = ''
     return src_link
 
-
+#FIXME : this turn img to non xml compatible form <img>
 def add_target_blank(html_src):
     try:
         tree = html.fromstring(html_src)
@@ -217,3 +219,7 @@ def fetchMarkdownFile(moduleDir):
 def cnslugify(value):
     """ Meant to be used as a tag in Jinja2 template, return the input string "value" turned into slugified version """
     return slugify(value)
+
+def cntohtml(value):
+    """ filter taking input in md or html and rendering it anyway """
+    return markdown.markdown(value, MARKDOWN_EXT, output_format='xhtml')

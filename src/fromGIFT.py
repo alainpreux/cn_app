@@ -87,7 +87,7 @@ class GiftQuestion():
         m1 = re.search('(?P<titre>::.*::){0,1}\s*(?P<format>\[[^\]]*\]){0,1}\s*(?P<qtext>[^\{]*)', new_src, flags=re.M)
         if m1:
             if m1.group('qtext'):
-                qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT)
+                qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT, output_format='xhtml')
                 qtext = utils.add_target_blank(qtext)
                 new_src = new_src.replace(m1.group('qtext'), qtext)
             if m1.group('format'):
@@ -159,13 +159,10 @@ class GiftQuestion():
     def toEdxXML(self):
         """ From a question object, write Open EDX XML representation """
         jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
+        jenv.filters['tohtml'] = utils.cntohtml
         problem_template = jenv.get_template("edx_problem_template.xml")
-        if self.text_format == 'html':
-            q_text = self.text
-        else:
-            q_text = markdown.markdown(self.text, MARKDOWN_EXT, output_format='xhtml')
-        result = problem_template.render(q=self, q_text=q_text)
-        return result.replace('<br>', '<br/>')
+        result = problem_template.render(q=self)
+        return result
 
     def parse_gift_src(self):
         # 1. Separate in 3 parts: q_prestate { q_answers } q_poststate
@@ -318,7 +315,7 @@ def process_questions(questions_src):
     for q_src in questions_src:
         q_obj = GiftQuestion()
         q_obj.gift_src = q_src
-        q_obj.md_src_to_html()
+        #q_obj.md_src_to_html()
         q_obj.parse_gift_src()
         question_objects.append(q_obj)
 

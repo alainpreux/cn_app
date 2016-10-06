@@ -1,7 +1,7 @@
 <!-- DEBUT problem {{q.title}} -->
 <problem display_name="{{ q.title }}" {% if q.type == "MULTICHOICE" or q.type == "TRUEFALSE" or q.type == 'MULTIANSWER' %}max_attempts="1"{%endif%}>
     <legend>
-        {{ q_text }}
+        {{ q.text|tohtml }}
     </legend>
     {% if q.type == "MULTICHOICE" or q.type == "TRUEFALSE" %}
     <multiplechoiceresponse>
@@ -33,11 +33,11 @@
     {% include 'edx_problem_essay_script.xml' %}
     <customresponse cfn="checkAnswerEssay">
     	<textline size="40" correct_answer="" label="Problem Text"/>
-    </customresponse> 
+    </customresponse>
     {% endif %}
     {% if q.global_feedback|length > 1 %}
     <solution>
-        <div class="detailed-solution">{{ q.global_feedback }}</div>
+        <div class="detailed-solution">{{ q.global_feedback|tohtml }}</div>
     </solution>
     {% endif %}
 </problem>
