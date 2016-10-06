@@ -315,7 +315,7 @@ def process_questions(questions_src):
     for q_src in questions_src:
         q_obj = GiftQuestion()
         q_obj.gift_src = q_src
-        #q_obj.md_src_to_html()
+        q_obj.md_src_to_html()
         q_obj.parse_gift_src()
         question_objects.append(q_obj)
 

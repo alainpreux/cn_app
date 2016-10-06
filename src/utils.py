@@ -81,16 +81,13 @@ def get_video_src(video_link):
         src_link = ''
     return src_link
 
-#FIXME : this turn img to non xml compatible form <img>
 def add_target_blank(html_src):
-    try:
-        tree = html.fromstring(html_src)
-        for link in tree.xpath('//a'):
-            link.attrib['target']="_blank"
-        html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
-    except:
-        logging.exception("=== Error finding anchors in html src: %s" % html_src)
-    return html_src
+    """ add target="_blank" attribute to anchors in html_src """
+    soup = BeautifulSoup(html_src, 'html.parser')
+    anchor_list = soup.find_all('a')
+    for anchor in anchor_list:
+        anchor['target'] = "_blank"
+    return soup.prettify()
 
 
 def iframize_video_anchors(htmlsrc, anchor_class):
@@ -210,7 +207,7 @@ def fetchMarkdownFile(moduleDir):
             break
     if not filein:
         logging.error(" No MarkDown file found, MarkDown file should end with '.md'")
-        return false
+        return False
     else:
         logging.info ("found MarkDown file : %s" % filein)
 
