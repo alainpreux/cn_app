@@ -172,6 +172,7 @@ class AnyActivity(Subsection):
             self.src += self.lastLine
             self.lastLine = f.readline()
 
+
     def toGift(self):
         gift_src=''
         for question in self.questions:
@@ -180,13 +181,10 @@ class AnyActivity(Subsection):
 
 
     def toEdxProblemsList(self):
-        """
-        xml source code of all questions in EDX XML format
-        """
+        """ xml source code of all questions in EDX XML format """
         edx_xml_problem_list = ""
         for question in self.questions:
             edx_xml_problem_list += '\n'+question.toEdxXML()+'\n'
-
         return edx_xml_problem_list
 
 
@@ -204,6 +202,7 @@ class AnyActivity(Subsection):
         #self.html_src = utils.add_target_blank(self.html_src)
         return self.html_src
 
+
     def toXMLMoodle(self,outDir):
         # a) depending on the type, get max number of attempts for the test
         if isinstance(self, Comprehension):
@@ -218,26 +217,28 @@ class AnyActivity(Subsection):
         utils.write_file(xml_src, outDir, self.folder , xml_filename)
 
 class Comprehension(AnyActivity):
-
+    actnum = 0
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
         self.title = 'Compréhension'
         self.folder = 'Comprehension'
+        Comprehension.actnum+=1
 
 class Activite(AnyActivity):
-
+    actnum = 0
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
         self.title = 'Activité'
         self.folder = 'Activite'
+        Activite.actnum+=1
 
 class ActiviteAvancee(AnyActivity):
-
+    actnum = 0
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
         self.title = 'Activité avancée'
         self.folder = 'ActiviteAvancee'
-
+        ActiviteAvancee.actnum+=1
 
 class Section:
     num = 1
@@ -360,6 +361,7 @@ class Module:
         self.css = 'http://culturenumerique.univ-lille3.fr/css/base.css'
         self.base_url = base_url
         self.parse(f)
+        self.act_counter = { c.__name__ : c.actnum for c in [Comprehension, Activite, ActiviteAvancee]}
 
     def parseHead(self,f) :
         """ Captures meta-data  """
@@ -374,6 +376,7 @@ class Module:
     def toJson(self):
         return json.dumps(self, sort_keys=True,
                           indent=4, separators=(',', ': '),cls=ComplexEncoder)
+
 
     def parse(self,f):
         #  A. split sections
