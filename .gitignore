@@ -10,3 +10,4 @@ repo_data*
 venv
 site_settings.py
 cnappenv
+apache_conf

@@ -11,13 +11,20 @@ import random
 from datetime import datetime
 import time
 import logging
+import uuid
 
 from lxml import etree
 from lxml import html
 from yattag import indent
 from yattag import Doc
 
+from jinja2 import Template, Environment, FileSystemLoader
+
+
 import utils
+
+BASE_PATH = os.path.abspath(os.getcwd())
+TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates' )
 
 HEADER = """
     <!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0"></head><body>
@@ -59,8 +66,7 @@ class GiftQuestion():
 
     """
     def __init__(self):
-        now = datetime.utcnow()
-        self.id = int(utils.totimestamp(now))
+        self.id = uuid.uuid4()
         self.gift_src = ''
         self.type = ''
         self.title = ''
@@ -74,9 +80,6 @@ class GiftQuestion():
         self.feedback_for_right = '' # for TRUEFALSE questions, given when giving the right answer
         self.feedback_for_wrong = '' # for TRUEFALSE questions, given when giving the wrong answer
 
-
-
-
     def md_src_to_html(self):
         """ Convert question or feedback src from markdown to html ( useful for easier export) """
         new_src = self.gift_src
@@ -84,7 +87,7 @@ class GiftQuestion():
         m1 = re.search('(?P<titre>::.*::){0,1}\s*(?P<format>\[[^\]]*\]){0,1}\s*(?P<qtext>[^\{]*)', new_src, flags=re.M)
         if m1:
             if m1.group('qtext'):
-                qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT)
+                qtext = markdown.markdown(m1.group('qtext'), MARKDOWN_EXT, output_format='xhtml')
                 qtext = utils.add_target_blank(qtext)
                 new_src = new_src.replace(m1.group('qtext'), qtext)
             if m1.group('format'):
@@ -124,7 +127,7 @@ class GiftQuestion():
                     doc.asis(self.text)
                 else:
                     logging.info ("printing Markdown/ source = %s" % (self.text))
-                    html_text = markdown.markdown(self.text, MARKDOWN_EXT)
+                    html_text = markdown.markdown(self.text, MARKDOWN_EXT, output_format='xhtml')
                     doc.asis(html_text)
             # If type MULTICHOICE, MULTIANSWER give choices
             if self.type in ['MULTICHOICE', 'MULTIANSWER', 'TRUEFALSE']:
@@ -152,6 +155,14 @@ class GiftQuestion():
                     doc.asis('<b><em>Feedback:</em></b><br/>'+self.global_feedback)
         doc.asis('\n\n')
         return((doc.getvalue()))
+
+    def toEdxXML(self):
+        """ From a question object, write Open EDX XML representation """
+        jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
+        jenv.filters['tohtml'] = utils.cntohtml
+        problem_template = jenv.get_template("edx_problem_template.xml")
+        result = problem_template.render(q=self)
+        return result
 
     def parse_gift_src(self):
         # 1. Separate in 3 parts: q_prestate { q_answers } q_poststate

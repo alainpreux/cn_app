@@ -7,6 +7,7 @@ import sys
 import logging
 import shutil
 import glob
+import tarfile
 
 from lxml import etree
 from lxml import html
@@ -19,7 +20,9 @@ from jinja2 import Template, Environment, FileSystemLoader
 
 import utils
 import toIMS
+import toEDX
 import model
+
 
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 BASE_PATH = os.path.abspath(os.getcwd())
@@ -46,6 +49,9 @@ def processModule(args, repoDir, outDir, module):
     with open(filein, encoding='utf-8') as md_file:
         m = model.Module(md_file, module, args.baseUrl)
 
+
+
+
     # FIXME : simplify process
     # write html, XML, and JSon files
     m.toHTMLFiles(moduleOutDir, args.feedback)
@@ -53,13 +59,20 @@ def processModule(args, repoDir, outDir, module):
     utils.write_file(m.toGift(), moduleOutDir, '', module+'.questions_bank.gift.txt')
     utils.write_file(m.toVideoList(), moduleOutDir, '', module+'.video_iframe_list.txt')
     mod_config = utils.write_file(m.toJson(), moduleOutDir, '',  module+'.config.json') # FIXME : this file should be optionnaly written
+    # EDX files
+    if args.edx:
+        # utils.write_file(m.toCourseHTML(), moduleOutDir, '', module+'.course_only.html')
+        #
+        # tar = tarfile.open(os.path.join(moduleOutDir, module+".edx_problems_library.tar.gz"), "w:gz")
+        # tar.add(utils.write_file(m.toEdxProblemsList(), moduleOutDir, '', 'library.xml'))
+        # tar.close
+        toEDX.generateEDXArchive(m, moduleOutDir)
 
     # if chosen, generate IMS archive
     if args.ims:
         m.ims_archive_path = toIMS.generateImsArchive(module, moduleOutDir)
         logging.warn('*Path to IMS = %s*' % m.ims_archive_path)
 
-    # Generate module html file from JSON file
     jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
     module_template = jenv.get_template("module.html")
     html = module_template.render(module=m)
@@ -89,6 +102,7 @@ def buildSite(course_obj, repoDir, outDir):
     """ Generate full site from result of parsing repository """
 
     jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
+    jenv.filters['slugify'] = utils.cnslugify
     site_template = jenv.get_template("site_layout.html")
     #if found, copy logo.png, else use default
     logo_files = glob.glob(os.path.join(repoDir, 'logo.*'))
@@ -155,8 +169,9 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--repository", help="Set the repositorie source dir containing the moduleX dirs, given as absolute or relative to cn_app dir", default='repositories/culturenumerique/cn_modules')
     parser.add_argument("-d", "--destination", help="Set the destination dir", default='build')
     parser.add_argument("-u", "--baseUrl", help="Set the base url for absolute url building", default='http://culturenumerique.univ-lille3.fr')
-    parser.add_argument("-f", "--feedback", action='store_true', help="Set the destination dir", default=False)
+    parser.add_argument("-f", "--feedback", action='store_true', help="Add feedbacks for all questions in web export", default=False)
     parser.add_argument("-i", "--ims", action='store_true', help="Also generate IMS archive for each module", default=False)
+    parser.add_argument("-e", "--edx", action='store_true', help="Also generate EDX archive for each module", default=False)
     args = parser.parse_args()
 
     # ** Logging **

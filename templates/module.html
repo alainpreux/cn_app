@@ -15,7 +15,7 @@
             <ul class="nav list-group">
                 {% for subsection in section.subsections %}
                     <li class="list-group-item">
-                        <a class="icon-{{ subsection.folder|lower  }}" href="#subsec_{{ subsection.num|replace('-','_') }}">{{ subsection.title }}</a>
+                        <a class="icon-{{ subsection.folder|lower  }}" href="#subsec_{{ subsection.num|replace('-','_') }}">{{ subsection.num|replace('-', '.')}} {{ subsection.title }}</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -73,10 +73,10 @@
                         {% if sub.videos|length > 0  %}
                             {% for video in sub.videos %}
                             <!--  TODO : check video here and add fancy text -->
-                                
+
                                 <div class="iframe_cont">
                                     {% if not firstsec %}{% include 'player_button.html'%}{%endif%}
-                                    <iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" {% if not firstsec %}data-{%endif%}src="{{video.video_src_link}}" 
+                                    <iframe allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" {% if not firstsec %}data-{%endif%}src="{{video.video_src_link}}"
                                         {%if not firstsec%}style="display:none"{%endif%}></iframe></div>
                             {% endfor %}
                         {% endif %}
@@ -111,9 +111,9 @@
                 </p>
                 <a href="{{module.module}}/{{module.ims_archive_path}}">{{module.ims_archive_path}}</a>
             </section>
-                
+
         </section>
-    
+
     </div>
     <!-- Fin contenu droite -->
 

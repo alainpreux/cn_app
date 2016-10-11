@@ -3,7 +3,9 @@ from __future__ import division
 
 import os
 import shutil
+import tarfile
 import requests
+import markdown
 
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
@@ -11,17 +13,18 @@ from io import open
 from lxml import etree
 from lxml import html
 from urlparse import urlparse
-
-
+from slugify import slugify
 
 import model
 import logging
 
+MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
 
 FOLDERS = ['Comprehension', 'Activite', 'ActiviteAvancee', 'webcontent']
 STATIC_FOLDERS = ['static/js', 'static/img', 'static/svg', 'static/css', 'static/fonts']
 VERBOSITY = False
 DEFAULT_VIDEO_THUMB_URL = 'https://i.vimeocdn.com/video/536038298_640.jpg'
+
 
 def fetch_vimeo_thumb(video_link):
     """ fetch video thumbnail for vimeo videos """
@@ -37,6 +40,7 @@ def fetch_vimeo_thumb(video_link):
         logging.exception (" ----------------  error while fetching video %s" % (video_link))
         image_link = DEFAULT_VIDEO_THUMB_URL
     return image_link
+
 
 def get_embed_code_for_url(url):
     """
@@ -77,16 +81,13 @@ def get_video_src(video_link):
         src_link = ''
     return src_link
 
-
 def add_target_blank(html_src):
-    try:
-        tree = html.fromstring(html_src)
-        for link in tree.xpath('//a'):
-            link.attrib['target']="_blank"
-        html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
-    except:
-        logging.exception("=== Error finding anchors in html src: %s" % html_src)
-    return html_src
+    """ add target="_blank" attribute to anchors in html_src """
+    soup = BeautifulSoup(html_src, 'html.parser')
+    anchor_list = soup.find_all('a')
+    for anchor in anchor_list:
+        anchor['target'] = "_blank"
+    return soup.prettify()
 
 
 def iframize_video_anchors(htmlsrc, anchor_class):
@@ -116,13 +117,16 @@ def totimestamp(dt, epoch=datetime(1970,1,1)):
     # return td.total_seconds()
     return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
 
-
+#FIXME: make it simpler with no current_dir param, but only target_folder
 def write_file(src, current_dir, target_folder, name):
     """
         given a "src" source string, write a file with "name" located in
         "current_dir"/"target_folder"
     """
-    filename = os.path.join(current_dir, target_folder, name)
+    target_folder = os.path.join(current_dir, target_folder)
+    if not(os.path.isdir(target_folder)):
+        os.makedirs(target_folder)
+    filename = os.path.join(target_folder, name)
     try:
         outfile = open(filename, 'wb')
         outfile.write(src)
@@ -203,8 +207,16 @@ def fetchMarkdownFile(moduleDir):
             break
     if not filein:
         logging.error(" No MarkDown file found, MarkDown file should end with '.md'")
-        return false
+        return False
     else:
         logging.info ("found MarkDown file : %s" % filein)
 
     return filein
+
+def cnslugify(value):
+    """ Meant to be used as a tag in Jinja2 template, return the input string "value" turned into slugified version """
+    return slugify(value)
+
+def cntohtml(value):
+    """ filter taking input in md or html and rendering it anyway """
+    return markdown.markdown(value, MARKDOWN_EXT, output_format='xhtml')

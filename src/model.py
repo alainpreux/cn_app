@@ -129,7 +129,7 @@ class Cours(Subsection):
 
     def toHTML(self, feedback_option=False):
         self.html_src = markdown.markdown(self.src, MARKDOWN_EXT)
-        if self.parseVideoLinks() : 
+        if self.parseVideoLinks() :
             logging.info("detected video links")
         self.html_src = utils.iframize_video_anchors(self.html_src, 'lien_video')
         self.html_src = utils.add_target_blank(self.html_src)
@@ -162,6 +162,7 @@ class AnyActivity(Subsection):
         self.parse(f)
         self.absolutizeMediaLinks()
         self.questions = process_questions(extract_questions(self.src))
+        self.absolutizeMediaLinks()
 
 
     def parse(self,f):
@@ -171,11 +172,21 @@ class AnyActivity(Subsection):
             self.src += self.lastLine
             self.lastLine = f.readline()
 
+
     def toGift(self):
         gift_src=''
         for question in self.questions:
             gift_src+='\n'+question.gift_src+'\n'
         return gift_src
+
+
+    def toEdxProblemsList(self):
+        """ xml source code of all questions in EDX XML format """
+        edx_xml_problem_list = ""
+        for question in self.questions:
+            edx_xml_problem_list += '\n'+question.toEdxXML()+'\n'
+        return edx_xml_problem_list
+
 
     def toHTML(self, feedback_option=False):
         self.html_src = ''
@@ -188,15 +199,9 @@ class AnyActivity(Subsection):
             if question.text_format in (("markdown")):
                 question.md_src_to_html()
         # add "target="_blank" to all anchors
-        try:
-            tree = html.fromstring(self.html_src)
-            for link in tree.xpath('//a'):
-                link.attrib['target']="_blank"
-            self.html_src = html.tostring(tree, encoding='utf-8').decode('utf-8')
-        except:
-            logging.exception("=== Error finding anchors in html src: %s" % self.html_src)
-
+        #self.html_src = utils.add_target_blank(self.html_src)
         return self.html_src
+
 
     def toXMLMoodle(self,outDir):
         # a) depending on the type, get max number of attempts for the test
@@ -205,7 +210,6 @@ class AnyActivity(Subsection):
         else:
             max_attempts = 'unlimited'
         # b) write empty xml test file for moodle export FIXME: moodle specific, do it only when asked
-        #xml_src = create_empty_ims_test(self.num+'_'+slugify(self.title), self.num, self.title, max_attempts)
         xml_src = create_ims_test(self.questions, self.num+'_'+slugify(self.title), self.title)
         filename = self.getFilename()
         xml_filename = filename.replace('html', 'xml')
@@ -213,26 +217,28 @@ class AnyActivity(Subsection):
         utils.write_file(xml_src, outDir, self.folder , xml_filename)
 
 class Comprehension(AnyActivity):
-
+    actnum = 0
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
         self.title = 'Compréhension'
         self.folder = 'Comprehension'
+        Comprehension.actnum+=1
 
 class Activite(AnyActivity):
-
+    actnum = 0
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
         self.title = 'Activité'
         self.folder = 'Activite'
+        Activite.actnum+=1
 
 class ActiviteAvancee(AnyActivity):
-
+    actnum = 0
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
         self.title = 'Activité avancée'
         self.folder = 'ActiviteAvancee'
-
+        ActiviteAvancee.actnum+=1
 
 class Section:
     num = 1
@@ -299,6 +305,14 @@ class Section:
         for sub in self.subsections:
             sub.toHTMLFile(outDir, feedback_option)
 
+    def toCourseHTML(self):
+        courseHTML = ""
+        for sub in self.subsections:
+            if isinstance(sub, Cours):
+                courseHTML += "\n\n<!-- Subsection "+sub.num+" -->\n"
+                courseHTML += markdown.markdown(sub.src, MARKDOWN_EXT)
+        return courseHTML
+
     def toXMLMoodle(self, outDir):
         for sub in self.subsections:
             sub.toXMLMoodle(outDir)
@@ -319,6 +333,19 @@ class Section:
                 video_list += sub.videoIframeList()
         return video_list
 
+    def toEdxProblemsList(self):
+        """
+        xml source code of all questions in EDX XML format
+        """
+        edx_xml_problem_list = ""
+        for sub in self.subsections:
+            if isinstance(sub, AnyActivity):
+                # add subsection title
+                edx_xml_problem_list += "<!-- "+sub.num+" "+sub.title+" -->\n\n"
+                edx_xml_problem_list += sub.toEdxProblemsList()
+
+        return edx_xml_problem_list
+
 class Module:
     """ Module structure"""
 
@@ -334,6 +361,7 @@ class Module:
         self.css = 'http://culturenumerique.univ-lille3.fr/css/base.css'
         self.base_url = base_url
         self.parse(f)
+        self.act_counter = { c.__name__ : c.actnum for c in [Comprehension, Activite, ActiviteAvancee]}
 
     def parseHead(self,f) :
         """ Captures meta-data  """
@@ -348,6 +376,7 @@ class Module:
     def toJson(self):
         return json.dumps(self, sort_keys=True,
                           indent=4, separators=(',', ': '),cls=ComplexEncoder)
+
 
     def parse(self,f):
         #  A. split sections
@@ -364,6 +393,13 @@ class Module:
     def toHTMLFiles(self, outDir, feedback_option=False):
         for s in self.sections:
             s.toHTMLFiles(outDir, feedback_option)
+
+    def toCourseHTML(self):
+        courseHTML = ""
+        for sec in self.sections:
+            courseHTML += "\n\n<!-- Section "+sec.num+" -->\n"
+            courseHTML += sec.toCourseHTML()
+        return courseHTML
 
     def toXMLMoodle(self, outDir):
         for s in self.sections:
@@ -386,6 +422,17 @@ class Module:
 
         return video_list
 
+    def toEdxProblemsList(self):
+        """
+        xmlL source code of all questions in EDX XML format
+        """
+        edx_xml_problem_list = '<library xblock-family="xblock.v1" display_name="'+self.module+'_'+self.menutitle+'" org="ULille3" library="'+self.module+'_'+self.menutitle+'">\n\n"'
+        for s in self.sections:
+            edx_xml_problem_list += s.toEdxProblemsList()
+
+        edx_xml_problem_list += "\n</library>"
+
+        return edx_xml_problem_list
 
 class CourseProgram:
     """ A course program is made of one or several course modules """
