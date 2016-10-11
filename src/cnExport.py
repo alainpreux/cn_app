@@ -25,7 +25,6 @@ import model
 
 
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
-# BASE_PATH = os.path.abspath(os.getcwd())
 BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates' )
 LOGFILE = 'logs/cnExport.log'
@@ -49,20 +48,21 @@ def processModule(args, repoDir, outDir, module):
     with open(filein, encoding='utf-8') as md_file:
         m = model.Module(md_file, module, args.baseUrl)
 
+    m.toHTML(args.feedback) # only generate html for all subsections
+
     # FIXME : simplify process
     # write html, XML, and JSon files
-    m.toHTML(args.feedback) # only generate html for all subsections
     # utils.write_file(m.toGift(), moduleOutDir, '', module+'.questions_bank.gift.txt')
     # utils.write_file(m.toVideoList(), moduleOutDir, '', module+'.video_iframe_list.txt')
     # mod_config = utils.write_file(m.toJson(), moduleOutDir, '',  module+'.config.json') # FIXME : this file should be optionnaly written
+
     # EDX files
     if args.edx:
         toEDX.generateEDXArchive(m, moduleOutDir)
 
     # if chosen, generate IMS archive
     if args.ims:
-        m.toXMLMoodle(moduleOutDir) # FIXME: xmlMoodle should not be written if no IMS option
-        m.ims_archive_path = toIMS.generateImsArchive(module, moduleOutDir)
+        m.ims_archive_path = toIMS.generateImsArchive(m, module, moduleOutDir)
         logging.warn('*Path to IMS = %s*' % m.ims_archive_path)
 
     # return module object

@@ -146,8 +146,9 @@ def stitch_files(files, filename):
                 outfile.write(infile.read())
     return outfile
 
-def createDirs(outDir):
-    for folder in FOLDERS :
+def createDirs(outDir, folders):
+    """ create anew all dirs in folders within target outdir"""
+    for folder in folders:
         new_folder = os.path.join(outDir, folder)
         # create and overwrite
         try:

@@ -83,14 +83,14 @@ class Subsection:
         self.videos = []
         Subsection.num +=1
 
-    def getFilename(self):
-        self.filename = slugify(self.num+self.title)+'_'+self.folder+'.html'
+    def getFilename(self, term='html'):
+        self.filename = slugify(self.num+self.title)+'_'+self.folder+'.'+term
         return self.filename
 
     def toGift(self):
         return ''
 
-    def toXMLMoodle(self, outDir):
+    def toXMLMoodle(self):
         pass
 
     def absolutizeMediaLinks(self):
@@ -308,10 +308,6 @@ class Section:
                 courseHTML += markdown.markdown(sub.src, MARKDOWN_EXT)
         return courseHTML
 
-    def toXMLMoodle(self, outDir):
-        for sub in self.subsections:
-            sub.toXMLMoodle(outDir)
-
     def toGift(self):
         allGifts = ""
         for sub in self.subsections:
@@ -395,10 +391,6 @@ class Module:
             courseHTML += "\n\n<!-- Section "+sec.num+" -->\n"
             courseHTML += sec.toCourseHTML()
         return courseHTML
-
-    def toXMLMoodle(self, outDir):
-        for s in self.sections:
-            s.toXMLMoodle(outDir)
 
     def toGift(self):
         """a text resource with all questions with a category / used for import into moodle"""

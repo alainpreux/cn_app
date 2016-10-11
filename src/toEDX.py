@@ -40,9 +40,11 @@ EDX_GRADER_MAP = {
 
 def generateEDXArchive(module, moduleOutDir):
     """ Given a module object and destination dir, generate EDX archive """
-
     jenv = Environment(loader=FileSystemLoader(EDX_TEMPLATES_PATH))
     jenv.filters['slugify'] = utils.cnslugify
+    jenv.filters['tohtml'] = utils.cntohtml
+    problem_template = jenv.get_template("edx_problem_template.xml")
+    course_template = jenv.get_template("course.tmpl.xml")
 
     # Module data
     module.advanced_EDX_module_list = EDX_ADVANCED_MODULE_LIST.__str__()
@@ -59,8 +61,7 @@ def generateEDXArchive(module, moduleOutDir):
             elif sub.folder in ('Activite', 'ActiviteAvancee', 'Comprehension'):
                 for question in sub.questions:
                     fname =  ('%s.xml' % question.id)
-                    fsrc = question.toEdxXML()
-                    utils.write_file(fsrc, edx_outdir, 'problem', fname )
+                    utils.write_file(problem_template.render(q=question), edx_outdir, 'problem', fname )
 
     # Add other files
     for folder, dfile in EDX_DEFAULT_FILES.items():
@@ -75,7 +76,6 @@ def generateEDXArchive(module, moduleOutDir):
         utils.write_file(pjson, os.getcwd(), os.path.join(edx_outdir, 'policies', 'course'), pfile)
 
     # Write main course.xml file
-    course_template = jenv.get_template("course.tmpl.xml")
     course_xml = course_template.render(module=module, grademap=EDX_GRADER_MAP)
     utils.write_file(course_xml, os.getcwd(), edx_outdir, 'course.xml')
 

@@ -18,13 +18,7 @@ from lxml import html
 from yattag import indent
 from yattag import Doc
 
-from jinja2 import Template, Environment, FileSystemLoader
-
-
 import utils
-
-BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates' )
 
 HEADER = """
     <!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0"></head><body>
@@ -156,13 +150,6 @@ class GiftQuestion():
         doc.asis('\n\n')
         return((doc.getvalue()))
 
-    def toEdxXML(self):
-        """ From a question object, write Open EDX XML representation """
-        jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
-        jenv.filters['tohtml'] = utils.cntohtml
-        problem_template = jenv.get_template("edx_problem_template.xml")
-        result = problem_template.render(q=self)
-        return result
 
     def parse_gift_src(self):
         # 1. Separate in 3 parts: q_prestate { q_answers } q_poststate
@@ -218,7 +205,8 @@ class GiftQuestion():
                 new_answers = [{'answer_text' : 'Vrai', 'is_right' :False, 'feedback' : self.feedback_for_wrong, 'credit':0},
                     {'answer_text' : 'Faux', 'is_right' :True, 'feedback' : self.feedback_for_right, 'credit':100}]
             else:
-                new_answers = [{'answer_text' : 'Vrai', 'is_right' :True, 'feedback' : self.feedback_for_right, 'credit':100},                      {'answer_text' : 'Faux', 'is_right' :False, 'feedback' : self.feedback_for_wrong, 'credit':0}]
+                new_answers = [{'answer_text' : 'Vrai', 'is_right' :True, 'feedback' : self.feedback_for_right, 'credit':100},
+                    {'answer_text' : 'Faux', 'is_right' :False, 'feedback' : self.feedback_for_wrong, 'credit':0}]
             self.answers = new_answers
             return
         ## NUMERIC questions
