@@ -41,7 +41,6 @@ def processModule(args, repoDir, outDir, module):
 
     moduleDir = os.path.join(repoDir, module)
     moduleOutDir = os.path.join(outDir,module)
-    utils.createDirs(moduleOutDir)
     utils.copyMediaDir(repoDir, moduleOutDir, module)
 
     # Fetch and parse md file
@@ -49,35 +48,21 @@ def processModule(args, repoDir, outDir, module):
     with open(filein, encoding='utf-8') as md_file:
         m = model.Module(md_file, module, args.baseUrl)
 
-
-
-
     # FIXME : simplify process
     # write html, XML, and JSon files
-    m.toHTMLFiles(moduleOutDir, args.feedback)
-    m.toXMLMoodle(moduleOutDir) # FIXME: xmlMoodle should not be written if no IMS option
-    utils.write_file(m.toGift(), moduleOutDir, '', module+'.questions_bank.gift.txt')
-    utils.write_file(m.toVideoList(), moduleOutDir, '', module+'.video_iframe_list.txt')
-    mod_config = utils.write_file(m.toJson(), moduleOutDir, '',  module+'.config.json') # FIXME : this file should be optionnaly written
+    m.toHTML(args.feedback) # only generate html for all subsections
+    # utils.write_file(m.toGift(), moduleOutDir, '', module+'.questions_bank.gift.txt')
+    # utils.write_file(m.toVideoList(), moduleOutDir, '', module+'.video_iframe_list.txt')
+    # mod_config = utils.write_file(m.toJson(), moduleOutDir, '',  module+'.config.json') # FIXME : this file should be optionnaly written
     # EDX files
     if args.edx:
-        # utils.write_file(m.toCourseHTML(), moduleOutDir, '', module+'.course_only.html')
-        #
-        # tar = tarfile.open(os.path.join(moduleOutDir, module+".edx_problems_library.tar.gz"), "w:gz")
-        # tar.add(utils.write_file(m.toEdxProblemsList(), moduleOutDir, '', 'library.xml'))
-        # tar.close
         toEDX.generateEDXArchive(m, moduleOutDir)
 
     # if chosen, generate IMS archive
     if args.ims:
+        m.toXMLMoodle(moduleOutDir) # FIXME: xmlMoodle should not be written if no IMS option
         m.ims_archive_path = toIMS.generateImsArchive(module, moduleOutDir)
         logging.warn('*Path to IMS = %s*' % m.ims_archive_path)
-
-    jenv = Environment(loader=FileSystemLoader(TEMPLATES_PATH))
-    module_template = jenv.get_template("module.html")
-    html = module_template.render(module=m)
-    # FIXME: we should simply pass the html string and not write a file
-    writeHtml(module, moduleOutDir, html)
 
     # return module object
     return m
@@ -145,10 +130,9 @@ def buildSite(course_obj, repoDir, outDir):
 
     # Loop through modules
     for module in course_obj.modules:
-        in_module_file = os.path.join(outDir, module.module, module.module+".html")
-        with open(in_module_file, 'r', encoding='utf-8') as f:
-            data=f.read()
-        html = site_template.render(course=course_obj, module_content=data, body_class="modules", logo=logo)
+        module_template = jenv.get_template("module.html")
+        module_html_content = module_template.render(module=module)
+        html = site_template.render(course=course_obj, module_content=module_html_content, body_class="modules", logo=logo)
         utils.write_file(html, os.getcwd(), outDir, module.module+'.html')
 
 

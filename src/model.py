@@ -28,7 +28,7 @@ from lxml import html
 from slugify import slugify
 
 from fromGIFT import extract_questions, process_questions
-from toIMS import create_ims_test, create_empty_ims_test
+import toIMS
 import utils
 
 
@@ -86,9 +86,6 @@ class Subsection:
     def getFilename(self):
         self.filename = slugify(self.num+self.title)+'_'+self.folder+'.html'
         return self.filename
-
-    def toHTMLFile(self,outDir, feedback_option):
-        utils.write_file(self.toHTML(feedback_option), outDir, self.folder, self.getFilename())
 
     def toGift(self):
         return ''
@@ -154,6 +151,7 @@ class Cours(Subsection):
             video_list += '<iframe src='+v['video_src_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'
         return video_list
 
+
 class AnyActivity(Subsection):
     """ Abstract class for any activity """
     def __init__(self,section,f):
@@ -203,18 +201,15 @@ class AnyActivity(Subsection):
         return self.html_src
 
 
-    def toXMLMoodle(self,outDir):
+    def toXMLMoodle(self):
         # a) depending on the type, get max number of attempts for the test
         if isinstance(self, Comprehension):
             max_attempts = '1'
         else:
             max_attempts = 'unlimited'
-        # b) write empty xml test file for moodle export FIXME: moodle specific, do it only when asked
-        xml_src = create_ims_test(self.questions, self.num+'_'+slugify(self.title), self.title)
-        filename = self.getFilename()
-        xml_filename = filename.replace('html', 'xml')
-        #   write xml file at same location
-        utils.write_file(xml_src, outDir, self.folder , xml_filename)
+        # b) write empty xml test file for moodle export
+        return toIMS.create_ims_test(self.questions, self.num+'_'+slugify(self.title), self.title)
+
 
 class Comprehension(AnyActivity):
     actnum = 0
@@ -301,9 +296,9 @@ class Section:
                         self.lastLine = f.readline()
 
 
-    def toHTMLFiles(self,outDir, feedback_option=False):
+    def toHTML(self, feedback_option=False):
         for sub in self.subsections:
-            sub.toHTMLFile(outDir, feedback_option)
+            sub.toHTML(feedback_option)
 
     def toCourseHTML(self):
         courseHTML = ""
@@ -390,9 +385,9 @@ class Module:
             match = reStartSection.match(l)
 
 
-    def toHTMLFiles(self, outDir, feedback_option=False):
+    def toHTML(self, feedback_option=False):
         for s in self.sections:
-            s.toHTMLFiles(outDir, feedback_option)
+            s.toHTML(feedback_option)
 
     def toCourseHTML(self):
         courseHTML = ""

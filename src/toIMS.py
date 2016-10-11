@@ -338,22 +338,28 @@ def generateIMSManifest(data):
     doc.asis("</manifest>") # IMS footer
     return indent(doc.getvalue())
 
-def generateImsArchive(module_name, module_directory):
+def generateImsArchive(module_object, module_name, module_directory):
     # Now this script has to get full path to module dir containing module_name.config.json
     fileout = module_name+'.imscc.zip'
-    filein = os.path.join(module_directory, module_name+'.config.json')
+    #filein = os.path.join(module_directory, module_name+'.config.json')
 
-    # load data from filin
-    with open(filein, encoding='utf-8') as data_file:
-        data = json.load(data_file)
+    # # load data from filin
+    # with open(filein, encoding='utf-8') as data_file:
+    #     data = json.load(data_file)
 
     # change directory to builded module dir
     cur_dir = os.getcwd()
     os.chdir(module_directory)
 
+    # Generate Html and XML files
+    for section in module_object.sections:
+        for sub in section.subsections:
+            pass
+            # utils.write_file
+
     # parse data and generate imsmanifest.xml
     imsfile = open('imsmanifest.xml', 'w', encoding='utf-8')
-    imsfile.write(generateIMSManifest(data))
+    imsfile.write(generateIMSManifest(module_object))
     imsfile.close()
     logging.warning("[toIMS] imsmanifest.xml saved for module %s", module_directory)
 

@@ -55,7 +55,7 @@ def generateEDXArchive(module, moduleOutDir):
     for sec in module.sections:
         for sub in sec.subsections:
             if sub.folder == 'webcontent': # these go to EDX/html/
-                utils.write_file(sub.html_src, edx_outdir, 'html', sub.filename )
+                utils.write_file(sub.html_src, edx_outdir, 'html', sub.getFilename() )
             elif sub.folder in ('Activite', 'ActiviteAvancee', 'Comprehension'):
                 for question in sub.questions:
                     fname =  ('%s.xml' % question.id)
