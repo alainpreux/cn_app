@@ -23,7 +23,7 @@ from jinja2 import Template, Environment, FileSystemLoader
 
 import utils
 
-BASE_PATH = os.path.abspath(os.getcwd())
+BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates' )
 
 HEADER = """

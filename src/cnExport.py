@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!cnappenv/bin/python
 # -*- coding: utf-8 -*-
 import argparse
 import json
@@ -25,7 +25,8 @@ import model
 
 
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
-BASE_PATH = os.path.abspath(os.getcwd())
+# BASE_PATH = os.path.abspath(os.getcwd())
+BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates' )
 LOGFILE = 'logs/cnExport.log'
 
@@ -176,7 +177,7 @@ if __name__ == "__main__":
         outDir = args.destination
     else:
         outDir = os.path.join(repoDir, args.destination)
-    utils.prepareDestination(outDir)
+    utils.prepareDestination(BASE_PATH, outDir)
 
     # ** Process repository **
     course_obj = processRepository(args, repoDir, outDir)

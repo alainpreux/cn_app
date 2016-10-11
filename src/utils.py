@@ -1,5 +1,7 @@
 from __future__ import division
 # -*- coding: utf-8 -*-
+#!cnappenv/bin/python
+
 
 import os
 import shutil
@@ -177,7 +179,7 @@ def create_empty_file(filedir, filename):
     open(filepath, 'a').close()
     return filepath
 
-def prepareDestination(outDir):
+def prepareDestination(BASE_PATH, outDir):
     """ Create outDir and copy mandatory files"""
     # first erase exising dir
     if os.path.exists(outDir):
@@ -189,13 +191,15 @@ def prepareDestination(outDir):
            print ("Cannot create %s " % (outDir))
            sys.exit(0)
     for d in STATIC_FOLDERS:
+        """ build absolute path independant of current working dir """
+        source = os.path.join(BASE_PATH, d)
         dest = os.path.join(outDir, d)
         try :
-            shutil.copytree(d, dest)
+            shutil.copytree(source, dest)
         except OSError as e:
             logging.warn("%s already exists, going to overwrite it",d)
             shutil.rmtree(dest)
-            shutil.copytree(d, dest)
+            shutil.copytree(source, dest)
 
 
 def fetchMarkdownFile(moduleDir):

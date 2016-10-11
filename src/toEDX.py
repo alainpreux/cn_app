@@ -22,7 +22,7 @@ import model
 
 
 MARKDOWN_EXT = ['markdown.extensions.extra', 'superscript']
-BASE_PATH = os.path.abspath(os.getcwd())
+BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 EDX_TEMPLATES_PATH = os.path.join(BASE_PATH, 'templates', 'toEDX' )
 EDX_DEFAULT_FILES = {
     'about':'overview.html',
