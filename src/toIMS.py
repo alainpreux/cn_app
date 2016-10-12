@@ -145,7 +145,7 @@ def create_ims_test(questions, test_id, test_title):
                         # Enoncé
                         with tag('material'):
                             with tag('mattext', texttype='text/html'):
-                                text(question.text)
+                                text(question.text )
                         # réponses possibles
                         if 'ESSAY' in question.type:
                             with tag('response_str', rcardinality='Single', ident='response_'+str(question.id)):

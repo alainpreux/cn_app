@@ -313,7 +313,6 @@ def process_questions(questions_src):
 def main(argv):
     """
         fromGIFT : take Gift file 'filein' and turn it into  'filein.html'
-
     """
     if len(sys.argv) != 2:
         print(" mini 1 argument")

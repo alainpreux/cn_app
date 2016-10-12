@@ -50,11 +50,10 @@ def processModule(args, repoDir, outDir, module):
 
     m.toHTML(args.feedback) # only generate html for all subsections
 
-    # FIXME : simplify process
     # write html, XML, and JSon files
-    # utils.write_file(m.toGift(), moduleOutDir, '', module+'.questions_bank.gift.txt')
-    # utils.write_file(m.toVideoList(), moduleOutDir, '', module+'.video_iframe_list.txt')
-    # mod_config = utils.write_file(m.toJson(), moduleOutDir, '',  module+'.config.json') # FIXME : this file should be optionnaly written
+    utils.write_file(m.toGift(), moduleOutDir, '', module+'.questions_bank.gift.txt')
+    utils.write_file(m.toVideoList(), moduleOutDir, '', module+'.video_iframe_list.txt')
+    mod_config = utils.write_file(m.toJson(), moduleOutDir, '',  module+'.config.json') # FIXME : this file should be optionnaly written
 
     # EDX files
     if args.edx:
@@ -160,7 +159,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # ** Logging **
-    logfile = utils.create_empty_file('logs', 'cnExport.log')
+    logfile = utils.create_empty_file(os.path.join(BASE_PATH, 'logs'), 'cnExport.log')
     logging.basicConfig(filename=logfile,filemode='w',level=getattr(logging, args.logLevel))
 
     # ** Paths and directories **

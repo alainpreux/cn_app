@@ -108,6 +108,7 @@ class Cours(Subsection):
         else:
             self.src=''
             self.parse(file)
+        self.parseVideoLinks()
         self.absolutizeMediaLinks()
 
 
@@ -126,8 +127,6 @@ class Cours(Subsection):
 
     def toHTML(self, feedback_option=False):
         self.html_src = markdown.markdown(self.src, MARKDOWN_EXT)
-        if self.parseVideoLinks() :
-            logging.info("detected video links")
         self.html_src = utils.iframize_video_anchors(self.html_src, 'lien_video')
         self.html_src = utils.add_target_blank(self.html_src)
         return self.html_src
