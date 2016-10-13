@@ -196,8 +196,6 @@ class AnyActivity(Subsection):
             # post-process Gift source replacing markdown formated questions text by html equivalent
             if question.text_format in (("markdown")):
                 question.md_src_to_html()
-        # add "target="_blank" to all anchors
-        #self.html_src = utils.add_target_blank(self.html_src)
         return self.html_src
 
 

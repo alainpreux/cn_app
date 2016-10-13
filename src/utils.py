@@ -46,20 +46,23 @@ def fetch_vimeo_thumb(video_link):
 
 def get_embed_code_for_url(url):
     """
-    parses a given url and retrieve embed code
+    parses a given url and retrieve embed code.
     """
     hostname = url and urlparse(url).hostname
     # VIMEO case
     if hostname == "vimeo.com":
-        # For vimeo videos, use OEmbed API
-        params = { 'url': url, 'format':'json', 'api':False }
-        try:
-            r = requests.get('https://vimeo.com/api/oembed.json', params=params)
-            r.raise_for_status()
-        except Exception as e:
-            return hostname, '<p>Error getting video from provider ({error})</p>'.format(error=e)
-        res = r.json()
-        return hostname, res['html']
+        # For vimeo videos, one can use OEmbed API, but it slows down the code enormously (from <1s to 4s+ for rendering one module)
+            # params = { 'url': url, 'format':'json', 'api':False }
+            # try:
+            #     r = requests.get('https://vimeo.com/api/oembed.json', params=params)
+            #     r.raise_for_status()
+            # except Exception as e:
+            #     return hostname, '<p>Error getting video from provider ({error})</p>'.format(error=e)
+            # res = r.json()
+            # return hostname, res['html']
+        vid_id = url.strip('/').rsplit('/', 1)[1]
+        embed_code = """<iframe src="https://player.vimeo.com/video/{0}" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>""".format(vid_id)
+        return hostname, embed_code
 
     # CanalU.tv
     elif hostname == "www.canal-u.tv":
