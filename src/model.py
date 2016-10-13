@@ -29,6 +29,7 @@ from slugify import slugify
 
 from fromGIFT import extract_questions, process_questions
 import toIMS
+import toEDX
 import utils
 
 
@@ -181,7 +182,7 @@ class AnyActivity(Subsection):
         """ xml source code of all questions in EDX XML format """
         edx_xml_problem_list = ""
         for question in self.questions:
-            edx_xml_problem_list += '\n'+question.toEdxXML()+'\n'
+            edx_xml_problem_list += '\n'+toEDX.toEdxProblemXml(question)+'\n'
         return edx_xml_problem_list
 
 
@@ -333,7 +334,6 @@ class Section:
                 # add subsection title
                 edx_xml_problem_list += "<!-- "+sub.num+" "+sub.title+" -->\n\n"
                 edx_xml_problem_list += sub.toEdxProblemsList()
-
         return edx_xml_problem_list
 
 class Module:
@@ -415,7 +415,6 @@ class Module:
         edx_xml_problem_list = '<library xblock-family="xblock.v1" display_name="'+self.module+'_'+self.menutitle+'" org="ULille3" library="'+self.module+'_'+self.menutitle+'">\n\n"'
         for s in self.sections:
             edx_xml_problem_list += s.toEdxProblemsList()
-
         edx_xml_problem_list += "\n</library>"
 
         return edx_xml_problem_list

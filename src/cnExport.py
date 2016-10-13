@@ -57,7 +57,7 @@ def processModule(args, repoDir, outDir, module):
 
     # EDX files
     if args.edx:
-        toEDX.generateEDXArchive(m, moduleOutDir)
+        m.edx_archive_path = toEDX.generateEDXArchive(m, moduleOutDir)
 
     # if chosen, generate IMS archive
     if args.ims:

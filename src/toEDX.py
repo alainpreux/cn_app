@@ -38,13 +38,21 @@ EDX_GRADER_MAP = {
     'webcontent': None,
 }
 
-def generateEDXArchive(module, moduleOutDir):
-    """ Given a module object and destination dir, generate EDX archive """
+def loadJinjaEnv():
     jenv = Environment(loader=FileSystemLoader(EDX_TEMPLATES_PATH))
     jenv.filters['slugify'] = utils.cnslugify
     jenv.filters['tohtml'] = utils.cntohtml
+    return jenv
+
+def toEdxProblemXml(question):
+    """ given a question object, return EDX Xml """
+    jenv = loadJinjaEnv()
     problem_template = jenv.get_template("edx_problem_template.xml")
-    course_template = jenv.get_template("course.tmpl.xml")
+    return problem_template.render(q=question)
+
+
+def generateEDXArchive(module, moduleOutDir):
+    """ Given a module object and destination dir, generate EDX archive """
 
     # Module data
     module.advanced_EDX_module_list = EDX_ADVANCED_MODULE_LIST.__str__()
@@ -61,7 +69,7 @@ def generateEDXArchive(module, moduleOutDir):
             elif sub.folder in ('Activite', 'ActiviteAvancee', 'Comprehension'):
                 for question in sub.questions:
                     fname =  ('%s.xml' % question.id)
-                    utils.write_file(problem_template.render(q=question), edx_outdir, 'problem', fname )
+                    utils.write_file(toEdxProblemXml(question), edx_outdir, 'problem', fname )
 
     # Add other files
     for folder, dfile in EDX_DEFAULT_FILES.items():
@@ -69,6 +77,8 @@ def generateEDXArchive(module, moduleOutDir):
 
     # Render and add policies/course files
     course_policies_files =  ['grading_policy.json', 'policy.json']
+
+    jenv = loadJinjaEnv()
     for pfile in course_policies_files:
         pfile_template = jenv.get_template(os.path.join('policies','course', pfile))
         pjson = pfile_template.render(module=module)
@@ -76,6 +86,7 @@ def generateEDXArchive(module, moduleOutDir):
         utils.write_file(pjson, os.getcwd(), os.path.join(edx_outdir, 'policies', 'course'), pfile)
 
     # Write main course.xml file
+    course_template = jenv.get_template("course.tmpl.xml")
     course_xml = course_template.render(module=module, grademap=EDX_GRADER_MAP)
     utils.write_file(course_xml, os.getcwd(), edx_outdir, 'course.xml')
 
@@ -85,3 +96,5 @@ def generateEDXArchive(module, moduleOutDir):
         for afile in os.listdir(edx_outdir):
             tar.add(os.path.join(edx_outdir, afile))
     tar.close()
+
+    return ('%s_edx.tar.gz' % module.module)
