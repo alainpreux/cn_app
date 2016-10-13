@@ -28,7 +28,8 @@ from lxml import html
 from slugify import slugify
 
 from fromGIFT import extract_questions, process_questions
-from toIMS import create_ims_test, create_empty_ims_test
+import toIMS
+import toEDX
 import utils
 
 
@@ -83,17 +84,14 @@ class Subsection:
         self.videos = []
         Subsection.num +=1
 
-    def getFilename(self):
-        self.filename = slugify(self.num+self.title)+'_'+self.folder+'.html'
+    def getFilename(self, term='html'):
+        self.filename = slugify(self.num+self.title)+'_'+self.folder+'.'+term
         return self.filename
-
-    def toHTMLFile(self,outDir, feedback_option):
-        utils.write_file(self.toHTML(feedback_option), outDir, self.folder, self.getFilename())
 
     def toGift(self):
         return ''
 
-    def toXMLMoodle(self, outDir):
+    def toXMLMoodle(self):
         pass
 
     def absolutizeMediaLinks(self):
@@ -111,6 +109,7 @@ class Cours(Subsection):
         else:
             self.src=''
             self.parse(file)
+        self.parseVideoLinks()
         self.absolutizeMediaLinks()
 
 
@@ -129,8 +128,6 @@ class Cours(Subsection):
 
     def toHTML(self, feedback_option=False):
         self.html_src = markdown.markdown(self.src, MARKDOWN_EXT)
-        if self.parseVideoLinks() :
-            logging.info("detected video links")
         self.html_src = utils.iframize_video_anchors(self.html_src, 'lien_video')
         self.html_src = utils.add_target_blank(self.html_src)
         return self.html_src
@@ -153,6 +150,7 @@ class Cours(Subsection):
         for v in self.videos:
             video_list += '<iframe src='+v['video_src_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'
         return video_list
+
 
 class AnyActivity(Subsection):
     """ Abstract class for any activity """
@@ -184,7 +182,7 @@ class AnyActivity(Subsection):
         """ xml source code of all questions in EDX XML format """
         edx_xml_problem_list = ""
         for question in self.questions:
-            edx_xml_problem_list += '\n'+question.toEdxXML()+'\n'
+            edx_xml_problem_list += '\n'+toEDX.toEdxProblemXml(question)+'\n'
         return edx_xml_problem_list
 
 
@@ -198,23 +196,18 @@ class AnyActivity(Subsection):
             # post-process Gift source replacing markdown formated questions text by html equivalent
             if question.text_format in (("markdown")):
                 question.md_src_to_html()
-        # add "target="_blank" to all anchors
-        #self.html_src = utils.add_target_blank(self.html_src)
         return self.html_src
 
 
-    def toXMLMoodle(self,outDir):
+    def toXMLMoodle(self):
         # a) depending on the type, get max number of attempts for the test
         if isinstance(self, Comprehension):
             max_attempts = '1'
         else:
             max_attempts = 'unlimited'
-        # b) write empty xml test file for moodle export FIXME: moodle specific, do it only when asked
-        xml_src = create_ims_test(self.questions, self.num+'_'+slugify(self.title), self.title)
-        filename = self.getFilename()
-        xml_filename = filename.replace('html', 'xml')
-        #   write xml file at same location
-        utils.write_file(xml_src, outDir, self.folder , xml_filename)
+        # b) write empty xml test file for moodle export
+        return toIMS.create_ims_test(self.questions, self.num+'_'+slugify(self.title), self.title)
+
 
 class Comprehension(AnyActivity):
     actnum = 0
@@ -301,9 +294,9 @@ class Section:
                         self.lastLine = f.readline()
 
 
-    def toHTMLFiles(self,outDir, feedback_option=False):
+    def toHTML(self, feedback_option=False):
         for sub in self.subsections:
-            sub.toHTMLFile(outDir, feedback_option)
+            sub.toHTML(feedback_option)
 
     def toCourseHTML(self):
         courseHTML = ""
@@ -312,10 +305,6 @@ class Section:
                 courseHTML += "\n\n<!-- Subsection "+sub.num+" -->\n"
                 courseHTML += markdown.markdown(sub.src, MARKDOWN_EXT)
         return courseHTML
-
-    def toXMLMoodle(self, outDir):
-        for sub in self.subsections:
-            sub.toXMLMoodle(outDir)
 
     def toGift(self):
         allGifts = ""
@@ -343,7 +332,6 @@ class Section:
                 # add subsection title
                 edx_xml_problem_list += "<!-- "+sub.num+" "+sub.title+" -->\n\n"
                 edx_xml_problem_list += sub.toEdxProblemsList()
-
         return edx_xml_problem_list
 
 class Module:
@@ -390,9 +378,9 @@ class Module:
             match = reStartSection.match(l)
 
 
-    def toHTMLFiles(self, outDir, feedback_option=False):
+    def toHTML(self, feedback_option=False):
         for s in self.sections:
-            s.toHTMLFiles(outDir, feedback_option)
+            s.toHTML(feedback_option)
 
     def toCourseHTML(self):
         courseHTML = ""
@@ -400,10 +388,6 @@ class Module:
             courseHTML += "\n\n<!-- Section "+sec.num+" -->\n"
             courseHTML += sec.toCourseHTML()
         return courseHTML
-
-    def toXMLMoodle(self, outDir):
-        for s in self.sections:
-            s.toXMLMoodle(outDir)
 
     def toGift(self):
         """a text resource with all questions with a category / used for import into moodle"""
@@ -429,7 +413,6 @@ class Module:
         edx_xml_problem_list = '<library xblock-family="xblock.v1" display_name="'+self.module+'_'+self.menutitle+'" org="ULille3" library="'+self.module+'_'+self.menutitle+'">\n\n"'
         for s in self.sections:
             edx_xml_problem_list += s.toEdxProblemsList()
-
         edx_xml_problem_list += "\n</library>"
 
         return edx_xml_problem_list
