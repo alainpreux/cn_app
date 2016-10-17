@@ -367,9 +367,9 @@ body {
 }
 
 .btn-modules{
-	padding-left: 0.5em;
-  padding-right: 0.5em;
   display: inline-block;
+  margin-bottom: 1em;
+  padding: 8px 10px 8px 10px;
 
 }
 /* ---------------------------------------------------------*/
