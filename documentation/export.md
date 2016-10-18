@@ -1,6 +1,12 @@
 Export
 ======
 
+Cette section est destinée à ceux qui souhaitent utiliser une archive EDX ou IMSCC générée par Esc@pad. Nous abordons les questions suivantes pour chaque type :
+
+* Comment récupérer et utiliser ces archives dans EDX-Studion ou Moodle
+* comment sont structurées les modules produits, ou quelles sont les correspondances établies entre le modèle de cours Esc@pad et le modèle inhérent de chacun des LMS supportés.
+
+
 ## Export EDX
 
 Simplement ajouter l'option `-e` à la commande cnExport.py
@@ -57,14 +63,12 @@ Avec EDX il est possible de défninir :
 ## Export vers Moodle via IMSCC
 
 ### Usage
-Ce script prend comme argument le chemin vers le dossier où se trouvent les sources du cours, à savoir le fichier markdown et les médias (stockés par convention dans un dossier nommé `media`).
+<!-- FIXME :
+- howto retrieve IMSCC archive
+- global structure
+-->
 
-Une fois à la racine du dépôt, éxécuter le script comme suit:
-```
-$ python3 toIMS.py module_folder
-```
-
-Ce scrit génère un fichier `module_folder.imscc.zip` qui peut être importé dans Moodle en tant que cours (cf [restauration d'un cours depuis une archive IMSCC sous Moodle](https://docs.moodle.org/28/en/IMS_Common_Cartridge_import_and_export)).
+Esc@pad peut générer un fichier `module_folder.imscc.zip` qui peut être importé dans Moodle en tant que cours (cf [restauration d'un cours depuis une archive IMSCC sous Moodle](https://docs.moodle.org/28/en/IMS_Common_Cartridge_import_and_export)).
 
 Cette archive contient également toutes les activités avec les questions associées déjà intégrées.
 

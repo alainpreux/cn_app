@@ -11,10 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   quickstart
+   installation
+   usage
    syntaxe
    export
-   deploiement
    parser_api
 
 
