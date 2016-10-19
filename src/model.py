@@ -47,6 +47,11 @@ reEndActivity = re.compile('^```\s*$')
 reMetaData = re.compile('^(?P<meta>.*?):\s*(?P<value>.*)\s*$')
 
 def goodActivity(match):
+    """ utility function used with 'reStartActivity' regex pattern to determine wether the 'type' variable of the given matched pattern fits the name of class defined in this module
+
+    Keyword arguments:
+    match -- result of reStartActivity.match(some_parsed_line) (see Regex expressions defined above)
+     """
     m = sys.modules[__name__]
     typeSection = re.sub('[ ._-]','',unidecode(match.group('type')).title())
     if typeSection in m.__dict__ :
@@ -57,7 +62,7 @@ def goodActivity(match):
 
 
 class ComplexEncoder(json.JSONEncoder):
-    ''' Encoder for Json serialization: just delete recursive structures'''
+    """ Encoder for Json serialization: just delete recursive structures. Used in toJson instance methods """
     def default(self, obj):
         if isinstance(obj, Section) or isinstance(obj,Module):
             return obj.__dict__
@@ -74,13 +79,11 @@ class ComplexEncoder(json.JSONEncoder):
 class Subsection:
     """
     Abstract class for any type of subsection: lectures and activities
-    - folders property equals the type (name of the class)
-    - num subsection number based on the section number
     """
-    num = 1
+    num = 1 #class-wise instance counter
     def __init__(self, section):
         self.section = section
-        self.num = self.section.num+'-'+str(Subsection.num)
+        self.num = self.section.num+'-'+str(Subsection.num) # mere string for display the subsection number
         self.videos = []
         Subsection.num +=1
 
@@ -95,18 +98,34 @@ class Subsection:
         pass
 
     def absolutizeMediaLinks(self):
+        """ returns the instance src attribute (i.e the bit of source code corresponding to this subsection) modified so that relative media
+            links are turned absolute with the base_url and the module name
+        """
         self.src = re.sub('\]\(\s*(\.\/)*\s*media/', ']('+self.section.base_url+'/'+self.section.module+'/media/', self.src)
 
 class Cours(Subsection):
-    """ Class for a lecture"""
+    """
+    Class for a lecture
+    """
     def __init__(self, section, file=None, src='' ,title = 'Cours'):
+        """Initialize a new instance.
+            If src is not empty no file is given, then the content has already been parsed.
+            Else (file pointer given and src empty), Section parser has detected a new Cours instance that we keep on parsing here.
+
+        Keyword arguments:
+
+        * section -- containing section object (to be deleted in JSON representation, see ComplexEncoder class)
+        * file --  parsed file (default None)
+        * src -- text string (default empty)
+        * title -- string (default 'Cours')
+
+        """
         Subsection.__init__(self,section)
         self.title = title
         self.folder = 'webcontent'
-        self.videos = []
-        if src:
+        if src: # case when the content has already been parsed
             self.src= src
-        else:
+        else: # case when only the begining of a Course has been detected, so we resume the parsing here
             self.src=''
             self.parse(file)
         self.parseVideoLinks()
@@ -114,7 +133,7 @@ class Cours(Subsection):
 
 
     def parse(self,f):
-        ''' Read lines in f until the end of the course '''
+        """Read lines in file f until the end of the course"""
         self.lastLine = f.readline()
         while self.lastLine and not reStartSection.match(self.lastLine) and not reStartSubsection.match(self.lastLine) :
             # Is it really the end of the section?
@@ -127,6 +146,11 @@ class Cours(Subsection):
 
 
     def toHTML(self, feedback_option=False):
+        """assign and return the html_src attribute, i.e the html representation of this Course subsection
+
+        Keyword arguments:
+        feedback_option -- determines wether or not it must include feedback and correct answer (default False)
+        """
         self.html_src = markdown.markdown(self.src, MARKDOWN_EXT)
         self.html_src = utils.iframize_video_anchors(self.html_src, 'lien_video')
         self.html_src = utils.add_target_blank(self.html_src)
@@ -134,6 +158,8 @@ class Cours(Subsection):
 
 
     def parseVideoLinks(self):
+        """parse instance src  and search for video matches. In case of a match, create a video object and assign it to self.videos list attribute.
+        return True if the number of videos found is above 0, False otherwise"""
         videos_findall = re.findall('^\[(?P<video_title>.*)\]\s*\((?P<video_link>.*)\){:\s*\.cours_video\s*.*}', self.src, flags=re.M)
         for video_match in videos_findall:
             new_video = {
@@ -146,6 +172,7 @@ class Cours(Subsection):
         return (len(videos_findall) > 0)
 
     def videoIframeList(self):
+        """generates and returns a text string containing all the iframe codes for a course subsection"""
         video_list = "\n"+self.num+' '+self.title+'\n'
         for v in self.videos:
             video_list += '<iframe src='+v['video_src_link']+' width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>\n'
@@ -153,18 +180,17 @@ class Cours(Subsection):
 
 
 class AnyActivity(Subsection):
-    """ Abstract class for any activity """
+    """ Abstract class for any activity. Responsible for parsing questions from the gift code in src attribute """
     def __init__(self,section,f):
         Subsection.__init__(self,section)
         self.src = ''
         self.parse(f)
         self.absolutizeMediaLinks()
         self.questions = process_questions(extract_questions(self.src))
-        self.absolutizeMediaLinks()
 
 
     def parse(self,f):
-        ''' Read lines in f until the end of the activity '''
+        """Read lines in f until the end of the activity"""
         self.lastLine = f.readline()
         while self.lastLine and not reEndActivity.match(self.lastLine):
             self.src += self.lastLine
@@ -172,21 +198,15 @@ class AnyActivity(Subsection):
 
 
     def toGift(self):
+        """Returns a text string containing the gift code of all the questions of this AnyActivity instance"""
         gift_src=''
         for question in self.questions:
             gift_src+='\n'+question.gift_src+'\n'
         return gift_src
 
 
-    def toEdxProblemsList(self):
-        """ xml source code of all questions in EDX XML format """
-        edx_xml_problem_list = ""
-        for question in self.questions:
-            edx_xml_problem_list += '\n'+toEDX.toEdxProblemXml(question)+'\n'
-        return edx_xml_problem_list
-
-
     def toHTML(self, feedback_option=False):
+        """Assign and return the html_src attribute == the concatenation of the HTML representation of all questions of this activity"""
         self.html_src = ''
         for question in self.questions:
             # append each question to html output
@@ -196,10 +216,19 @@ class AnyActivity(Subsection):
             # post-process Gift source replacing markdown formated questions text by html equivalent
             if question.text_format in (("markdown")):
                 question.md_src_to_html()
-        return self.html_src
+                return self.html_src
+
+
+    def toEdxProblemsList(self):
+        """Returns xml source code of all the questions in EDX XML format. *depends on toEdx.py module*"""
+        edx_xml_problem_list = ""
+        for question in self.questions:
+            edx_xml_problem_list += '\n'+toEDX.toEdxProblemXml(question)+'\n'
+        return edx_xml_problem_list
 
 
     def toXMLMoodle(self):
+        """Returns the XML representation following IMS QTI standard of all the questions in this activity. *depends on toIMS.py module*"""
         # a) depending on the type, get max number of attempts for the test
         if isinstance(self, Comprehension):
             max_attempts = '1'
@@ -210,6 +239,7 @@ class AnyActivity(Subsection):
 
 
 class Comprehension(AnyActivity):
+    """Subclass of AnyActivity defining a compréhension type of activity"""
     actnum = 0
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
@@ -218,6 +248,7 @@ class Comprehension(AnyActivity):
         Comprehension.actnum+=1
 
 class Activite(AnyActivity):
+    """Subclass of AnyActivity defining a simple activité type of activity"""
     actnum = 0
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
@@ -226,6 +257,7 @@ class Activite(AnyActivity):
         Activite.actnum+=1
 
 class ActiviteAvancee(AnyActivity):
+    """Subclass of AnyActivity defining an activité avancée type of activity"""
     actnum = 0
     def __init__(self, section, src):
         AnyActivity.__init__(self,section,src)
@@ -234,9 +266,18 @@ class ActiviteAvancee(AnyActivity):
         ActiviteAvancee.actnum+=1
 
 class Section:
+    """Class defining the section level in the course module model of Esc@pad"""
     num = 1
 
     def __init__(self,title,f,module, base_url=DEFAULT_BASE_URL):
+        """Initialize a Section instance
+
+        Keyword arguments:
+        title -- text string title
+        f -- file pointer
+        module -- text string of the module name
+        base_url -- base url for building absolute paths for relative media
+        """
         self.title = title
         self.subsections = []
         self.num = str(Section.num)
@@ -247,6 +288,7 @@ class Section:
         Subsection.num=1
 
     def parse(self, f):
+        """Read lines in f until the start of a new section"""
         body = ''
         self.lastLine = f.readline()
         while self.lastLine:
@@ -265,7 +307,7 @@ class Section:
                     # or between activities
                     if body and not body.isspace():
                         self.subsections.append(Cours(self,src=body))
-                    sub = Cours(self,file=f,title=match.group('title'))
+                    sub = Cours(self,file=f,title=match.group('title')) #parsing is then continued in Cours parse method,
                     self.subsections.append(sub)
                     # The next line is the last line read in the parse of the subsection
                     self.lastLine = sub.lastLine
