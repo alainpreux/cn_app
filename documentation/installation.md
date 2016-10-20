@@ -7,7 +7,7 @@ Nous allons couvrir ici l'installation de l'application Escapad qui peut être u
 - via l'application web en local
 - via l'application web déployé sur un serveur
 
-Cette section est destinée aux usagers techniciens ou aux contributeurs du code qui souhaite installer l'application localement ou sur un serveur. 
+Cette section est destinée aux usagers techniciens ou aux contributeurs du code qui souhaite installer l'application localement ou sur un serveur.
 
 ## Prérequis et installation minimale
 
@@ -94,3 +94,7 @@ $ python manage.py runserver
 ```
 
 and go to web adress at `http://localhost:8000`
+
+## Déploiement sur un serveur
+
+** TBD **
