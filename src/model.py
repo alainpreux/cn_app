@@ -124,7 +124,7 @@ class Cours(Subsection):
         self.title = title
         self.folder = 'webcontent'
         if src: # case when the content has already been parsed
-            self.src= src
+            self.src = src
         else: # case when only the begining of a Course has been detected, so we resume the parsing here
             self.src=''
             self.parse(file)
@@ -499,7 +499,7 @@ class CourseProgram:
 
          Keyword arguments:
 
-         - repository -- path to the folder containing the modules 
+         - repository -- path to the folder containing the modules
 
          """
         self.modules = []
