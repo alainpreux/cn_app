@@ -11,10 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   installation
    usage
    syntaxe
    export
+   installation
    parser_api
 
 

@@ -1,13 +1,7 @@
 Installation
 ============
 
-Nous allons couvrir ici l'installation de l'application Escapad qui peut être utilisée de différente manières:
-
-- via le script d'export
-- via l'application web en local
-- via l'application web déployé sur un serveur
-
-Cette section est destinée aux usagers techniciens ou aux contributeurs du code qui souhaite installer l'application localement ou sur un serveur.
+Cette section est destinée aux usagers techniciens ou aux contributeurs du code qui souhaitent installer l'application localement ou sur un serveur.
 
 ## Prérequis et installation minimale
 
@@ -37,25 +31,10 @@ L'installation de toutes ces librairies reposent parfois sur des packets "systè
 - python-dev
 - zlib1g-dev
 
-## Obtenir les fichiers sources des modules de cours
-
-Le principe d'Esc@pad consiste à transformer une arborescence de modules de cours en différents formats d'exports (mini-site web et archives pour LMS). Le point de départ est donc un dossier contenant plusieurs modules de cours, appelé "programme de cours" au même titre que [les cours Culture Numérique](https://culturenumerique.univ-lille3.fr/) qui comprennent plusieurs modules et qui sont produits à partir de l'application Esc@pad.
-
-Chaque module de cours doit suivre la syntaxe et la structuration définie dans la [section syntaxe](syntaxe.md)). Le résultat de l'export est un dossier contenant un mini site Web (un dossier de fichiers HTML statiques) reprenant tous les modules de cours et incluant des archives IMSCC et EDX (cf [section export](export.md) pour l'usage de ces archives et le mapping adopté). Pour obtenir vos propres fichiers sources "Esc@pad", vous pouvez soit partir d'un dossier vide et suivre les [instructions de syntaxe](syntaxe.md), soit partir du dépôt git suivant proposant un patron de programme de cours:
-
-    $ git clone https://github.com/CultureNumerique/course_template mon_nom_de_cours
-
-Pour la suite, il est possible de simplement utiliser le script d'export localement à partir de ce dossier lui aussi local. Esc@pad est cependant pensé pour le travail collaboratif, et l'application web nécessite de disposer de l'adresse d'un dépôt git. Pour cela vous pouvez par exemple:
-
-- forker le dépôt `course_template` depuis GitHub puis cloner votre fork localement, ou bien même le modifier sur la plateforme
-- téléverser votre clone local sur l'hébergeur git de votre choix.
-
-Dans les 2 cas vous disposerez ainsi de l'adresse "git" de votre propre version d'un dossier de cours transformable par Esc@pad.
-
 
 ## Exécution du script en local
 
-En supposant donc que vous disposez d'un dossier local contenant votre contenu de cours structuré en respectant [le guide d'utilisation et la syntaxe Esc@pad](syntaxe.md),  le script `src/cnExport.py` vous permet d'obtenir un export Web contenant les archives importable dans Moodle ou EDX. L'usage de base est le suivant:
+En supposant que vous disposez d'un dossier local `mon_dossier_de_cours` contenant votre contenu de cours structuré en respectant [le guide d'utilisation](usage.html) et la [syntaxe Esc@pad](syntaxe.html),  le script `src/cnExport.py` vous permet d'obtenir un export Web contenant les archives importable dans Moodle ou EDX. L'usage de base est le suivant:
 
 ```
 $ cd cnappenv
