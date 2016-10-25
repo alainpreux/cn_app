@@ -1,17 +1,31 @@
 Syntaxe et structuration
 ========================
 
-Nous détaillons ici la syntaxe adoptée pour la production de modules de cours à partir d'une arborescence détaillée ci-après.  
-Nous utilisons un fichier dit "maitre" comme matrice de base pour générer le cours. La syntaxe employée est basée sur le format MarkDown, que nous avons étendu pour nos besoins spécifiques. Ces ajouts consistent en des conventions décrites ci-dessous et l'usage d'extensions proposées par la [librairie Python de MarkDown](https://pythonhosted.org/Markdown/extensions).
+Nous détaillons ici la syntaxe adoptée pour la production de modules de cours à partir d'une arborescence de fichier source au format texte. Une arborescence type pouvant servir d'exemple est proposé dans le dépôt
+[`course_template`](https://github.com/CultureNumerique/course_template) incluant un exemple type de fichier source de cours  [`course_template/module1/example_module1.md`](https://github.com/CultureNumerique/course_template/blob/master/module1/example_module1.md)
 
-## Arboresce et structure des fichiers sources
 
-  <!-- FIXME  -->
-Le fichier source permettant de générer un cours se décompose en sections et sous-sections. Le niveau sous-sections constitue le niveau "pivot" de la structure d'un cours Culture NUmérique. Chaque sous-section peut être du type et de la forme suivante:  
+## Arborescence et structure des fichiers sources
 
-1. cours simple (texte + images)  
-2. vidéo de cours accompagnée de la version texte
-3. activité de 3 types possibles:
+Pour fonctionner normalement, l'application web Escapad nécessite d'avoir accès à un dossier `depot_de_cours` structuré à minima de la manière suivante:
+
+    depot_de_cours/
+        - moduleX/
+            module_de_coursX.md
+            media/
+                - img.jpg
+                - img2.png
+        - moduleY/
+
+- Un dépôt de cours peut contenir plusieurs modules de cours chacun contenu dans un dossier
+- Pour chaque dossier de module de cours:
+    - un seul fichier source de type MarkDown dont le suffixe est '.md'
+    - le dossier media est optionnel, mais doit être nommé `media`. Voir plus bas pour la gestion des images, mais nous recommandons de gérer les medias séparemment et d'utiliser préférablement des urls absolues
+
+Le fichier source permettant de générer un cours (`module_de_coursX.md` dans noter exemple) se décompose en sections et sous-sections. Le niveau sous-sections constitue le niveau "pivot" de la structure d'un cours Culture NUmérique. Chaque sous-section peut être de 2 types:  
+
+- sous-section de cours, incluant ou pas une ou plusieurs videos
+- sous-section d'activité, chacune de 3 types possibles:
     - auto-évaluation sous forme de quiz
     - exercice autonome
     - exercice d'approfondissement
@@ -22,14 +36,15 @@ Exemple:
 
 ```
 
-## Contenu de cours
-### Cours simple
+## Sous-section de cours
+
+### Contenu Markdown
 
 Rédigée en MarkDown, c'est un type de sous-section simple consistant en du texte mis en forme et enrichi d'images.
-Par rapport au MArkdown simple, nous utilisons les fonctions supplémentaires décrites ci-après.
+Par rapport au markdown simple, nous supportons les extensions suivantes:
+<!--  TBD -->
 
-
-#### ajouter des classes CSS
+<!-- ### ajouter des classes CSS
 
 Avec des [Attribute list](https://pythonhosted.org/Markdown/extensions/attr_list.html): Pour permettre d'ajouter des classes CSS à une image ou à un bloc de texte, pour permettre une mise en page enrichie.
 Un exemple pour ajouter un attribut en ligne à un lien:  
@@ -37,19 +52,12 @@ Un exemple pour ajouter un attribut en ligne à un lien:
 qui produit le HTML suivant:  
 `<p><a href="http://example.com" class="foo bar titre" title="Some title!">link</a></p>`  
 
-Notez que pour ajouter des classes on peut soit spécifier `.une_classe` ou `class='une_classe``
+Notez que pour ajouter des classes on peut soit spécifier `.une_classe` ou `class='une_classe`` -->
 
 
-#### Commentaires invisibles
-En utilisant simplement les commentaires HTML:
+### Ajouter des Vidéos
 
-        <!-- On pourrait aussi mentionner les lol cats dans cette section non ? -->
-
-Le commentaire suivant ne sera donc pas visible dans le rendu HTML final.
-<!-- Il faudrait vraiment enrichir cette documentation de quelques Gifs animés -->        
-
-
-### Vidéo de cours
+<!-- FIXME : 2 types -->
 
 Ces éléments de cours consistent en des sous-sections pouvant inclure 1 ou plusieurs vidéos d'animations. Pour qu'un lien vers une vidéo (Vimeo uniquement pour l'instant) soit reconnu comme video de cours,  on utilise le principe des *attribute lists* (cf ci-dessus) en ajoutant la classe `cours_video`:  
 
@@ -66,7 +74,7 @@ Ces liens vidéos font l'objet d'un traitement spécifique selon le type d'expor
 * pour l'export Moodle/IMSCC, le plugin Viméo de Moodle permet de transformer le lien vidéo en iframe automatiquement:
 ![video_moodle](media/3.vue_cours_avec_video.png)
 
-**NB:** les liens de videos doivent être de la forme
+**NB:** les liens de videos Vimeo doivent être de la forme
 
 `https://vimeo.com/1234568`
 
@@ -76,8 +84,18 @@ et non
 
 La 2e forme est celle du champ "src" des iframes vimeo, mais l'API Vimeo requiert la 1ère forme, et qui est le lien permettant de plus d'accéder à la page vimeo de la video, et donc d'accéder à la chaine, aux autres videos, de liker, partager, etc.
 
+### Ajouter des images ou des fichiers resources
 
-## Rédiger des activités
+<!-- TBD -->
+
+- syntaxe markdown
+- prise en compte des medias locaux intégrés
+- recommendations sur les medias externalisés
+
+
+## Sous-section de type Activité
+
+### Repérer les activités
 
 Les activités peuvent être de 3 types:
 
@@ -122,11 +140,20 @@ Exemple:
         }
         ```
 
-### HTML et MarkDown dans les questions rédigées en GIFT
+
+### Contenu des questions rédigées en GIFT
+
+#### Spécifier le format
 
 Dans les questions rédigées en GIFT il est possible de rédiger le texte au format HTML ou Markdown en spécifiant devant chaque bloc la syntaxe (voir explications à la fin de [ce paragraphe de la documentation Moodle sur le format GIFT](https://docs.moodle.org/28/en/GIFT_format#Percentage_Answer_Weights)).
 
-Dans le cas du Markdown, il y a cependant une limitation pour les listes (simples ou numérotées). En Markdown il faut laisser une ligne vide avant de commencer une liste:
+#### Gestion des medias 
+
+<!-- TBD -->
+
+#### Listes
+
+Si le format choisi est le Markdown, il y a une limitation pour les listes (simples ou numérotées). En Markdown il faut laisser une ligne vide avant de commencer une liste:
 ```
 Ingrédients:
 

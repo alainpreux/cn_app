@@ -64,7 +64,7 @@ Ensuite, pour personnaliser le mini-site qui sera généré par l'application, v
 
 ## Générer le site et les archives
 
-6. pour générer votre site, rendez-vous sur le site http://escapad.univ-lille3.fr/admin
+6. pour générer votre site, rendez-vous sur l'application web Esc@pad http://escapad.univ-lille3.fr/admin
 5. loguez-vous avec les accès qui vous ont été fournis,  et cliquez sur "Ajouter un dépôt".
 7. renseignez le champs "url du dépôt" avec l'adresse de votre url git, modifiez au besoin la branche par défaut. Validez.
 8. Vous pouvez à présent générer un site vitrine de votre cours en cliquant sur "Build site". Les archives d'export (IMS, etc) sont disponibles à l'intérieur de ce site.
@@ -72,4 +72,6 @@ Ensuite, pour personnaliser le mini-site qui sera généré par l'application, v
 
 ## Intégration continue avec le webhook
 
-Le lien "Build site" peut être utilisé comme webhook pour les plateformes Git le supportant (framagit, github).
+Le lien "Build site" peut être utilisé comme webhook pour les plateformes Git le supportant (framagit, github). Ce mécanisme de webhook est proposé par certaines plateformes git (GitHub, FramaGit, etc.) et permet de renseigner une url qui sera appelé (requête POST) à chaque fois qu'un certains nombres d'actions (paramétrables) sont réalisés sur votre dépôt.
+
+Généralement l'action par défaut est le "push" qui correspond à la publication des dernières mises à jour d'un dépôt par l'un des contributeurs au dépôt de code. Ainsi, après avoir ajouter l'adresse "Build Site" de votre dépôt Esc@pad comme webhook, à chaque mise à jour de votre code source de cours, le site vitrine sera régénéré et visible à l'adresse "Visit Site".
