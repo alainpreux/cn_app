@@ -17,12 +17,14 @@ Pour fonctionner normalement, l'application web Escapad nécessite d'avoir accè
                 - img2.png
         - moduleY/
 
+Commentaires sur l'arborescence:
+
 - Un dépôt de cours peut contenir plusieurs modules de cours chacun contenu dans un dossier
 - Pour chaque dossier de module de cours:
     - un seul fichier source de type MarkDown dont le suffixe est '.md'
     - le dossier media est optionnel, mais doit être nommé `media`. Voir plus bas pour la gestion des images, mais nous recommandons de gérer les medias séparemment et d'utiliser préférablement des urls absolues
 
-Le fichier source permettant de générer un cours (`module_de_coursX.md` dans noter exemple) se décompose en sections et sous-sections. Le niveau sous-sections constitue le niveau "pivot" de la structure d'un cours Culture NUmérique. Chaque sous-section peut être de 2 types:  
+Le fichier source permettant de générer un cours (`module_de_coursX.md` dans noter exemple) peut se décompose en sections et sous-sections. Le niveau sous-sections constitue le niveau "pivot" de la structure d'un cours Culture NUmérique. Chaque sous-section peut être de 2 types:  
 
 - sous-section de cours, incluant ou pas une ou plusieurs videos
 - sous-section d'activité, chacune de 3 types possibles:
@@ -30,34 +32,43 @@ Le fichier source permettant de générer un cours (`module_de_coursX.md` dans n
     - exercice autonome
     - exercice d'approfondissement
 
-Exemple:
+A noter qu'optionnellement le fichier peut débuter par une section d'en-tête comprenant des paramètres tels que titre, langue, etc. Cette partie se place avant la première section et comporte les champs suivants:
 
 ```
+TITLE: Module de cours test 1 (Titre long)
+MENUTITLE: Module Test 1 (Titre court)
+AUTHOR: Culture Numérique
+LANGUAGE: fr
+
+# Section 1
+## Sous-section 1.1
+etc....
 
 ```
-
 ## Sous-section de cours
 
-### Contenu Markdown
+C'est un type de sous-section simple consistant en du texte structuré à l'aide de la syntaxe markdown et qui peut inclure des liens, des images, ou des videos à partir de l'url de ces ressources additionelles. La syntaxe markdown de base est expliqué dans [ce récapitulatif](http://daringfireball.net/projects/markdown/syntax).
 
-Rédigée en MarkDown, c'est un type de sous-section simple consistant en du texte mis en forme et enrichi d'images.
-Par rapport au markdown simple, nous supportons les extensions suivantes:
-<!--  TBD -->
+### Extension markdow
 
-<!-- ### ajouter des classes CSS
+Pour compléter les spécifications du markdow, plusieurs variantes ont été développées. Nous incluons les variantes de syntaxe ["PHP Markdown Extra"](https://michelf.ca/projects/php-markdown/extra/). La variante PHP Markdown Extra permet par exemple de spécifier des attributs attachés à des éléments de la syntaxe (lien, titre, image, etc). Ces ["special attributes"](https://michelf.ca/projects/php-markdown/extra/#spe-attr) permettent par exemple d'ajouter des classes CSS à une image ou à un bloc de texte, ou un titre:
 
-Avec des [Attribute list](https://pythonhosted.org/Markdown/extensions/attr_list.html): Pour permettre d'ajouter des classes CSS à une image ou à un bloc de texte, pour permettre une mise en page enrichie.
-Un exemple pour ajouter un attribut en ligne à un lien:  
-`[link](http://example.com){: class="foo bar" .titre title="Some title!" }`  
+```
+[link](http://example.com){: class="foo bar" .titre title="Some title!" }`  
+```
 qui produit le HTML suivant:  
-`<p><a href="http://example.com" class="foo bar titre" title="Some title!">link</a></p>`  
 
-Notez que pour ajouter des classes on peut soit spécifier `.une_classe` ou `class='une_classe`` -->
+
+```
+<p><a href="http://example.com" class="foo bar titre" title="Some title!">link</a></p>`  
+```
+
+**Notez** que pour ajouter des classes on peut soit spécifier `.une_classe` ou `class='une_classe``
 
 
 ### Ajouter des Vidéos
 
-<!-- FIXME : 2 types -->
+
 
 Ces éléments de cours consistent en des sous-sections pouvant inclure 1 ou plusieurs vidéos d'animations. Pour qu'un lien vers une vidéo (Vimeo uniquement pour l'instant) soit reconnu comme video de cours,  on utilise le principe des *attribute lists* (cf ci-dessus) en ajoutant la classe `cours_video`:  
 
@@ -147,7 +158,7 @@ Exemple:
 
 Dans les questions rédigées en GIFT il est possible de rédiger le texte au format HTML ou Markdown en spécifiant devant chaque bloc la syntaxe (voir explications à la fin de [ce paragraphe de la documentation Moodle sur le format GIFT](https://docs.moodle.org/28/en/GIFT_format#Percentage_Answer_Weights)).
 
-#### Gestion des medias 
+#### Gestion des medias
 
 <!-- TBD -->
 

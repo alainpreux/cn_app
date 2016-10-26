@@ -64,11 +64,12 @@ Ensuite, pour personnaliser le mini-site qui sera généré par l'application, v
 
 ## Générer le site et les archives
 
-6. pour générer votre site, rendez-vous sur l'application web Esc@pad http://escapad.univ-lille3.fr/admin
-5. loguez-vous avec les accès qui vous ont été fournis,  et cliquez sur "Ajouter un dépôt".
+Une fois que vous avez modifié votre contenu et mis à jour votre dépôt git, vous pouvez passer à l'étape de génération du site vitrine et des archives IMS et EDX.
+
+6. pour générer votre site, connectez vous sur l'application web Esc@pad http://escapad.univ-lille3.fr/admin, loguez-vous avec les accès qui vous ont été fournis,  et cliquez sur "Ajouter un dépôt".
 7. renseignez le champs "url du dépôt" avec l'adresse de votre url git, modifiez au besoin la branche par défaut. Validez.
-8. Vous pouvez à présent générer un site vitrine de votre cours en cliquant sur "Build site". Les archives d'export (IMS, etc) sont disponibles à l'intérieur de ce site.
-9. le site généré est hébergé par l'application à l'adresse "visit site"
+3. depuis la page listant les "repositories", les liens "build site" et "visit site" permettent de respectivement générer et de visiter le mini-site généré par Esc@pad. Les archives d'export IMS et EDX sont disponibles pour chaque module du site généré (menu en haut à droite), à la section "Réutilisez ce module".
+9. le site généré est hébergé par l'application à l'adresse "visit site". Cette adresse reste identique.
 
 ## Intégration continue avec le webhook
 
