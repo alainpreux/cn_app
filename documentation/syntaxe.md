@@ -17,14 +17,14 @@ Pour fonctionner normalement, l'application web Escapad nécessite d'avoir accè
                 - img2.png
         - moduleY/
 
-Commentaires sur l'arborescence:
+Commentaires sur l'arborescence type:
 
 - Un dépôt de cours peut contenir plusieurs modules de cours chacun contenu dans un dossier
 - Pour chaque dossier de module de cours:
     - un seul fichier source de type MarkDown dont le suffixe est '.md'
-    - le dossier media est optionnel, mais doit être nommé `media`. Voir plus bas pour la gestion des images, mais nous recommandons de gérer les medias séparemment et d'utiliser préférablement des urls absolues
+    - le **dossier media est optionnel**, mais doit être nommé `media`. Voir plus bas pour la gestion des images, mais nous recommandons de gérer les medias séparemment et d'utiliser préférablement des urls absolues pour une meilleure portabilité.
 
-Le fichier source permettant de générer un cours (`module_de_coursX.md` dans noter exemple) peut se décompose en sections et sous-sections. Le niveau sous-sections constitue le niveau "pivot" de la structure d'un cours Culture NUmérique. Chaque sous-section peut être de 2 types:  
+Le fichier source permettant de générer un cours (`module_de_coursX.md` dans notre exemple) peut se décompose en sections et sous-sections. Le niveau sous-sections constitue le niveau "pivot" de la structure d'un cours Culture NUmérique. Chaque sous-section peut être de 2 types:  
 
 - sous-section de cours, incluant ou pas une ou plusieurs videos
 - sous-section d'activité, chacune de 3 types possibles:
@@ -51,13 +51,12 @@ C'est un type de sous-section simple consistant en du texte structuré à l'aide
 
 ### Extension markdow
 
-Pour compléter les spécifications du markdow, plusieurs variantes ont été développées. Nous incluons les variantes de syntaxe ["PHP Markdown Extra"](https://michelf.ca/projects/php-markdown/extra/). La variante PHP Markdown Extra permet par exemple de spécifier des attributs attachés à des éléments de la syntaxe (lien, titre, image, etc). Ces ["special attributes"](https://michelf.ca/projects/php-markdown/extra/#spe-attr) permettent par exemple d'ajouter des classes CSS à une image ou à un bloc de texte, ou un titre:
+Pour compléter les spécifications du markdow, plusieurs variantes ont été développées. Nous incluons dans Esc@pad, la variante de syntaxe ["PHP Markdown Extra"](https://michelf.ca/projects/php-markdown/extra/). Cett variante permet par exemple de spécifier des attributs attachés à des éléments de la syntaxe (lien, titre, image, etc). Ces ["special attributes"](https://michelf.ca/projects/php-markdown/extra/#spe-attr) permettent par exemple d'ajouter des classes CSS à une image ou à un bloc de texte, ou un titre:
 
 ```
 [link](http://example.com){: class="foo bar" .titre title="Some title!" }`  
 ```
 qui produit le HTML suivant:  
-
 
 ```
 <p><a href="http://example.com" class="foo bar titre" title="Some title!">link</a></p>`  
@@ -66,11 +65,32 @@ qui produit le HTML suivant:
 **Notez** que pour ajouter des classes on peut soit spécifier `.une_classe` ou `class='une_classe``
 
 
+
+### Ajouter des images ou des fichiers resources
+
+L'ajout d'images en Markdown se fait de la manière suivante:
+
+    ![une image](http://url.fr/de/mon.image.png)
+
+A noter que l'url peut être de 2 formes:
+
+- **absolue** e.g `https://culturenumerique.univ-lille3.fr/static/img/logo_plat_vert.svg`
+- **relative** au dossier `media` (situé dans le même dossier de module) e.g `media/logo_plat_vert.svg`
+
+De manière générale nous recommendons d'utiliser des liens absolus vers une source stable (wikimedia, sites institutionnels, GED de l'université, etc.) ou une source que vous controllez (owncloud, serveur ftp, etc.). Cependant esc@pad supporte tout à fait l'usage de liens relatifs au dossier `media`. Dans ce dernier cas, les liens sont transformés en lien absolus vers l'hébergement escapad du site généré. E.g `media/img.png` dans le dossier `module1` du dépot `culturenum` sera transformé en `http://escapad.univ-lille.fr/culturenum/module1/media/img.png`
+
+A noter que l'ajout de lien hypertexte simple, par exemple un lien vers un fichier texte ressource `[exempleLaTeX](http://culturenumerique.univ-lille3.fr/module3/media/exempleLaTeX.pdf)` vers des ressources externes est géré de la même manière et il est possible donc d'ajouter simplement ces fichiers ressources dans le dossier `media` de chaque module.
+
+**Positionnement et stylage des images**. En utilisant la syntaxe "special attributes" vue ci-avant et permettant d'ajouter des attributs à des éléments,  il est possible d'ajouter du style à une image pour, par exemple, en diminuer la largeur, spécifier l'affichage, etc:
+
+```
+![logo](https://culturenumerique.univ-lille3.fr/static/img/logo_plat_vert.svg){: style="width:30%;float:right;"}
+```
+
 ### Ajouter des Vidéos
 
 
-
-Ces éléments de cours consistent en des sous-sections pouvant inclure 1 ou plusieurs vidéos d'animations. Pour qu'un lien vers une vidéo (Vimeo uniquement pour l'instant) soit reconnu comme video de cours,  on utilise le principe des *attribute lists* (cf ci-dessus) en ajoutant la classe `cours_video`:  
+Esc@pad permet de traiter de manière spécifique les liens hypertext pointant vers une video hébergée (sur Viméo e.g) afin que la ou les videos soient intégrées directement dans le contenu. Pour qu'un lien vers une vidéo (Vimeo, et Canal-u.tv uniquement pour l'instant) soit reconnu comme video de cours,  on utilise le principe des *attribute lists* (cf ci-avant) en ajoutant la classe `cours_video`:  
 
     [Introduction au web](https://vimeo.com/138623497){: .cours_video }
 
@@ -78,14 +98,19 @@ ou
 
     [Introduction au web](https://vimeo.com/138623497){: class="cours_video" }
 
-Ce lien doit être placé à l'intérieur d'une sous-section. Une sous-section peut bien sûr comporter plusieurs vidéos de cours.
+Ce lien doit être placé à l'intérieur d'une sous-section de cours, qui peut comporter plusieurs vidéos de cours.
 
 Ces liens vidéos font l'objet d'un traitement spécifique selon le type d'export:
+
 * export Site Vitrine HTML: on génère un code d'iframe qui permet de lire le/les vidéo/s sans quitter la page courante;
 * pour l'export Moodle/IMSCC, le plugin Viméo de Moodle permet de transformer le lien vidéo en iframe automatiquement:
 ![video_moodle](media/3.vue_cours_avec_video.png)
+* pour l'export EDX, les videos de cours sont intégrées en préambule du contenu de cours
 
-**NB:** les liens de videos Vimeo doivent être de la forme
+
+### Remarque sur le format des liens Vimeo
+
+Les liens de videos Vimeo doivent être de la forme
 
 `https://vimeo.com/1234568`
 
@@ -95,26 +120,19 @@ et non
 
 La 2e forme est celle du champ "src" des iframes vimeo, mais l'API Vimeo requiert la 1ère forme, et qui est le lien permettant de plus d'accéder à la page vimeo de la video, et donc d'accéder à la chaine, aux autres videos, de liker, partager, etc.
 
-### Ajouter des images ou des fichiers resources
-
-<!-- TBD -->
-
-- syntaxe markdown
-- prise en compte des medias locaux intégrés
-- recommendations sur les medias externalisés
 
 
 ## Sous-section de type Activité
 
 ### Repérer les activités
 
-Les activités peuvent être de 3 types:
+Les sous-sections d'activités peuvent être de 3 types:
 
 - auto-évaluation pour vérifier la compréhension du cours: `comprehension`
 - exercices de recherche autonome : `activité`
 - Exercices d'approfondissement: `activité-avancée`
 
-Pour le découpage des activités, nous n'utilisons plus les `##` de la syntaxe markdown, mais les "fenced code blocks" en spécifiant le type d'activité  juste à côté des "backticks":
+Pour le découpage des sous-section d'activités, nous n'utilisons plus les `##` de la syntaxe markdown, mais les "fenced code blocks" en spécifiant le type d'activité  juste à côté des "backticks":
 
         ```comprehension
 
@@ -129,7 +147,7 @@ ou
 
 ### Syntaxe GIFT
 
-Ces activités sont rédigées en GIFT; chaque question est séparée par une ligne vide. La syntaxe Gift a été proposé par l'équipde Moodle pour permettre de gagner du temps dans la rédaction de quizz et de tests. Cette syntaxe est disponible sur [cette page](https://docs.moodle.org/28/en/GIFT_format). Il s'agit d'un format "texte" qui peut s'éditer dans n'importe quel "éditeur de texte" (et non dans un "traitement de texte").
+Ces activités sont rédigées en GIFT; chaque question est séparée par une ligne vide. La syntaxe Gift a été proposé par l'équipde Moodle pour permettre de gagner du temps dans la rédaction de quizz et de tests. Cette syntaxe est disponible sur [cette page](https://docs.moodle.org/28/en/GIFT_format). Il s'agit d'un format "texte" qui peut donc s'éditer dans n'importe quel éditeur de texte.
 
 Exemple:
 
@@ -154,17 +172,20 @@ Exemple:
 
 ### Contenu des questions rédigées en GIFT
 
-#### Spécifier le format
+Au delà de la syntaxe spécifique à GIFT pour définir le texte des questions, les choix possibles, etc., la rédaction de ces contenus de questions présente quelques particularités:   
+
+**Spécifier le format**:
 
 Dans les questions rédigées en GIFT il est possible de rédiger le texte au format HTML ou Markdown en spécifiant devant chaque bloc la syntaxe (voir explications à la fin de [ce paragraphe de la documentation Moodle sur le format GIFT](https://docs.moodle.org/28/en/GIFT_format#Percentage_Answer_Weights)).
 
-#### Gestion des medias
+**Gestion des medias**:
 
-<!-- TBD -->
+Les consignes et recommandations sont les mêmes que dans la section ci-dessus [Ajouter des images ou des fichiers resources](#Ajouter-des-images-ou des-fichiers-resources).
 
-#### Listes
+**Listes**:
 
 Si le format choisi est le Markdown, il y a une limitation pour les listes (simples ou numérotées). En Markdown il faut laisser une ligne vide avant de commencer une liste:
+
 ```
 Ingrédients:
 

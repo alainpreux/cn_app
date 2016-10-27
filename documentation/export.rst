@@ -2,10 +2,10 @@ Export
 ======
 
 Cette section est destinée à ceux qui souhaitent utiliser une
-archive EDX ou IMSCC générée par Esc@pad. Nous abordons les
+archive EDX ou IMSCC générée par Esc@pad et téléchargeable depuis le site vitrine généré, dans la page de chaque module, section "Réutilisez ce module". Nous abordons les
 questions suivantes pour chaque type :
 
--  Comment récupérer et utiliser ces archives dans EDX-Studion ou
+-  Comment récupérer et utiliser ces archives dans EDX-Studio ou
    Moodle
 -  comment sont structurées les modules produits, ou quelles sont
    les correspondances établies entre le modèle de cours Esc@pad et
@@ -14,7 +14,13 @@ questions suivantes pour chaque type :
 Export EDX
 ----------
 
-Simplement ajouter l'option ``-e`` à la commande cnExport.py
+Usage
+~~~~~
+
+Dans le studio EDX, une fois dans la page de votre cours (la fonction "créer un cours
+depuis une archive EDX" n'est à notre connaissance pas encore disponible), cliquez sur "importer".
+Suivez ensuite les étapes. Plus d'explications [ici](http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/releasing_course/export_import_course.html)
+
 
 Correspondance entre les modèles de cours
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,13 +93,6 @@ Export vers Moodle via IMSCC
 Usage
 ~~~~~
 
-.. raw:: html
-
-   <!-- FIXME :
-   - howto retrieve IMSCC archive
-   - global structure
-   -->
-
 Esc@pad peut générer un fichier ``module_folder.imscc.zip`` qui peut
 être importé dans Moodle en tant que cours (cf `restauration d'un cours
 depuis une archive IMSCC sous
@@ -125,3 +124,9 @@ quelques limitations :
    création d'un nouveau quiz **ne sont pas pris en compte lors de
    l'import IMSCC**. Ce comportement semble plutôt anormal et `a été
    signalé également <https://tracker.moodle.org/browse/MDL-53422>`__
+
+
+Correspondance entre les modèles Moodle et Esc@pad
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+< TBD >
