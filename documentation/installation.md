@@ -77,3 +77,13 @@ and go to web adress at `http://localhost:8000`
 ## Déploiement sur un serveur
 
 ** TBD **
+
+## Mettre à jour la documentation
+
+** TBD **
+
+- générée avec Spinx + recommonmark pour le support des fichiers markdown
+- placez-vous dans le dossier `documentation` de votre installation
+- copier le fichier `conf.py.template` en nommant la copie `conf.py`
+- modifier les chemins de sys.path (vers ligne 21) pour permettre à Sphinx de trouver le code des modules Escapad situés dans le dossier `src` (utilisé pour l'autodocumentation du module `src/model.py`)
+- la commande ` make html` permet alors de régénérer la documentation. 

@@ -49,7 +49,7 @@ etc....
 
 C'est un type de sous-section simple consistant en du texte structuré à l'aide de la syntaxe markdown et qui peut inclure des liens, des images, ou des videos à partir de l'url de ces ressources additionelles. La syntaxe markdown de base est expliqué dans [ce récapitulatif](http://daringfireball.net/projects/markdown/syntax).
 
-### Extension markdow
+### Extension markdown
 
 Pour compléter les spécifications du markdow, plusieurs variantes ont été développées. Nous incluons dans Esc@pad, la variante de syntaxe ["PHP Markdown Extra"](https://michelf.ca/projects/php-markdown/extra/). Cett variante permet par exemple de spécifier des attributs attachés à des éléments de la syntaxe (lien, titre, image, etc). Ces ["special attributes"](https://michelf.ca/projects/php-markdown/extra/#spe-attr) permettent par exemple d'ajouter des classes CSS à une image ou à un bloc de texte, ou un titre:
 
