@@ -76,14 +76,112 @@ and go to web adress at `http://localhost:8000`
 
 ## Déploiement sur un serveur
 
-** TBD **
+
+Il s'agit ici de voir un peu plus en détail la stratégie de déploiement.
+Pour le déploiement sur un serveur, nous préconisons de suivre les conseils [donnés par la documentation Django](https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/modwsgi/) ou bien ceux disponible sur [ce support de cours](https://openclassrooms.com/courses/developpez-votre-site-web-avec-le-framework-django/deployer-votre-application-en-production))
+
+## Arborescence des fichiers et dossiers
+
+Par rapport à un déploiement standard, la difficulté ici réside dans le fait que plusieurs fichiers et dossiers sont manipulés à chaque exécution de l'application, ce qui peut poser problème si les droits d'accès ne sont pas gérés de manière cohérente. Nous recommandons d'utiliser l'arborescence suivants pour l'installation d'Esc@pad sur un serveur (considérons pour la suite que `cnuser` est le compte de l'usager, `www-data` le compte lié au serveur --dans notre cas Apache+mod_wsgi--):
+
+```
+    cnapp_install (dossier d'installation)
+        - cnappenv/ (owner = cnuser)
+              (dossier de l'environement virtuel contenant les binaires et librairies)
+        - cn_app/ (owner = cnuser)
+              (le dossier de code source cloné depuis le dépôt git)
+        - data/ (owner = www-data)
+              - db.sqlite3 (fichier de base de donnée, uniquement si vous choisissez SQLite)
+              - debug.log (fichier de debug du script cnExport.py)
+              - repo-data/
+                    - repositories (dossier contenant les dépôts de code source)
+                    - sites (dossier où sont copiés les mini-sites web générés)
+```
+
+### Configuration Django
+
+Après avoir créé le dossier `cnappenv` et le cloné le code source `dans cn_app`, vous pouvez créer le dossier `data` et
+ à l'interieur de celui-ci `repo-data`. Les autres fichiers (`db.sqlite3` et `debug.log`) et dossiers (`repositories` et `sites`) seront créés automatiquement plus tard).
+
+ Passons à présent à la configuration du fichier `site_settings.py` qu'il faut créer à partir du patron `site_settings.template.py`. Modifiez le de cette manière:
+
+ - Ajoutez l'url du serveur dans le champ `ALLOWED_HOSTS`
+ - base SQLite: indiquez le chemin absolu vers le fichier de base de donnée:
+```
+     # SQLite conf
+     DATABASES = {
+         'default': {
+             'ENGINE': 'django.db.backends.sqlite3',
+             'NAME': '/path/to/cnapp_install/data/db.sqlite3',
+```
+- chemin vers le dossier data:
+```
+    DATA_DIR = '/path/to/cnapp_install/data/'
+```
+- pour le logging, indiquez aussi le chemin absol vers le fichier de log:
+```
+    LOGGING = {
+            (...)
+            'apps_handler': {
+                'level': 'INFO',
+                'class': 'logging.FileHandler',
+                'filename': 'path/to/cnapp_install/data/debug.log',
+```
+A ce stade vous pouvez lancer la migration et la collecte de fichiers statiques (après avoir activé votre environment):
+```
+    $ ./manage.py migrate
+    $ ./manage.py collectstatic
+```
+Ce qui aura pour effet de créer le fichier et peupler la base de données, ainsi que copier les fichiers statiques (CSS, images, JS) dans le dossier `cn_app/collectedstatics`.
+
+
+### Configuration Apache
+
+L'idée ici est d'ajouter un site à la config Apache. Pour ceci créer un fichier escapa.conf dans le dossier `/etc/apache2/sites-enabled`. Le fichier doit ressembler à ceci:
+
+
+```
+        # URL et chemin des repo-data
+        Alias /data /path/to/cnapp_install/data/repo-data
+
+        <Directory /path/to/cnapp_install/data/repo-data>
+        Require all granted
+
+        # URL et chemin pour les fichiers static de Django
+        Alias /static /path/to/cnapp_install/cn_app/collectedstatics
+
+        <Directory /path/to/cnapp_install/cn_app/collectedstatics>
+        Require all granted
+        </Directory>
+
+        # CHemin et PythonPath pour l'appli web escapad
+        WSGIScriptAlias / /path/to/cnapp_install/cn_app/cn_app/wsgi.py
+        WSGIPythonPath /path/to/cnapp_install/cn_app:/path/to/cnapp_install/cnapp_env/lib/python2.7/site-packages
+
+        <Directory /path/to/cnapp_install/cn_app/cn_app>
+          <Files wsgi.py>
+          Require all granted
+          </Files>
+        </Directory>
+
+```
+
 
 ## Mettre à jour la documentation
 
-** TBD **
 
-- générée avec Spinx + recommonmark pour le support des fichiers markdown
-- placez-vous dans le dossier `documentation` de votre installation
-- copier le fichier `conf.py.template` en nommant la copie `conf.py`
-- modifier les chemins de sys.path (vers ligne 21) pour permettre à Sphinx de trouver le code des modules Escapad situés dans le dossier `src` (utilisé pour l'autodocumentation du module `src/model.py`)
-- la commande ` make html` permet alors de régénérer la documentation. 
+**Installation**
+
+La documentation est générée avec [Sphinx](http://www.sphinx-doc.org) et l'utilisation d'un parser additionnel, Recommonmark, pour le support des fichiers markdown (voir les explications [ici](http://searchvoidstar.tumblr.com/post/125486358368/making-pdfs-from-markdown-on-readthedocsorg-using)). Ensuite les étapes sont:
+
+- installation des dépendances : les librairies nécessaires sont intégrées dans la fichier `requirements.txt` situé à la racine du code source, et sont donc installées par la commande `pip install - r requirements.txt` si vous ne l'avez pas déjà exécutée.
+- par ailleurs les fichiers de configuration de Sphinx sont intégré dans le code source: `Makefile` à utilser tel quel, et le `conf.py.template` à modifier de la façon suivante:
+    - placez-vous dans le dossier `documentation` de votre installation
+    - copier le fichier `conf.py.template` en nommant la copie `conf.py` et modifier y le chemin absolu (vers ligne 21) vers le dossier `src` du code source d'Esc@pad (utilisé pour l'autodocumentation du module `src/model.py`)
+    - les autres éléments pour le parsing du markdown sont déjà ajoutés.
+
+
+**Régénérer la documentation**
+
+- La structure de la documentation est définie dans le fichier `documentation/index.rst` qui permet d'inclure les autres fichiers en tant que section simplement en ajoutant leur nom à la suite de la commande  sans préciser leur suffixe.
+- la commande `make html` permet alors de régénérer la documentation dans le dossier `_build`
