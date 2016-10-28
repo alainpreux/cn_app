@@ -19,17 +19,18 @@ Usage
 
 Dans le studio EDX, une fois dans la page de votre cours (la fonction "créer un cours
 depuis une archive EDX" n'est à notre connaissance pas encore disponible), cliquez sur "importer".
-Suivez ensuite les étapes. Plus d'explications [ici](http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/releasing_course/export_import_course.html)
+Suivez ensuite les étapes. Plus d'explications `ici <http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/releasing_course/export_import_course.html>`__
 
 
 Correspondance entre les modèles de cours
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-La mapping se fait très naturellement entre le modèle Esc@Pad et le
-modèle EDX. Le grain pivot est celui de **sous-section** dans les 2 cas
+La mapping se fait assez naturellement entre le modèle Esc@Pad et le
+modèle EDX, même si le typage des activités et contenu ne se fait exactement
+au niveau de la sous-section mais sur celui du "component". Voir tableau ci-dessous.
 
 +----------------------------+-------------------------------------------+
-| EDX                        | Esc@pad                                   |
+| EDX element(:attribute)    | correspondance dans le modèle Esc@pad     |
 +============================+===========================================+
 | chapter                    | section                                   |
 +----------------------------+-------------------------------------------+
@@ -46,7 +47,7 @@ modèle EDX. Le grain pivot est celui de **sous-section** dans les 2 cas
 | component                  | type de contenu > type de sous-section.   |
 +----------------------------+-------------------------------------------+
 
-Les sous-section peuvent être de 4 types qui sont notées ou pas selon un
+Les sous-sections Esc@pad peuvent être de 4 types qui sont notées ou pas selon un
 type défini dans une "grading policy". Pour Esc@Pad :
 
 -  (ungraded) : cours
@@ -55,8 +56,8 @@ type défini dans une "grading policy". Pour Esc@Pad :
 -  Activité Avancé : activite-avancee
 
 Ensuite chaque ``sequential`` peut avoir plusieurs ``vertical`` dénommés
-"Unité" dans l'interface, mais dans Esc#pad il n'y a qu'une 'unité' par
-sous-section.
+"Unité" dans l'interface, mais dans Esc@pad il n'y a qu'une 'unité' par
+sous-section, et l'on se tient à un type de composant par Unité sauf pour les cours avec video qui auront un composant "Html" précédé d'un composant "cn-video" utilisant le plugin spécifique développé pour l'occasion `xblock-cnvideo <https://github.com/CultureNumerique/xblock-cnvideo>`__
 
 Chaque unité peut ensuite contenir différents composant EDX qui seront
 déterminé selon le contenu de la sous-section:
@@ -85,7 +86,7 @@ Avec EDX il est possible de défninir :
 -  nom et nom de code
 
 Tout ceci est défini dans le fichier de template
-```templates/toEDX/policies/course/grading_policy.json`` <../templates/toEDX/policies/course/grading_policy.json>`__
+`templates/toEDX/policies/course/grading_policy.json <../templates/toEDX/policies/course/grading_policy.json>`__
 
 Export vers Moodle via IMSCC
 ----------------------------
@@ -129,4 +130,27 @@ quelques limitations :
 Correspondance entre les modèles Moodle et Esc@pad
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-< TBD >
+La correspondance entre les modèles de cours Moodle et le modèle choisi dans Esc@pad sont très proches car
+tous les 2 placent le typage des contenus pédagogiques au niveau de la sous-section. Voir ce tableau:
+
++----------------------------+-------------------------------------------+
+| Moodle                     | Esc@pad                                   |
++============================+===========================================+
+| Section                    | section                                   |
++----------------------------+-------------------------------------------+
+| Activité / Resource        | sous-section                              |
++----------------------------+-------------------------------------------+
+| Resource:page              | sous-section: Cours                       |
++----------------------------+-------------------------------------------+
+| Activité:quiz              | sous-section:                             |
+|                            |                                           |
+|                            |    - Compréhension                        |
+|                            |    - Activité                             |
+|                            |    - ActivitéAvancée                      |
++----------------------------+-------------------------------------------+
+
+Commentaire:
+
+- Le découpage en section est identique
+- Les sous-section de Cours sont traduites en Resource Moodel de type "page"
+- les 3 types d'activités sont traduits en Activité Moodle de type Quiz.  

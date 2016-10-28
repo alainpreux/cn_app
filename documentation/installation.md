@@ -76,11 +76,10 @@ and go to web adress at `http://localhost:8000`
 
 ## Déploiement sur un serveur
 
-
 Il s'agit ici de voir un peu plus en détail la stratégie de déploiement.
-Pour le déploiement sur un serveur, nous préconisons de suivre les conseils [donnés par la documentation Django](https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/modwsgi/) ou bien ceux disponible sur [ce support de cours](https://openclassrooms.com/courses/developpez-votre-site-web-avec-le-framework-django/deployer-votre-application-en-production))
+Pour le déploiement sur un serveur, nous préconisons de suivre les conseils [donnés par la documentation Django](https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/modwsgi/) ou bien ceux disponible sur [ce support de cours](https://openclassrooms.com/courses/developpez-votre-site-web-avec-le-framework-django/deployer-votre-application-en-production). Nous revoyons les étapes principipales de l'installation, mais les prérequis vu [ci-avant](#prerequis-et-installation-minimale) sont toujours les mêmes.
 
-## Arborescence des fichiers et dossiers
+### Arborescence des fichiers et dossiers
 
 Par rapport à un déploiement standard, la difficulté ici réside dans le fait que plusieurs fichiers et dossiers sont manipulés à chaque exécution de l'application, ce qui peut poser problème si les droits d'accès ne sont pas gérés de manière cohérente. Nous recommandons d'utiliser l'arborescence suivants pour l'installation d'Esc@pad sur un serveur (considérons pour la suite que `cnuser` est le compte de l'usager, `www-data` le compte lié au serveur --dans notre cas Apache+mod_wsgi--):
 
@@ -100,8 +99,11 @@ Par rapport à un déploiement standard, la difficulté ici réside dans le fait
 
 ### Configuration Django
 
-Après avoir créé le dossier `cnappenv` et le cloné le code source `dans cn_app`, vous pouvez créer le dossier `data` et
- à l'interieur de celui-ci `repo-data`. Les autres fichiers (`db.sqlite3` et `debug.log`) et dossiers (`repositories` et `sites`) seront créés automatiquement plus tard).
+Après avoir créé le dossier `cnappenv` avec l'applicatif `virtualenv`, et cloné le code source dans `cn_app`, vous pouvez installer les dépendances avec `pip` depuis le dossier `cn_app` (après avoir activé votre environment):
+```
+$ pip install -r requirements.txt
+```
+ Ensuite, créez le dossier `data` et à l'interieur de celui-ci `repo-data`. Les autres fichiers (`db.sqlite3` et `debug.log`) et dossiers (`repositories` et `sites`) seront créés automatiquement plus tard).
 
  Passons à présent à la configuration du fichier `site_settings.py` qu'il faut créer à partir du patron `site_settings.template.py`. Modifiez le de cette manière:
 
@@ -127,13 +129,17 @@ Après avoir créé le dossier `cnappenv` et le cloné le code source `dans cn_a
                 'class': 'logging.FileHandler',
                 'filename': 'path/to/cnapp_install/data/debug.log',
 ```
-A ce stade vous pouvez lancer la migration et la collecte de fichiers statiques (après avoir activé votre environment):
+A ce stade vous pouvez lancer la migration et la collecte de fichiers statiques:
 ```
     $ ./manage.py migrate
     $ ./manage.py collectstatic
 ```
 Ce qui aura pour effet de créer le fichier et peupler la base de données, ainsi que copier les fichiers statiques (CSS, images, JS) dans le dossier `cn_app/collectedstatics`.
 
+Pour tester que l'installation a bien fonctionné, lancer le serveur local:
+```
+$ ./manage.py runserver
+```
 
 ### Configuration Apache
 
